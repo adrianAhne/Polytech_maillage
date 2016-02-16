@@ -130,4 +130,23 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 	return(1);
 }
 
+// calculates the a new mesh translated by length length
+void translation2D(Mesh *mesh, float lengthX, float lengthY)
+{
+	int i;
+	pPoint ppt;
+
+	for(i=0; i <= mesh->np; i++)
+	{
+		ppt = &mesh->point[i];
+		x = ppt->c[0] + lengthX;
+		y = ppt->c[1] + lengthY;
+	
+		ppt->c[0] = x;
+		ppt->c[1] = y;		
+	}
+	
+	
+	
+}
 

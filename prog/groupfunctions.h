@@ -21,4 +21,6 @@ void center2D(Mesh *mesh, float *xc, float *yc);
 
 int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) ;
 
+void translation2D(Mesh *mesh, float lengthX, float lengthY);
+
 #endif
