@@ -295,7 +295,7 @@ me
   if ( !loadMesh(&mesh) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
-	if ( ! (&mesh)) return(1);
+	
 	
 
   if ( !hello(&mesh,10) )  return(1);
