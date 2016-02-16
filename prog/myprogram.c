@@ -252,6 +252,23 @@ int hello(pMesh mesh,int ref) {
   
   return(1);
 }
+/*** FUNCTION SUPERPOSITION ***/
+/*	Parameters : 3 meshs: the 2 meshs to combine + the combinaison of the 2
+	return : 1 if it works, 0 if not
+	This function will join a mesh to another 
+	Before this function The function loadMesh has to be done on the two meshs to combine, 
+	in order to fill the number of Vertices, Triangles and edges of each one.
+	After that we will go through the file of Mesh1 as a text file and find where is the last point
+*/
+
+int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) 
+{
+	
+	Mesh_final->nt
+
+
+	return(1);
+}
 
 
 /***	FUNCTION ROTATION_2D	***/
@@ -269,7 +286,7 @@ int main(int argc,char *argv[]) {
 
   /* default values */
   memset(&mesh,0,sizeof(Mesh));
-
+me
   /* parse arguments */
   if ( !parsar(argc,argv,&mesh) )  return(1);
 
@@ -277,6 +294,9 @@ int main(int argc,char *argv[]) {
   fprintf(stdout,"\n  -- INPUT DATA\n");
   if ( !loadMesh(&mesh) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+	
+	if ( ! (&mesh)) return(1);
+	
 
   if ( !hello(&mesh,10) )  return(1);
   if ( !hello(&mesh,2) )  return(1);
