@@ -308,6 +308,12 @@ int main(int argc,char *argv[]) {
 
 rotation2D(&mesh, PI);
 
+	/* Adrian: Translation 2D
+	translation2D(&mesh, 0.5, 0);
+	translation3D(&mesh, 0, 1, 1);
+		
+	*/
+
 // Tupac : write data into a new file
   mesh.nameout = "test.mesh";
   fprintf(stdout,"\n  -- OUTPUT DATA\n");

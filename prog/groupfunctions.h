@@ -23,4 +23,7 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) ;
 
 void translation2D(Mesh *mesh, float lengthX, float lengthY);
 
+// calculates the a new mesh translated by length length
+void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ);
+
 #endif
