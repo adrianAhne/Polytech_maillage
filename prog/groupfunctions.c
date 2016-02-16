@@ -16,7 +16,7 @@ void rotation2D(Mesh *mesh, float angle)
 	float xc, yc;
 
 	printf("Centres : %f %f\n", xc, yc);
-	for (i = 0; i <= mesh->np; ++i)
+	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
 		float x,y;
@@ -139,4 +139,40 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 	return(1);
 }
 
+// calculates the a new mesh translated by length length
+void translation2D(Mesh *mesh, float lengthX, float lengthY)
+{
+	int i;
+	pPoint ppt;
+	float x,y;
+	for(i=0; i <= mesh->np; i++)
+	{
+		ppt = &mesh->point[i];
+		x = ppt->c[0] + lengthX;
+		y = ppt->c[1] + lengthY;
+	
+		ppt->c[0] = x;
+		ppt->c[1] = y;		
+	}
+	
+}
 
+// calculates the a new mesh translated by length length
+void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ)
+{
+	int i;
+	pPoint ppt;
+	float x,y,z;
+	for(i=0; i <= mesh->np; i++)
+	{
+		ppt = &mesh->point[i];
+		x = ppt->c[0] + lengthX;
+		y = ppt->c[1] + lengthY;
+		z = ppt->c[2] + lengthZ;
+	
+		ppt->c[0] = x;
+		ppt->c[1] = y;	
+		ppt->c[2] = z;		
+	}
+	
+}

@@ -6,6 +6,10 @@
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
+<<<<<<< HEAD
+=======
+
+>>>>>>> ca991315315bc723ef08e55c0c09733d1cbca292
 
 
 
@@ -272,14 +276,14 @@ int hello(pMesh mesh,int ref) {
 int main(int argc,char *argv[]) {
   Mesh  mesh1;
 	Mesh	mesh2;
-	Mesh	mesh3;
+	Mesh	mesh;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
   /* default values */
   memset(&mesh1,0,sizeof(Mesh));
 	memset(&mesh2,0,sizeof(Mesh));
-	memset(&mesh3,0,sizeof(Mesh));
+	memset(&mesh,0,sizeof(Mesh));
 
   /* parse arguments */
 	fprintf(stdout,"\n  -- DATA MESH1\n");
@@ -289,7 +293,7 @@ int main(int argc,char *argv[]) {
   if ( !parsar(argc,argv,&mesh2) )  return(1);
 
 	fprintf(stdout,"\n  -- DATA MESH3\n");
-  if ( !parsar(argc,argv,&mesh3) )  return(1);
+  if ( !parsar(argc,argv,&mesh) )  return(1);
   /* read data */
 
   fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
@@ -301,16 +305,24 @@ int main(int argc,char *argv[]) {
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
 
-	if ( ! (Superposition(&mesh1, &mesh2, &mesh3 ) )) return(1) ;
+	if ( ! (Superposition(&mesh1, &mesh2, &mesh ) )) return(1) ;
 
-	if ( ! (&mesh3)) return(1);
+	if ( ! (&mesh)) return(1);
+
+rotation2D(&mesh, PI);
+
+	/* Adrian: Translation 2D
+	translation2D(&mesh, 0.5, 0);
+	translation3D(&mesh, 0, 1, 1);
+		
+	*/
+
+// Tupac : write data into a new file
+  mesh.nameout = "test.mesh";
+  fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  if ( !saveMesh(&mesh) )  return(1);
+  fprintf(stdout,"  -- WRITING COMPLETED\n");	
 
 
-	
-
-  if ( !saveMesh(&mesh3))  return(1);
-  if ( !hello(&mesh3,2) )  return(1);
-
-  fprintf(stdout,"  -- WRITING COMPLETED\n");
   return(0);
 }
