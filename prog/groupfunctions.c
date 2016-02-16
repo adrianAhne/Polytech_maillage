@@ -135,7 +135,7 @@ void translation2D(Mesh *mesh, float lengthX, float lengthY)
 {
 	int i;
 	pPoint ppt;
-
+	float x,y;
 	for(i=0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
