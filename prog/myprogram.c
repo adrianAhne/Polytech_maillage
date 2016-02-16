@@ -397,10 +397,14 @@ int main(int argc,char *argv[]) {
   if ( !loadMesh(&mesh2) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
+<<<<<<< HEAD
 
 	if ( ! (Superposition(&mesh1, &mesh2, &mesh3 ) )) return(1) ;
 
 	if ( ! (&mesh3)) return(1);
+=======
+	
+>>>>>>> 290a73cf31329d4b01d7ceddbcf8458ff6dc6496
 	
 
   if ( !saveMesh(&mesh3))  return(1);
