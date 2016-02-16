@@ -18,8 +18,10 @@ int loadMesh(pMesh mesh) {
   float      fp1,fp2,fp3;
   int        k,i,inm,ia;
   char      *ptr,data[256];
-
+	fprintf(stdout,"ici\n");
   strcpy(data,mesh->namein);
+	fprintf(stdout,"là\n");
+	/* test if we have a ".mesh"*/
   ptr = strstr(data,".mesh");
   if ( !ptr ) {
     strcat(data,".meshb");
@@ -67,6 +69,9 @@ int loadMesh(pMesh mesh) {
     assert(mesh->tria);
   }
 
+
+	/* fill the tab of points */
+
   GmfGotoKwd(inm,GmfVertices);
   for (k=1; k<=mesh->np; k++) {
     ppt = &mesh->point[k];
@@ -80,6 +85,8 @@ int loadMesh(pMesh mesh) {
       GmfGetLin(inm,GmfVertices,&ppt->c[0],&ppt->c[1],&ppt->c[2],&ppt->ref);
 		
   }
+
+	/* Center of the mesh*/
 	mesh->o[0] = 0.5 * (xmin+xmax); 
 	mesh->o[1] = 0.5 * (ymin+ymax); 
 	mesh->o[2] = zmin; //0.5 * (zmin+zmax);
@@ -89,7 +96,7 @@ int loadMesh(pMesh mesh) {
 	mesh->rad *= 1.1;
 	printf("radius %f\n",mesh->rad);
 
-  /* read triangles */
+  /* read triangles and fill the tab */
   GmfGotoKwd(inm,GmfTriangles);
   for (k=1; k<=mesh->nt; k++) {
     pt = &mesh->tria[k];
@@ -116,6 +123,9 @@ int loadMesh(pMesh mesh) {
   fprintf(stdout,"  %%%% NUMBER OF VERTICES   %8d\n",mesh->np);
   fprintf(stdout,"  %%%% NUMBER OF TRIANGLES  %8d\n",mesh->nt);  
   fprintf(stdout,"  %%%% NUMBER OF EDGES      %8d (%d ridges)\n",mesh->na,mesh->nr);
+	fprintf(stdout,"  %%%% DIMENSION  %8d\n",mesh->dim);  
+	fprintf(stdout,"  %%%% MARK  %8d\n",mesh->mark);  
+	fprintf(stdout,"  %%%% VER  %8d\n",mesh->ver); 
 
   GmfCloseMesh(inm);
   return(1);
@@ -130,14 +140,16 @@ int saveMesh(pMesh mesh) {
   int          k,nr,outm;
   char         data[128];
 
+	
   mesh->ver = GmfDouble;
   strcpy(data,mesh->nameout);
+ fprintf(stdout,"ICI\n");
   if ( !(outm = GmfOpenMesh(data,GmfWrite,mesh->ver,mesh->dim)) ) {
     fprintf(stderr,"  ** UNABLE TO OPEN %s\n",data);
     return(0);
   }
   fprintf(stdout,"  %%%% %s OPENED\n",data);
-
+ 
   /* vertices */
   GmfSetKwd(outm,GmfVertices,mesh->np);
   for (k=1; k<=mesh->np; k++) {
@@ -264,8 +276,83 @@ int hello(pMesh mesh,int ref) {
 int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) 
 {
 	
-	Mesh_final->nt
+	/* Variables */
+	int i,j;
+	
+	/* First we put the number of vertices, triangles and edges of the final mesh */ 
+	Mesh_final->nt = Mesh1->nt + Mesh2->nt 	;
+	Mesh_final->np = Mesh1->np + Mesh2->np 	;
+	Mesh_final->na = Mesh1->na + Mesh2->na 	;
+	Mesh_final->nr = Mesh1->nr + Mesh2->nr 	;
 
+	/* Fill the dimension ( we take the more important dimension) and the mark */
+
+	Mesh_final->dim = Mesh1->dim ;
+	Mesh_final->mark = Mesh1->mark ;
+	
+	
+	/* Version of the mesh wanted */
+	Mesh_final->ver = 1 ;
+	
+
+	/* Memory allocation */
+
+	Mesh_final->point = (pPoint)calloc(Mesh_final->np,sizeof(Point));
+  assert(Mesh_final->point);
+	Mesh_final->sol = (double*)calloc(3*Mesh_final->np, sizeof(double));
+	assert(Mesh_final->sol);
+  if ( Mesh_final->na ){
+    Mesh_final->edge = (pEdge)calloc(Mesh_final->na,sizeof(Edge));
+    assert(Mesh_final->edge);
+  }
+  if ( Mesh_final->nt ) {
+    Mesh_final->tria = (pTria)calloc(Mesh_final->nt,sizeof(Tria));
+    assert(Mesh_final->tria);
+  }
+	
+	/* Now we fill the tab of points, vertices and edges */
+
+	/* For the tab of points we first input in the new tab the vertices of mesh1. 
+		 After that we eliminate the last char of the tab ("\0") and input the vertices of the mesh2
+	*/  
+	
+	
+		for(i=0;i<=Mesh1->np;i++)
+		{
+			Mesh_final->point[i] = Mesh1->point[i];
+		}
+	
+	/*points of mesh2*/
+	
+		for(j=0;j<= Mesh2->np;j++)
+		{
+			Mesh_final->point[i+j] = Mesh2->point[j];
+		}
+	
+	/* Triangles of mesh1 */
+	
+		for(i=0;i<=Mesh1->nt;i++)
+		{
+			Mesh_final->tria[i] = Mesh1->tria[i];
+		}
+
+	/*Triangles of mesh2*/
+	
+		for(j=0;j<= Mesh2->nt;j++)
+		{
+			Mesh_final->tria[i+j].v[0] = (Mesh2->tria[j+1].v[0])+((Mesh1->np) + 1 );
+			Mesh_final->tria[i+j].v[1] = (Mesh2->tria[j+1].v[1])+((Mesh1->np) + 1);
+			Mesh_final->tria[i+j].v[2] = (Mesh2->tria[j+1].v[2])+((Mesh1->np) + 1);
+		}
+
+
+	/* the center of the mesh is the average of the center of the 2 meshs */
+
+
+	
+	
+
+	
 
 	return(1);
 }
@@ -280,26 +367,44 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
  
 
 int main(int argc,char *argv[]) {
-  Mesh  mesh;
+  Mesh  mesh1;
+	Mesh	mesh2;
+	Mesh	mesh3;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
   /* default values */
-  memset(&mesh,0,sizeof(Mesh));
-me
-  /* parse arguments */
-  if ( !parsar(argc,argv,&mesh) )  return(1);
+  memset(&mesh1,0,sizeof(Mesh));
+	memset(&mesh2,0,sizeof(Mesh));
+	memset(&mesh3,0,sizeof(Mesh));
 
+  /* parse arguments */
+	fprintf(stdout,"\n  -- DATA MESH1\n");
+  if ( !parsar(argc,argv,&mesh1) )  return(1);
+
+	fprintf(stdout,"\n  -- DATA MESH2\n");
+  if ( !parsar(argc,argv,&mesh2) )  return(1);
+
+	fprintf(stdout,"\n  -- DATA MESH3\n");
+  if ( !parsar(argc,argv,&mesh3) )  return(1);
   /* read data */
-  fprintf(stdout,"\n  -- INPUT DATA\n");
-  if ( !loadMesh(&mesh) )  return(1);
+
+  fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
+  if ( !loadMesh(&mesh1) )  return(1);
+  fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+	fprintf(stdout,"\n  -- INPUT DATA MESH2 \n");
+  if ( !loadMesh(&mesh2) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
-	if ( ! (&mesh)) return(1);
+
+	if ( ! (Superposition(&mesh1, &mesh2, &mesh3 ) )) return(1) ;
+
+	if ( ! (&mesh3)) return(1);
 	
 
-  if ( !hello(&mesh,10) )  return(1);
-  if ( !hello(&mesh,2) )  return(1);
+  if ( !saveMesh(&mesh3))  return(1);
+  if ( !hello(&mesh3,2) )  return(1);
 
   fprintf(stdout,"  -- WRITING COMPLETED\n");
   return(0);
