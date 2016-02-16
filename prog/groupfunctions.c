@@ -70,7 +70,12 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 
 	/* Fill the dimension ( we take the more important dimension) and the mark */
 
-	Mesh_final->dim = Mesh1->dim ;
+	if ( Mesh1->dim == 3 || Mesh2->dim == 3 )
+	{
+		Mesh_final-> dim =3 ;
+		Change2Dto3D(Mesh2);
+	}
+	
 	Mesh_final->mark = Mesh1->mark ;
 	
 	
@@ -92,12 +97,16 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
     Mesh_final->tria = (pTria)calloc(Mesh_final->nt,sizeof(Tria));
     assert(Mesh_final->tria);
   }
+  
+  
 	
 	/* Now we fill the tab of points, vertices and edges */
 
 	/* For the tab of points we first input in the new tab the vertices of mesh1. 
 		 After that we eliminate the last char of the tab ("\0") and input the vertices of the mesh2
 	*/  
+	
+	
 	
 	
 		for(i=0;i<=Mesh1->np;i++)
