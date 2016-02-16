@@ -16,7 +16,7 @@ void rotation2D(Mesh *mesh, float angle)
 	float xc, yc;
 
 	printf("Centres : %f %f\n", xc, yc);
-	for (i = 0; i <= mesh->np; ++i)
+	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
 		float x,y;
