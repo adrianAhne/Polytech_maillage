@@ -30,10 +30,7 @@ void rotation2D(Mesh *mesh, float angle)
 	}
 }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 82c2e7b563274d93f549b1218f7e8c6ed39f5b39
 void rotation3D(Mesh *mesh, float angleX, float angleY, float angleZ)
 {
 	pPoint ppt;
@@ -104,10 +101,7 @@ void Change2Dto3D( pMesh Mesh )
 	}
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 081dae967ff65a11838a62a4187303f0399c1a75
 /*** FUNCTION SUPERPOSITION ***/
 /*	Parameters : 3 meshs: the 2 meshs to combine + the combinaison of the 2
 	return : 1 if it works, 0 if not
@@ -258,3 +252,9 @@ void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ)
 	}
 	
 }
+
+
+
+
+
+

@@ -20,7 +20,6 @@ void center2D(Mesh *mesh, float *xc, float *yc);
 	in order to fill the number of Vertices, Triangles and edges of each one.
 	After that we will go through the file of Mesh1 as a text file and find where is the last point
 */
-
 int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) ;
 
 void translation2D(Mesh *mesh, float lengthX, float lengthY);
