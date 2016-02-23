@@ -95,6 +95,16 @@ void center2D(Mesh *mesh, float *xc, float *yc)
 	After that we will go through the file of Mesh1 as a text file and find where is the last point
 */
 
+
+/*** FUNCTION SUPERPOSITION ***/
+/*	Parameters : 3 meshs: the 2 meshs to combine + the combinaison of the 2
+	return : 1 if it works, 0 if not
+	This function will join a mesh to another 
+	Before this function The function loadMesh has to be done on the two meshs to combine, 
+	in order to fill the number of Vertices, Triangles and edges of each one.
+	After that we will go through the file of Mesh1 as a text file and find where is the last point
+*/
+
 int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) 
 {
 	
@@ -109,7 +119,22 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 
 	/* Fill the dimension ( we take the more important dimension) and the mark */
 
-	Mesh_final->dim = Mesh1->dim ;
+	if ( Mesh1->dim == 3 && Mesh2->dim == 2 )
+	{
+		Mesh_final-> dim = 3 ;
+		Change2Dto3D(Mesh2);
+	}
+	if (Mesh2->dim == 3 && Mesh1->dim == 2)
+	{
+		Mesh_final-> dim = 3 ;
+		Change2Dto3D(Mesh1) ;
+	}
+	if (Mesh1->dim == 3 && Mesh2->dim == 3)
+		Mesh_final-> dim = 3 ;
+	
+	if (Mesh1->dim == 2 && Mesh2->dim == 2)
+		Mesh_final-> dim = 2 ;
+	
 	Mesh_final->mark = Mesh1->mark ;
 	
 	
@@ -131,6 +156,8 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
     Mesh_final->tria = (pTria)calloc(Mesh_final->nt,sizeof(Tria));
     assert(Mesh_final->tria);
   }
+  
+  
 	
 	/* Now we fill the tab of points, vertices and edges */
 
@@ -139,32 +166,39 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 	*/  
 	
 	
+		int tab = 0 ;
+	
 		for(i=0;i<=Mesh1->np;i++)
 		{
-			Mesh_final->point[i] = Mesh1->point[i];
+			Mesh_final->point[tab] = Mesh1->point[i];
+			tab ++ ;
 		}
-	
+		
 	/*points of mesh2*/
 	
 		for(j=0;j<= Mesh2->np;j++)
 		{
-			Mesh_final->point[i+j] = Mesh2->point[j];
+			Mesh_final->point[tab] = Mesh2->point[j+1];
+			tab ++ ;
 		}
 	
+	tab = 0 ;
 	/* Triangles of mesh1 */
 	
 		for(i=0;i<=Mesh1->nt;i++)
 		{
-			Mesh_final->tria[i] = Mesh1->tria[i];
+			Mesh_final->tria[tab] = Mesh1->tria[i];
+			tab++ ;
 		}
 
 	/*Triangles of mesh2*/
 	
 		for(j=0;j<= Mesh2->nt;j++)
 		{
-			Mesh_final->tria[i+j].v[0] = (Mesh2->tria[j+1].v[0])+((Mesh1->np) + 1 );
-			Mesh_final->tria[i+j].v[1] = (Mesh2->tria[j+1].v[1])+((Mesh1->np) + 1);
-			Mesh_final->tria[i+j].v[2] = (Mesh2->tria[j+1].v[2])+((Mesh1->np) + 1);
+			Mesh_final->tria[tab].v[0] = (Mesh2->tria[j+1].v[0] + Mesh1->np );
+			Mesh_final->tria[tab].v[1] = (Mesh2->tria[j+1].v[1] + Mesh1->np );
+			Mesh_final->tria[tab].v[2] = (Mesh2->tria[j+1].v[2] + Mesh1->np );
+			tab ++ ;
 		}
 	return(1);
 }
