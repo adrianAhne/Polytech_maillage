@@ -104,6 +104,10 @@ void Change2Dto3D( pMesh Mesh )
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 081dae967ff65a11838a62a4187303f0399c1a75
 /*** FUNCTION SUPERPOSITION ***/
 /*	Parameters : 3 meshs: the 2 meshs to combine + the combinaison of the 2
 	return : 1 if it works, 0 if not
