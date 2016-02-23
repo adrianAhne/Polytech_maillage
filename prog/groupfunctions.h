@@ -6,6 +6,8 @@
 // Tupac: 2D mesh rotation
 void rotation2D(Mesh *mesh, float angle);
 
+void rotation3D(Mesh *mesh, float angleX, float angleY, float angleZ);
+
 // Tupac: defines the center of a 2D mesh
 // I don't know if it works
 void center2D(Mesh *mesh, float *xc, float *yc);
