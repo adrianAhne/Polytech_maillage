@@ -13,9 +13,8 @@ void rotation2D(Mesh *mesh, float angle)
 {
 	pPoint ppt;
 	int i;
-	float xc, yc;
 
-	printf("Centres : %f %f\n", xc, yc);
+	//printf("Centres : %f %f\n", xc, yc);
 	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
@@ -31,7 +30,10 @@ void rotation2D(Mesh *mesh, float angle)
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 82c2e7b563274d93f549b1218f7e8c6ed39f5b39
 void rotation3D(Mesh *mesh, float angleX, float angleY, float angleZ)
 {
 	pPoint ppt;

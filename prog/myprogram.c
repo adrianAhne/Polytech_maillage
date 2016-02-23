@@ -6,10 +6,6 @@
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
-<<<<<<< HEAD
-=======
-
->>>>>>> ca991315315bc723ef08e55c0c09733d1cbca292
 
 
 
@@ -148,6 +144,7 @@ int saveMesh(pMesh mesh) {
   mesh->ver = GmfDouble;
   strcpy(data,mesh->nameout);
  fprintf(stdout,"ICI\n");
+ fprintf(stdout,"Version = %d ; data = %s ; dimension = %d ", mesh->ver , data, mesh->dim );
   if ( !(outm = GmfOpenMesh(data,GmfWrite,mesh->ver,mesh->dim)) ) {
     fprintf(stderr,"  ** UNABLE TO OPEN %s\n",data);
     return(0);
@@ -287,40 +284,39 @@ int main(int argc,char *argv[]) {
 
   /* parse arguments */
 	fprintf(stdout,"\n  -- DATA MESH1\n");
-  if ( !parsar(argc,argv,&mesh1) )  return(1);
+  if ( !parsar(argc,argv,&mesh) )  return(1);
 
 	fprintf(stdout,"\n  -- DATA MESH2\n");
-  if ( !parsar(argc,argv,&mesh2) )  return(1);
+  if ( !parsar(argc,argv,&mesh1) )  return(1);
 
-	fprintf(stdout,"\n  -- DATA MESH3\n");
-  if ( !parsar(argc,argv,&mesh) )  return(1);
+	/*fprintf(stdout,"\n  -- DATA MESH3\n");
+  if ( !parsar(argc,argv,&mesh) )  return(1);*/
   /* read data */
 
   fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
-  if ( !loadMesh(&mesh1) )  return(1);
+  if ( !loadMesh(&mesh) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 
 	fprintf(stdout,"\n  -- INPUT DATA MESH2 \n");
-  if ( !loadMesh(&mesh2) )  return(1);
+  if ( !loadMesh(&mesh1) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
 
-	if ( ! (Superposition(&mesh1, &mesh2, &mesh ) )) return(1) ;
+	if ( ! (Superposition(&mesh, &mesh1, &mesh2 ) )) return(1) ;
 
 	if ( ! (&mesh)) return(1);
 
-rotation2D(&mesh, PI);
+	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
 
-	/* Adrian: Translation 2D
-	translation2D(&mesh, 0.5, 0);
-	translation3D(&mesh, 0, 1, 1);
+	 //Adrian: Translation 2D
+	//translation2D(&mesh, 0.5, 0);
+	//translation3D(&mesh, 0, 1, 1);
 		
-	*/
 
 // Tupac : write data into a new file
-  mesh.nameout = "test.mesh";
+  mesh2.nameout = "test.mesh";
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
-  if ( !saveMesh(&mesh) )  return(1);
+  if ( !saveMesh(&mesh2) )  return(1);
   fprintf(stdout,"  -- WRITING COMPLETED\n");	
 
 

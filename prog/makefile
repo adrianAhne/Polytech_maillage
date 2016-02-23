@@ -8,7 +8,7 @@ OBJS= \
 all: myprogram
 
 myprogram: $(OBJS)
-	$(CC) -O3 -o myprogram $(OBJS) 
+	$(CC) -o myprogram $(OBJS) -lm 
 
 libmesh5: libmesh.c
 	$(CC) -c libmesh5.c -o libmesh.o
