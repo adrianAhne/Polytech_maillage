@@ -32,4 +32,8 @@ void translation2D(pMesh mesh, double lengthX, double lengthY);
 // calculate a new mesh translated by length length
 void translation3D(Mesh *mesh, double lengthX, double lengthY, double lengthZ);
 
+// Calculate the normales of triangles
+void normalesOfTriangles(Mesh *mesh);
+
+
 #endif

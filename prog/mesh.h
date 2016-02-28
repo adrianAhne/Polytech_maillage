@@ -21,6 +21,16 @@ typedef struct {
 } Tria;
 typedef Tria * pTria;
 
+
+// Adrian et Tupac: structure for edge normale
+typedef struct {
+  pPoint    point[3];
+  pEdge		norm[3];
+  int		ref;
+} TriaNorm;
+typedef TriaNorm * pTriaNorm;
+
+
 typedef struct {
   int       np,na,nt,nr,ver,dim,mark;
   char     *namein,*nameout;
@@ -28,8 +38,13 @@ typedef struct {
   pPoint    point;
   pEdge     edge;
   pTria     tria;
+  pTriaNorm triaNorm;
 } Mesh;
 typedef Mesh * pMesh;
+
+
+
+
 
 
 /* read mesh */
