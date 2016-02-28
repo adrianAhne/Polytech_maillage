@@ -9,6 +9,7 @@
 
 
 
+
 /* read mesh */
 int loadMesh(pMesh mesh) {
   pPoint     ppt;
@@ -52,9 +53,6 @@ int loadMesh(pMesh mesh) {
     return(0);
   }
 
-
-
-
   /* memory allocation */
   mesh->point = (pPoint)calloc(mesh->np+1,sizeof(Point));
   assert(mesh->point);
@@ -85,16 +83,6 @@ int loadMesh(pMesh mesh) {
       GmfGetLin(inm,GmfVertices,&ppt->c[0],&ppt->c[1],&ppt->c[2],&ppt->ref);
 		
   }
-
-	/* Center of the mesh*/
-	mesh->o[0] = 0.5 * (xmin+xmax); 
-	mesh->o[1] = 0.5 * (ymin+ymax); 
-	mesh->o[2] = zmin; //0.5 * (zmin+zmax);
-		
-	printf(" max %f %f  %f %f   %f %f\n",xmin,xmax,ymin,ymax,zmin,zmax);
-	mesh->rad = max(xmax-xmin, max(ymax-ymin,zmax-zmin));
-	mesh->rad *= 1.1;
-	printf("radius %f\n",mesh->rad);
 
   /* read triangles and fill the tab */
   GmfGotoKwd(inm,GmfTriangles);
@@ -144,7 +132,6 @@ int saveMesh(pMesh mesh) {
   mesh->ver = GmfDouble;
   strcpy(data,mesh->nameout);
  fprintf(stdout,"ICI\n");
- fprintf(stdout,"Version = %d ; data = %s ; dimension = %d ", mesh->ver , data, mesh->dim );
   if ( !(outm = GmfOpenMesh(data,GmfWrite,mesh->ver,mesh->dim)) ) {
     fprintf(stderr,"  ** UNABLE TO OPEN %s\n",data);
     return(0);
@@ -219,7 +206,7 @@ int saveSol(pMesh mesh,int it) {
 
 
 /* parse command line arguments */
-static int parsar(int argc,char *argv[],pMesh mesh) {
+static int parsar(int argc,char *argv[],pMesh mesh){
   int     i;
   char   *ptr;
 
@@ -259,21 +246,13 @@ static int parsar(int argc,char *argv[],pMesh mesh) {
 }
 
 
-int hello(pMesh mesh,int ref) {
-  
-  fprintf(stdout,"  -- HELLO ref = %d \n",ref);
-  
-  return(1);
-}
 
 
-
- 
-
-int main(int argc,char *argv[]) {
+ int main(int argc,char *argv[]) {
   Mesh  mesh1;
 	Mesh	mesh2;
 	Mesh	mesh;
+  double c[3];
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
@@ -284,40 +263,38 @@ int main(int argc,char *argv[]) {
 
   /* parse arguments */
 	fprintf(stdout,"\n  -- DATA MESH1\n");
-  if ( !parsar(argc,argv,&mesh) )  return(1);
-
-	fprintf(stdout,"\n  -- DATA MESH2\n");
   if ( !parsar(argc,argv,&mesh1) )  return(1);
 
-	/*fprintf(stdout,"\n  -- DATA MESH3\n");
-  if ( !parsar(argc,argv,&mesh) )  return(1);*/
+	fprintf(stdout,"\n  -- DATA MESH2\n");
+  if ( !parsar(argc,argv,&mesh2) )  return(1);
+  
   /* read data */
-
   fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
-  if ( !loadMesh(&mesh) )  return(1);
+  if ( !loadMesh(&mesh1) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 
 	fprintf(stdout,"\n  -- INPUT DATA MESH2 \n");
-  if ( !loadMesh(&mesh1) )  return(1);
+  if ( !loadMesh(&mesh2) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
+  /* Test new functions */
+	if ( !(Superposition(&mesh1, &mesh2, &mesh ) )) return(1);
+   //if(!(center(&mesh1,c) )) return 1;
 
-	if ( ! (Superposition(&mesh, &mesh1, &mesh2 ) )) return(1) ;
 
-	if ( ! (&mesh)) return(1);
+  //rotation2D(&mesh, PI);
 
-	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
-
-	 //Adrian: Translation 2D
-	//translation2D(&mesh, 0.5, 0);
-	//translation3D(&mesh, 0, 1, 1);
+	/* Adrian: Translation 2D
+	translation2D(&mesh, 0.5, 0);
+	translation3D(&mesh, 0, 1, 1);
 		
+	*/
 
 // Tupac : write data into a new file
-  mesh2.nameout = "test.mesh";
+  mesh.nameout = "test.mesh";
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
-  if ( !saveMesh(&mesh2) )  return(1);
-  fprintf(stdout,"  -- WRITING COMPLETED\n");	
+  if ( !saveMesh(&mesh) )  return(1);
+  fprintf(stdout,"  -- WRITING COMPLETED\n");
 
 
   return(0);
