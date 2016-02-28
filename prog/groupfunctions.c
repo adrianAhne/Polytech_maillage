@@ -219,7 +219,7 @@ void normalesOfTriangles(Mesh *mesh)
 {
 	mesh->triaNorm = (pTriaNorm)calloc(mesh->nt+1, sizeof(TriaNorm));
 	assert(mesh->triaNorm);
-	/*
+	
 	int i, j;
 	pTria currentTria;
 	for(i=0; i <= mesh->nt; i++)
@@ -227,17 +227,17 @@ void normalesOfTriangles(Mesh *mesh)
 		currentTria = &mesh->tria[i];
 		for(j=0; j < 3; j++)
 		{
-			(mesh->triaNorm[i])->point[j] = mesh->point[(currentTria->v[j])];
+			(mesh->triaNorm[i]).point[j] = &mesh->point[(currentTria->v[j])];
 		}
 		// the line is faulse, check formula
-		(mesh->triaNorm[i])->norm[0]->v[0] = ( mesh->point[(currentTria->v[0])]->c[0] - mesh->point[(currentTria->v[1])]->c[0] ) *( mesh->point[(currentTria->v[0])]->c[0] - mesh->point[(currentTria->v[2])]->c[0] );
+		(mesh->triaNorm[i]).norm[0]->v[0] = ( mesh->point[(currentTria->v[0])].c[0] - mesh->point[(currentTria->v[1])].c[0] ) *( mesh->point[(currentTria->v[0])].c[0] - mesh->point[(currentTria->v[2])].c[0] );
 			
 		
 		
 
 	}
 
-	*/
+	
 
 }
 
