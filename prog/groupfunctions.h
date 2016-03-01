@@ -28,6 +28,16 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) ;
 
 void translation2D(Mesh *mesh, float lengthX, float lengthY);
 
+/*** FUNCTION COURBURE ***/
+/* 
+	This functions will calculate the curve for each point 
+	For that we will add up all the angle of the triangles around the point and make the difference to 2PI 
+	Parameters : a mesh 
+	return : it create the sol file in the current repository
+						it return if it works ,  if not 
+*/
+int courbure3D(pMesh mesh );
+
 // calculates the a new mesh translated by length length
 void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ);
 
