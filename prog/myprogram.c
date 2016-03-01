@@ -181,6 +181,20 @@ int saveMesh(pMesh mesh) {
       }
     }
 	}
+	
+/* write normals 
+if ( mesh->nn) {
+        GmfSetKwd(inm,GmfNormals,mesh->nn);
+        for(k=1; k<=mesh->nn; k++) {
+            pn = &mesh->normal[k];
+            GmfSetLin(inm,GmfNormals,pn->n[0],pn->n[1],pn->n[2]);
+        }
+        GmfSetKwd(inm,GmfNormalAtVertices,mesh->np);
+        for (k=1; k<=mesh->np; k++) {
+            GmfSetLin(inm,GmfNormalAtVertices,k,k);
+        }
+    } */
+
 
   GmfCloseMesh(outm);
   return(1);
