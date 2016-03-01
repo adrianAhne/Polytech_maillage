@@ -253,8 +253,151 @@ void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ)
 	
 }
 
+/*** FUNCTION COURBURE ***/
+/* 
+	This functions will calculate the curve for each point 
+	For that we will add up all the angle of the triangles around the point and make the difference to 2PI 
+	Parameters : a mesh 
+	return : it create the sol file in the current repository
+						it return if it works ,  if not 
+*/
+int courbure3D(pMesh mesh )
+{
+	
+	/* DEFINITION */
+	double angle,distAB,distAC,costr ;
+	int i,j,point1,point2, THEpoint ;
+	pTria	triangle ;
+	int pos = 0 ;
+	double AB[3],AC[3] ;
+	
+
+	
+	
+	/* CALCUL */
+	for (i=1 ; i<= mesh->np ; i++ )
+	{
+	
+		angle = 0.000000000000 ;
+
+		
+		/* for each point of the mesh we stock in a tab the triangles with the point */ 
+		for (j=1 ; j <= mesh -> nt ; j++)
+		{		
+			
+			if ( mesh -> tria[j].v[0] == i || mesh -> tria[j].v[1] == i || mesh -> tria[j].v[2] == i )
+			{
+					/*triangle[pos] = mesh->tria[j] ;*/
+					pos ++ ;
+			}
+		}
+			/* MEMORY ALLOCATION */
+	
+		triangle = ( pTria ) calloc ( (pos+1) , sizeof(Tria) ) ;
+		pos = 0 ;
+		
+		for (j=1 ; j <= mesh -> nt ; j++)
+		{		
+			
+			if ( mesh -> tria[j].v[0] == i || mesh -> tria[j].v[1] == i || mesh -> tria[j].v[2] == i )
+			{		
+					
+					triangle[pos] = mesh->tria[j] ;
+					pos ++ ;
+			}
+			
+		}
+		//fprintf(stdout," pos = %d \n" , pos );
+		
+		/* first we calcule the cosinus of each angle around the point */
+		for (j=0 ; j < pos ; j++ )
+		{
+			/* we determine which point is the current point */
+			if  (   triangle[j].v[0] == i )
+			{
+				THEpoint = 0;
+				point1 = 1 ;
+				point2 = 2 ;
+			}
+			if  (   triangle[j].v[1] == i )
+			{
+				THEpoint = 1;
+				point1 = 0 ;
+				point2 = 2 ;
+			}
+			if  (   triangle[j].v[2] == i )
+			{
+				THEpoint = 2;	
+				point1 = 0 ;
+				point2 = 1 ;
+			}
+		
+			/* now we calculate the scalar product */
+			
+			
+			/*
+			fprintf(stdout," coordonnées de A = ( %f , %f , %f ) \n ", mesh->point[i].c[0] , mesh->point[i].c[1] , mesh->point[i].c[2] ) ;
+			fprintf(stdout," coordonnées de B %d = ( %f , %f , %f ) \n ", triangle[j].v[point1] , mesh->point[triangle[j].v[point1]].c[0] , mesh->point[triangle[j].v[point1]].c[1] , mesh->point[triangle[j].v[point1]].c[2] ) ;
+			fprintf(stdout," coordonnées de C %d = ( %f , %f , %f ) \n ", triangle[j].v[point2], mesh->point[triangle[j].v[point2]].c[0] , mesh->point[triangle[j].v[point2]].c[1] , mesh->point[triangle[j].v[point2]].c[2] ) ;
+		*/
+			AB[0] =  mesh->point[triangle[j].v[point1]].c[0] - mesh->point[i].c[0]  ;
+			AB[1] =  mesh->point[triangle[j].v[point1]].c[1] - mesh->point[i].c[1]  ;
+			AB[2] =  mesh->point[triangle[j].v[point1]].c[2] - mesh->point[i].c[2]  ;
+			
+			AC[0] = mesh->point[triangle[j].v[point2]].c[0] - mesh->point[i].c[0]  ;
+			AC[1] = mesh->point[triangle[j].v[point2]].c[1] - mesh->point[i].c[1]  ;
+			AC[2] = mesh->point[triangle[j].v[point2]].c[2] - mesh->point[i].c[2]  ;
+			
+			distAB = sqrt(  pow(AB[0],2) + pow(AB[1],2) + pow(AB[2],2)  ) ;
+			distAC = sqrt(  pow(AC[0],2) + pow(AC[1],2) + pow(AC[2],2)  ) ; 
+			
+			
+			if ( distAB < 0 || distAC < 0 )
+				fprintf(stdout, "PROBLEME ! \n");
+			costr = ( AB[0] * AC [0] + AB[1] * AC [1] + AB[2] * AC[2] ) / (  distAB * distAC ) ;
+			//fprintf(stdout," costr = %f \n" , costr) ;
+			
+			/* Here we have the angle for each triangle around the point */
+			angle +=  acos(costr) ;
+			
+		}
+		
+		
+	
+	
+		//fprintf(stdout," angle = %f \n" , angle ) ;
+		/* Here we save the solution for each vertice in the struct */
+		
+		/*if ( 2*PI - angle < 0.01 )
+			 mesh->sol[i] = 0 ;*/
+		//else
+			mesh->sol[i] = 2.0*PI - angle ;
+		
+		//fprintf(stdout," solu = %f \n" , mesh->sol[i] ) ;
+	}
+	return (1) ;
+	
+}
 
 
+/***** NEW NAME *****/
+/* this function will remove the .o.mesh for saving the solution 
+	Parameter : the data (char *)
+*/
+void newname( char* data )
+{
 
+	int i,indic = 0 ;
+	
+	for (i=0;i< 128 ; i++ )
+		if (indic == 1)
+			data[i] = '\0' ;
+		if ( data[i] == '.' )
+		{
+			data[i] = '\0';
+			indic = 1;
+		}
+}
+	
 
 

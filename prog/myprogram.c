@@ -188,12 +188,15 @@ int saveMesh(pMesh mesh) {
 
 /* save solution */
 int saveSol(pMesh mesh,int it) {
-  double       buf[3];
+  double       buf[1];
   int          k,inm,type,typtab[GmfMaxTyp],is;
   char        *ptr,data[128];
 
-  strcpy(data,mesh->nameout);
-  sprintf(data,"%s.sol",mesh->nameout);
+	strcpy(data,mesh->nameout);
+	// .o.mesh
+	
+	fprintf(stdout, " data = %s \n" , mesh->nameout ) ;  
+  sprintf(data,"%s.sol",mesh->namein);
 
   if ( !(inm = GmfOpenMesh(data,GmfWrite,mesh->ver,mesh->dim)) ) {
     fprintf(stderr,"  ** UNABLE TO OPEN %s\n",data);
@@ -203,15 +206,16 @@ int saveSol(pMesh mesh,int it) {
 
   mesh->ver = GmfDouble;
   type = 1;
-  typtab[0] = GmfVec;
+  typtab[0] = GmfSca;
 
   GmfSetKwd(inm,GmfSolAtVertices,mesh->np,type,typtab);
   for (k=1; k<=mesh->np; k++) {     
-    is = 3*(k-1)+1;
-		buf[0] = mesh->sol[is+0];
-		buf[1] = mesh->sol[is+1];
-		buf[2] = mesh->sol[is+2];
+    is = 3*(k-1)+1 ;
+		buf[0] = mesh->sol[k];
+    /*buf[1] = mesh->sol[is+1];
+    buf[2] = mesh->sol[is+2];*/
     GmfSetLin(inm,GmfSolAtVertices,buf);
+    //fprintf(stdout," solu = %f \n" , buf[0] ) ;
   }
   GmfCloseMesh(inm);
   return(1);
@@ -271,38 +275,28 @@ int hello(pMesh mesh,int ref) {
  
 
 int main(int argc,char *argv[]) {
-  Mesh  mesh1;
-	Mesh	mesh2;
+ 
 	Mesh	mesh;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
   /* default values */
-  memset(&mesh1,0,sizeof(Mesh));
-	memset(&mesh2,0,sizeof(Mesh));
+
 	memset(&mesh,0,sizeof(Mesh));
 
   /* parse arguments */
-	fprintf(stdout,"\n  -- DATA MESH1\n");
+	fprintf(stdout,"\n  -- DATA MESH\n");
   if ( !parsar(argc,argv,&mesh) )  return(1);
 
-	fprintf(stdout,"\n  -- DATA MESH2\n");
-  if ( !parsar(argc,argv,&mesh1) )  return(1);
-
-	/*fprintf(stdout,"\n  -- DATA MESH3\n");
-  if ( !parsar(argc,argv,&mesh) )  return(1);*/
   /* read data */
 
-  fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
+  fprintf(stdout,"\n  -- INPUT DATA MESH \n");
   if ( !loadMesh(&mesh) )  return(1);
   fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 
-	fprintf(stdout,"\n  -- INPUT DATA MESH2 \n");
-  if ( !loadMesh(&mesh1) )  return(1);
-  fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 	
-
-	if ( ! (Superposition(&mesh, &mesh1, &mesh2 ) )) return(1) ;
+	fprintf(stdout,"\n  -- COURBURE MESH \n");
+	if ( !courbure3D(&mesh) ) return (1) ;
 
 	if ( ! (&mesh)) return(1);
 
@@ -314,9 +308,9 @@ int main(int argc,char *argv[]) {
 		
 
 // Tupac : write data into a new file
-  mesh2.nameout = "test.mesh";
+
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
-  if ( !saveMesh(&mesh2) )  return(1);
+  if ( !saveSol(&mesh,1) )  return(1);
   fprintf(stdout,"  -- WRITING COMPLETED\n");	
 
 

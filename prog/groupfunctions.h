@@ -3,6 +3,10 @@
 
 #define PI 3.14159265
 
+
+
+
+
 // Tupac: 2D mesh rotation
 void rotation2D(Mesh *mesh, float angle);
 
