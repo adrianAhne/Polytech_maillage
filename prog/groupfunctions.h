@@ -50,8 +50,7 @@ void normalesOfTriangles(Mesh *mesh);
 */
 int courbure3D(pMesh mesh );
 
-// calculates the a new mesh translated by length length
-void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ);
+
 
 
 #endif

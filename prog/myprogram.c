@@ -91,10 +91,10 @@ int loadMesh(pMesh mesh) {
 	mesh->o[1] = 0.5 * (ymin+ymax); 
 	mesh->o[2] = zmin; //0.5 * (zmin+zmax);
 		
-	printf(" max %f %f  %f %f   %f %f\n",xmin,xmax,ymin,ymax,zmin,zmax);
+	//printf(" max %f %f  %f %f   %f %f\n",xmin,xmax,ymin,ymax,zmin,zmax);
 	mesh->rad = max(xmax-xmin, max(ymax-ymin,zmax-zmin));
 	mesh->rad *= 1.1;
-	printf("radius %f\n",mesh->rad);
+	//printf("radius %f\n",mesh->rad);
 
   /* read triangles and fill the tab */
   GmfGotoKwd(inm,GmfTriangles);
@@ -182,18 +182,18 @@ int saveMesh(pMesh mesh) {
     }
 	}
 	
-/* write normals 
+// write normals 
 if ( mesh->nn) {
-        GmfSetKwd(inm,GmfNormals,mesh->nn);
-        for(k=1; k<=mesh->nn; k++) {
-            pn = &mesh->normal[k];
-            GmfSetLin(inm,GmfNormals,pn->n[0],pn->n[1],pn->n[2]);
-        }
-        GmfSetKwd(inm,GmfNormalAtVertices,mesh->np);
-        for (k=1; k<=mesh->np; k++) {
-            GmfSetLin(inm,GmfNormalAtVertices,k,k);
-        }
-    } */
+  GmfSetKwd(outm,GmfNormals,mesh->nn);
+  for(k=1; k<=mesh->nn; k++) {
+    ppt = &mesh->point[k];
+    GmfSetLin(outm,GmfNormals,ppt->n[0],ppt->n[1],ppt->n[2]);
+  }
+  GmfSetKwd(outm,GmfNormalAtVertices,mesh->np);
+  for (k=1; k<=mesh->np; k++) {
+    GmfSetLin(outm,GmfNormalAtVertices,k,k);
+  }
+}
 
 
   GmfCloseMesh(outm);
@@ -312,6 +312,9 @@ int main(int argc,char *argv[]) {
 	fprintf(stdout,"\n  -- COURBURE MESH \n");
 	if ( !courbure3D(&mesh) ) return (1) ;
 
+  fprintf(stdout,"\n  -- NORMALE OF TRIANGLES \n");
+  normalesOfTriangles(&mesh);
+
 	if ( ! (&mesh)) return(1);
 
 	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
@@ -324,6 +327,8 @@ int main(int argc,char *argv[]) {
 // Tupac : write data into a new file
 
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  mesh.nameout = "meshWithNormale.mesh";
+  if ( !saveMesh(&mesh) )  return(1);
   if ( !saveSol(&mesh,1) )  return(1);
   fprintf(stdout,"  -- WRITING COMPLETED\n");	
 
