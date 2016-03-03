@@ -8,7 +8,6 @@
 #include "groupfunctions.h"
 
 
-
 /* read mesh */
 int loadMesh(pMesh mesh) {
   pPoint     ppt;
