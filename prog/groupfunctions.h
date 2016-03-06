@@ -50,8 +50,15 @@ void normalesOfTriangles(Mesh *mesh);
 */
 int courbure3D(pMesh mesh );
 
-// calculates the a new mesh translated by length length
-void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ);
+/*** FUNCTION COURBURE ***/ 
+/* In this function we will calculate the curvature for each point in a 2D Mesh.
+		In order to do that we will use the gaussian curvature: this is the angular between two edge.
+		PARAMETERS : the 2D mesh ( pMesh )
+		RETURN : 1 if everythings happen alright 
+*/
+int courbure2D( pMesh mesh );
+
+
 
 
 #endif

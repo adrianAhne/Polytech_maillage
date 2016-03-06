@@ -8,97 +8,101 @@
 #include "groupfunctions.h"
 
 
-/*** FUNCTION ROTATION ***/
-void rotation2D(pMesh mesh, double angle)
+
+void rotation2D(Mesh *mesh, double angle)
 {
 	pPoint ppt;
 	int i;
 
+	//printf("Centres : %f %f\n", xc, yc);
 	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
-		ppt->c[0] = ppt->c[0] * cos(angle) - ppt->c[1] * sin(angle);
-		ppt->c[1] = ppt->c[1] * cos(angle) + ppt->c[0] * sin(angle);
-    
+		double x,y;
+		// Check if 2D or 3D
+		
+
+		x = ppt->c[0] * cos(angle) - ppt->c[1] * sin(angle);
+		y = ppt->c[1] * cos(angle) + ppt->c[0] * sin(angle);
+
+		ppt->c[0] = x;
+		ppt->c[1] = y;
 	}
 }
 
-void rotation3D(pMesh mesh, double angleX, double angleY, double angleZ)
+
+void rotation3D(Mesh *mesh, double angleX, double angleY, double angleZ)
 {
 	pPoint ppt;
 	int i;
+
+	double x,y,z;
 	
 	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
 		
-		// Si l'angle est sufisamment grand pour que la rotation puisse se faire
-		if (fabs(angleX) > 1e-10)
-		{
-			ppt->c[1] = ppt->c[1] * cos(angleX) - ppt->c[2] * sin(angleX);
-			ppt->c[2] = ppt->c[1] * sin(angleX) + ppt->c[2] * cos(angleX);
 		
+		// Si l'angle est sufisamment grand pour que la rotation puisse se faire
+		if (fabsf(angleX) > 1e-10)
+		{
+			y = ppt->c[1] * cos(angleX) - ppt->c[2] * sin(angleX);
+			z = ppt->c[1] * sin(angleX) + ppt->c[2] * cos(angleX);
+			ppt->c[1] = y;
+			ppt->c[2] = z;
 		}
 
-		if (fabs(angleY) > 1e-10)
+		if (fabsf(angleY) > 1e-10)
 		{
-			ppt->c[0] = ppt->c[2] * sin(angleY) + ppt->c[0] * cos(angleY);
-			ppt->c[2] = ppt->c[2] * cos(angleY) - ppt->c[0] * sin(angleY);
-
+			x = ppt->c[2] * sin(angleY) + ppt->c[0] * cos(angleY);
+			z = ppt->c[2] * cos(angleY) - ppt->c[0] * sin(angleY);
+			ppt->c[0] = x;
+			ppt->c[2] = z;
 		}
 
-		if (fabs(angleZ) > 1e-10)
+		if (fabsf(angleZ) > 1e-10)
 		{
-			ppt->c[0] = ppt->c[0] * cos(angleZ) - ppt->c[1] * sin(angleZ);
-			ppt->c[1] = ppt->c[0] * sin(angleZ) + ppt->c[1] * cos(angleZ);
+			x = ppt->c[0] * cos(angleZ) - ppt->c[1] * sin(angleZ);
+			y = ppt->c[0] * sin(angleZ) + ppt->c[1] * cos(angleZ);
+			ppt->c[0] = x;
+			ppt->c[1] = y;
 		}
 		
 	}
 }
 
-/* The mesh center c is the centre of the bounding box [xmin,xmax]*[ymin,ymax]*[zmin,zmax] */
-int center(pMesh mesh, double *c)//ici j'ai mis c (au lieu que xc,yc) pour traiter les cas 2d et 3d dans la même fonction
+// I don't know if it works
+void center2D(Mesh *mesh, double *xc, double *yc)
 {
-	pPoint  ppt;
-	int     i,l;
-  double   min[3],max[3];
-  
-  /*compute bounding box*/
-  for (i=0; i<mesh->dim; i++)
-  {
-    min[i] =   FLT_MAX;
-    max[i] =  -FLT_MAX;
-    
-  }
-	for (i = 1; i <= mesh->np; ++i)
+	pPoint ppt;
+	int i;
+	for (i = 0; i <= mesh->np; ++i)
 	{
-    ppt = &mesh->point[i];
-    for (l=0; l<mesh->dim; l++)
-    {
-      max[l] = D_MAX(max[l],ppt->c[l]);
-      min[l] = D_MIN(min[l],ppt->c[l]);
-    }
-  }
-  if(mesh->dim==3)
-  fprintf(stdout,"  %%%% Bounding box  [%f,%f] [%f,%f] [%f,%f] \n",min[0],max[0],min[1],max[1],min[2],max[2]);
-  else
-   fprintf(stdout,"  %%%% Bounding box  [%f,%f] [%f,%f] \n",min[0],max[0],min[1],max[1]);
-  
-  /*compute center of the bounding box*/
-  for (l=0; l<mesh->dim; l++) c[l] = 0.5*(min[l]+max[l]);
-  
-  if(mesh->dim==3)
-    fprintf(stdout,"  %%%% Center  %f %f %f \n",c[0],c[1],c[2]);
-  else
-    fprintf(stdout,"  %%%% Center  %f %f \n",c[0],c[1]);
-  
-  
-    return 1;
+		ppt = &mesh->point[i];
+		*xc += ppt->c[0];
+		*yc += ppt->c[1];
+	}
+	*xc = *xc / mesh->np;
+	*yc = *yc / mesh->np;
 }
 
-/******************************/
+
+/*** Change 2D to 3D ***/
+/* Parameter : a mesh with dim == 2 
+	This function will add a square to the tab of points for the third dimension
+*/
+void Change2Dto3D( pMesh Mesh )
+{
+	int i;
+	for(i=0;i<=Mesh -> np;i++)
+	{
+		Mesh->point[i].c[3] = Mesh->point[i].c[2] ;
+		Mesh->point[i].c[2] = 0.0 ;
+	}
+}
+
+
 /*** FUNCTION SUPERPOSITION ***/
-/******************************/
 /*	Parameters : 3 meshs: the 2 meshs to combine + the combinaison of the 2
 	return : 1 if it works, 0 if not
 	This function will join a mesh to another 
@@ -121,7 +125,22 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 
 	/* Fill the dimension ( we take the more important dimension) and the mark */
 
-	Mesh_final->dim = Mesh1->dim ;
+	if ( Mesh1->dim == 3 && Mesh2->dim == 2 )
+	{
+		Mesh_final-> dim = 3 ;
+		Change2Dto3D(Mesh2);
+	}
+	if (Mesh2->dim == 3 && Mesh1->dim == 2)
+	{
+		Mesh_final-> dim = 3 ;
+		Change2Dto3D(Mesh1) ;
+	}
+	if (Mesh1->dim == 3 && Mesh2->dim == 3)
+		Mesh_final-> dim = 3 ;
+	
+	if (Mesh1->dim == 2 && Mesh2->dim == 2)
+		Mesh_final-> dim = 2 ;
+	
 	Mesh_final->mark = Mesh1->mark ;
 	
 	
@@ -133,6 +152,8 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 
 	Mesh_final->point = (pPoint)calloc(Mesh_final->np,sizeof(Point));
   assert(Mesh_final->point);
+	Mesh_final->sol = (double*)calloc(3*Mesh_final->np, sizeof(double));
+	assert(Mesh_final->sol);
   if ( Mesh_final->na ){
     Mesh_final->edge = (pEdge)calloc(Mesh_final->na,sizeof(Edge));
     assert(Mesh_final->edge);
@@ -141,6 +162,8 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
     Mesh_final->tria = (pTria)calloc(Mesh_final->nt,sizeof(Tria));
     assert(Mesh_final->tria);
   }
+  
+  
 	
 	/* Now we fill the tab of points, vertices and edges */
 
@@ -148,73 +171,87 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 		 After that we eliminate the last char of the tab ("\0") and input the vertices of the mesh2
 	*/  
 	
-	/*points of mesh1*/
+	
+		int tab = 0 ;
+	
+		for(i=0;i<=Mesh1->np;i++)
+		{
+			Mesh_final->point[tab] = Mesh1->point[i];
+			tab ++ ;
+		}
 		
-    for(i=1;i<=Mesh1->np;i++)
-		{
-			Mesh_final->point[i] = Mesh1->point[i];
-		}
-	
 	/*points of mesh2*/
-  
-    for(j=1;j<= Mesh2->np;j++)
+	
+		for(j=0;j<= Mesh2->np;j++)
 		{
-			Mesh_final->point[i+j] = Mesh2->point[j];
+			Mesh_final->point[tab] = Mesh2->point[j+1];
+			tab ++ ;
 		}
 	
+	tab = 0 ;
 	/* Triangles of mesh1 */
-  
-    for(i=1;i<=Mesh1->nt;i++)
+	
+		for(i=0;i<=Mesh1->nt;i++)
 		{
-			Mesh_final->tria[i] = Mesh1->tria[i];
+			Mesh_final->tria[tab] = Mesh1->tria[i];
+			tab++ ;
 		}
 
 	/*Triangles of mesh2*/
 	
-		for(j=1;j<= Mesh2->nt;j++)
+		for(j=0;j<= Mesh2->nt;j++)
 		{
-			Mesh_final->tria[i+j].v[0] = (Mesh2->tria[j+1].v[0])+((Mesh1->np) + 1);
-			Mesh_final->tria[i+j].v[1] = (Mesh2->tria[j+1].v[1])+((Mesh1->np) + 1);
-			Mesh_final->tria[i+j].v[2] = (Mesh2->tria[j+1].v[2])+((Mesh1->np) + 1);
+			Mesh_final->tria[tab].v[0] = (Mesh2->tria[j+1].v[0] + Mesh1->np );
+			Mesh_final->tria[tab].v[1] = (Mesh2->tria[j+1].v[1] + Mesh1->np );
+			Mesh_final->tria[tab].v[2] = (Mesh2->tria[j+1].v[2] + Mesh1->np );
+			tab ++ ;
 		}
 	return(1);
 }
 
-/****************************/
-/*** FUNCTION TRANSLATION ***/
-/****************************/
-
-// calculates a new mesh translated by length length
-void translation2D(pMesh mesh, double lengthX, double lengthY)
+// calculates the a new mesh translated by length length
+void translation2D(Mesh *mesh, double lengthX, double lengthY)
 {
 	int i;
 	pPoint ppt;
-  
+	double x,y;
+	int refNew;
 	for(i=0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
-	  ppt->c[0] += lengthX;
-		ppt->c[1] += lengthY;
+		x = ppt->c[0] + lengthX;
+		y = ppt->c[1] + lengthY;
+		refNew = ppt->c[2];
+	
+		ppt->c[0] = x;
+		ppt->c[1] = y;	
+		ppt->c[2] = refNew ;	
 	}
+	
 }
 
-// calculates a new mesh translated by length length
+// calculates the a new mesh translated by length length
 void translation3D(Mesh *mesh, double lengthX, double lengthY, double lengthZ)
 {
 	int i;
 	pPoint ppt;
-
+	double x,y,z;
+	int refNew;
 	for(i=0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
+		x = ppt->c[0] + lengthX;
+		y = ppt->c[1] + lengthY;
+		z = ppt->c[2] + lengthZ;
+		refNew = ppt->c[3];
 	
-    ppt->c[0] += lengthX;
-		ppt->c[1] += lengthY;
-		ppt->c[2] += lengthZ;
+		ppt->c[0] = x;
+		ppt->c[1] = y;	
+		ppt->c[2] = z;		
+		ppt->c[3] = refNew ;	
 	}
 	
 }
-
 
 /*** FUNCTION COURBURE ***/
 /* 
@@ -298,7 +335,7 @@ int courbure3D(pMesh mesh )
 			/* now we calculate the scalar product */
 			
 			
-			/*
+		/*	
 			fprintf(stdout," coordonnées de A = ( %f , %f , %f ) \n ", mesh->point[i].c[0] , mesh->point[i].c[1] , mesh->point[i].c[2] ) ;
 			fprintf(stdout," coordonnées de B %d = ( %f , %f , %f ) \n ", triangle[j].v[point1] , mesh->point[triangle[j].v[point1]].c[0] , mesh->point[triangle[j].v[point1]].c[1] , mesh->point[triangle[j].v[point1]].c[2] ) ;
 			fprintf(stdout," coordonnées de C %d = ( %f , %f , %f ) \n ", triangle[j].v[point2], mesh->point[triangle[j].v[point2]].c[0] , mesh->point[triangle[j].v[point2]].c[1] , mesh->point[triangle[j].v[point2]].c[2] ) ;
@@ -318,7 +355,7 @@ int courbure3D(pMesh mesh )
 			if ( distAB < 0 || distAC < 0 )
 				fprintf(stdout, "PROBLEME ! \n");
 			costr = ( AB[0] * AC [0] + AB[1] * AC [1] + AB[2] * AC[2] ) / (  distAB * distAC ) ;
-			//fprintf(stdout," costr = %f \n" , costr) ;
+			fprintf(stdout," costr = %f \n" , acos(costr)) ;
 			
 			/* Here we have the angle for each triangle around the point */
 			angle +=  acos(costr) ;
@@ -328,7 +365,7 @@ int courbure3D(pMesh mesh )
 		
 	
 	
-		//fprintf(stdout," angle = %f \n" , angle ) ;
+		fprintf(stdout," angle = %f \n" , angle ) ;
 		/* Here we save the solution for each vertice in the struct */
 		
 		/*if ( 2*PI - angle < 0.01 )
@@ -342,51 +379,90 @@ int courbure3D(pMesh mesh )
 	
 }
 
-void normalesOfTriangles(Mesh *mesh)
+/*** FUNCTION COURBURE ***/ 
+/* In this function we will calculate the curvature for each point in a 2D Mesh.
+		In order to do that we will use the gaussian curvature: this is the angular between two edge.
+		PARAMETERS : the 2D mesh ( pMesh )
+		RETURN : VOID 
+*/
+int courbure2D( pMesh mesh )
 {
-	mesh->triaNorm = (pTriaNorm)calloc(mesh->nt+1, sizeof(TriaNorm));
-	assert(mesh->triaNorm);
+	int check = 0 , i , j ;
+	int *voisin = 0 ;
+	double u1=0,u2=0,v1=0,v2=0,normu=0,normv=0,costh=0;
+	/* first we have to find the vertices */
 	
-	int i, j;
-	pTria currentTria;
-	for(i=0; i <= mesh->nt; i++)
+	/* Go through all the vertices */
+	for(i=1;i<= mesh->np;i++)
 	{
-		currentTria = &mesh->tria[i];
-		for(j=0; j < 3; j++)
+		fprintf(stdout, "i = %d \n" , i ) ;
+		check = 0 ;
+		/* MEMORY ALLOCATION */
+		for(j=1;j<mesh->na;j++)
+			/* here we see in which edge is the vertice i */
+			if( mesh->edge[j].v[0] == i  ||  mesh->edge[j].v[1] == i )
+				check ++ ;
+		voisin = (int*) malloc ( check * sizeof(int)) ;
+		check =0;
+		/* going though all the edge to find the vertices which are important */
+		for(j=1;j<= mesh->na;j++)
 		{
-			(mesh->triaNorm[i]).point[j] = &mesh->point[(currentTria->v[j])];
+			/* here we see in which edge is the vertice i */
+			if( mesh->edge[j].v[0] == i  )
+			{
+				/* here we stock the following point */
+				voisin [1] = mesh->edge[j].v[1] ;
+				fprintf(stdout," pt suivant = %d \n",mesh->edge[j].v[1]);
+				check++;
+			}
+			if ( mesh->edge[j].v[1] == i )
+			{
+				/* here we stock the last point */
+				voisin [0] = mesh->edge[j].v[0] ;
+				fprintf(stdout," pt précedent = %d \n",mesh->edge[j].v[0]);
+				check++;
+			}
+		
 		}
-		// the line is faulse, check formula
-		(mesh->triaNorm[i]).norm[0]->v[0] = ( mesh->point[(currentTria->v[0])].c[0] - mesh->point[(currentTria->v[1])].c[0] ) *( mesh->point[(currentTria->v[0])].c[0] - mesh->point[(currentTria->v[2])].c[0] );
+		
+		if( check == 2 )
+		{
+			/* calcule de la courbure au point */
+			/* u is the vector for (pi-1,pi) and v for (pi,pi+1) */
+			u1 =  mesh->point[voisin[0]].c[0] - mesh->point[i].c[0]  ;
+			u2 =  mesh->point[voisin[0]].c[1] - mesh->point[i].c[1]  ;
+			v1 =  mesh->point[i].c[0] - mesh->point[voisin[0]].c[0]  ;
+			v2 =  mesh->point[i].c[1] - mesh->point[voisin[0]].c[1]  ;
+			/* NORM */
+			normu = sqrt(  pow(u1,2) + pow(u2,2) ) ;
+			normv = sqrt(  pow(v1,2) + pow(v2,2) ) ; 
+			/* SCALAR PRODUCT */
+			costh = ( (u1*v1) + (u2*v2) ) / ( normu * normv ) ;
+			/* THETA */
+			mesh->sol[i] = acos(costh) ;
 			
-		
-		
-
+			
+			
+			/* pondération par les longueurs (li-1,li) et (li,li+1)*/
+		}
+		if ( check == 1 )
+		{
+			fprintf(stdout, " Point pas à l'intersection de 2 edges mais fait partie de l'un d'entre eux \n" );
+			mesh->sol[i] = 0.0 ;
+			fprintf(stdout," check = %d \n" ,check );
+			
+		}
+		if ( check > 2 )
+		{
+			fprintf(stdout ," PROBLEME point à l'intersection de plusieurs edges \n" );	
+			mesh -> sol[i] = 0.0 ;
+			
+		}
+		free (voisin);
 	}
-
-
-	
+	return 1;
 
 }
 
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-	
 
 
