@@ -7,7 +7,7 @@
 
 
 typedef struct {
-  double    c[3],ref;
+  double    c[3],n[3],ref;
 } Point;
 typedef Point * pPoint;
 
@@ -24,15 +24,15 @@ typedef Tria * pTria;
 
 // Adrian et Tupac: structure for edge normale
 typedef struct {
-  pPoint    point[3];
-  pEdge		norm[3];
-  int		ref;
+  // Normal vertice defined by 2 points : norm start and norm end
+  double  n[3];
+  double  weight;
 } TriaNorm;
 typedef TriaNorm * pTriaNorm;
 
 
 typedef struct {
-  int       np,na,nt,nr,ver,dim,mark;
+  int       np,na,nt,nr,nn,ver,dim,mark;
   char     *namein,*nameout;
 	double   *sol,o[3],rad;
   pPoint    point;
