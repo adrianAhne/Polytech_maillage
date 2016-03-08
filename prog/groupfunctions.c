@@ -387,6 +387,7 @@ int courbure3D(pMesh mesh )
 */
 int courbure2D( pMesh mesh )
 {
+
 	int check = 0 , i , j ;
 	int *voisin = 0 ;
 	double u1=0,u2=0,v1=0,v2=0,normu=0,normv=0,costh=0;
@@ -467,13 +468,18 @@ int courbure2D( pMesh mesh )
 
 void normalesOfTriangles(Mesh *mesh)
 {
+
+	mesh->triaNorm = (pTriaNorm)calloc(mesh->nt+1, sizeof(TriaNorm));
+	assert(mesh->triaNorm);
+
+
 	int i, j, k;
 	pTria currentTria;
 	Point P1,P2,P3,N;
 	double weight;
 
 	// Loop over all triangles calculating the normales, the area and store data into mesh->triaNorm
-	for(i=0; i <= mesh->nt; i++)
+	for(i=1; i <= mesh->nt; i++)
 	{
 		currentTria = &mesh->tria[i];
 		
@@ -506,15 +512,13 @@ void normalesOfTriangles(Mesh *mesh)
 		N.c[2] = (P2.c[0]-P1.c[0])*(P3.c[1]-P1.c[1]) - (P2.c[1]-P1.c[1])*(P3.c[0]-P1.c[0]);
 
 		// Weight of the triangle (let's say it the area)
-		weight = 0.5 * sqrt(
-			pow((P2.c[1]-P1.c[1])*(P3.c[2]-P1.c[2])-(P2.c[2]-P1.c[2])*(P3.c[1]-P1.c[1]),2)+
-			pow((P2.c[2]-P1.c[2])*(P3.c[0]-P1.c[0])-(P2.c[0]-P1.c[0])*(P3.c[2]-P1.c[2]),2)+
-			pow((P2.c[0]-P1.c[0])*(P3.c[1]-P1.c[1])-(P2.c[0]-P1.c[0])*(P3.c[0]-P1.c[0]),2));
+		weight = 0.5 * sqrt( pow(N.c[0],2)+pow(N.c[1],2)+pow(N.c[2],2) );
 		
 		// Normale is calculated at point P1 for the triangle; save both points defining the normale
 		(mesh->triaNorm[i]).n[0] = N.c[0];
 		(mesh->triaNorm[i]).n[1] = N.c[1];
 		(mesh->triaNorm[i]).n[2] = N.c[2];
+		printf("%f %f %f\n", N.c[0],N.c[1],N.c[2]);
 		(mesh->triaNorm[i]).weight = weight;
 		
 
@@ -527,15 +531,16 @@ void normalesOfTriangles(Mesh *mesh)
 	//
 	// A la fin du calcul de normales, normaliser chaque normale pour chaque point par sa norme
 
-
-	pPoint normalAveraged;
-	int compteur = 0;
+	
 	// Loop over all points and calculate weighted normales for each point by using neighbour triangles
-	// WARNING : Not optimized loop !
+	// WARNING : Not optimized and not normalized normales ! 
+	/*
 	for (i = 1; i <= mesh->np; i++)
 	{
-		normalAveraged = 0;
-		compteur = 0;
+		mesh->point[i].n[0] = 0;
+		mesh->point[i].n[1] = 0;
+		mesh->point[i].n[2] = 0;
+
 		for (j = 0; j <= mesh->nt; j++)
 		{
 			currentTria = &mesh->tria[j];
@@ -544,16 +549,25 @@ void normalesOfTriangles(Mesh *mesh)
 				if (currentTria->v[k] == i)
 				{
 
-					mesh->point[i].n[0] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[0] - mesh->point[mesh->tria[j].v[0]].c[0]);
-					mesh->point[i].n[1] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[1] - mesh->point[mesh->tria[j].v[0]].c[1]);
-					mesh->point[i].n[2] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[1] - mesh->point[mesh->tria[j].v[0]].c[2]);
-					compteur++;
+					mesh->point[i].n[0] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[0]);
+					mesh->point[i].n[1] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[1]);
+					mesh->point[i].n[2] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[2]);
 				}
 			}
 		}
-		
+		mesh->point[i].n[0] = mesh->point[i].n[0] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
+		mesh->point[i].n[1] = mesh->point[i].n[1] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
+		mesh->point[i].n[2] = mesh->point[i].n[2] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
 
+	}
+	*/
 
+	for (i = 1; i < mesh->nt ; i++) {
+		for (j = 0; j < 3 ; j++) {
+			mesh->point[mesh->tria[i].v[j]].n[0] += mesh->triaNorm[i].n[0];
+			mesh->point[mesh->tria[i].v[j]].n[1] += mesh->triaNorm[i].n[1];
+			mesh->point[mesh->tria[i].v[j]].n[2] += mesh->triaNorm[i].n[2];
+		}
 	}
 
 	mesh->nn = mesh->np;
@@ -561,6 +575,6 @@ void normalesOfTriangles(Mesh *mesh)
 	
 
 }
->>>>>>> 30b6a935d87148078140f98fc649f7b9582338c1
+
 
 
