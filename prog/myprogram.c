@@ -296,7 +296,7 @@ int main(int argc,char *argv[]) {
 
 	
 	fprintf(stdout,"\n  -- COURBURE MESH \n");
-	if ( !courbure3D(&mesh) ) return (1) ;
+	if ( !courbure2D(&mesh) ) return (1) ;
 
 	if ( ! (&mesh)) return(1);
 
