@@ -6,6 +6,7 @@
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
+#include "distanceMeshFunctions.h"
 
 
 /* read mesh */
@@ -325,11 +326,14 @@ int main(int argc,char *argv[]) {
 
 // Tupac : write data into a new file
 
+  checkPointInTriangle(&mesh, &mesh.point[1], &mesh.tria[4]);
+
+
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
   mesh.nameout = "meshWithNormale.mesh";
   if ( !saveMesh(&mesh) )  return(1);
   if ( !saveSol(&mesh,1) )  return(1);
-  fprintf(stdout,"  -- WRITING COMPLETED\n");	
+  fprintf(stdout,"  -- WRITING COMPLETED\n");
 
 
   return(0);

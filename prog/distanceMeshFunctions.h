@@ -12,4 +12,6 @@ double dotProduct3D(Point a, Point b);
 // Check if point is in triangle tria
 int checkPointInTriangle(pMesh mesh, pPoint P, pTria tria);
 
+int calculeProjection(pMesh mesh, pTria tria);
+
 #endif //DISTANCEMESHFUNCTIONS_H

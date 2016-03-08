@@ -76,3 +76,16 @@ int checkPointInTriangle(pMesh mesh, pPoint P, pTria tria)
 }
 
 
+int calculeProjection(pMesh mesh, pTria tria)
+{
+
+    // check if normales of triangles are already calculated
+    if !(mesh->triaNorm)
+    {
+        normalesOfTriangles(&mesh);
+    }
+
+
+}
+
+
