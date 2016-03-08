@@ -17,8 +17,8 @@ libmesh5: libmesh.c
 groupfunctions: groupfunctions.c libmesh.c
 	$(CC) -c groupfunctions.c libmesh.c -o groupfunctions.o
 
-distanceMeshFunctions: distanceMeshFunctions.c groupfunctions.c
-	$(CC) -c distanceMeshFunctions.c groupfunctions.c -o distanceMeshFunctions.o
+#distanceMeshFunctions: distanceMeshFunctions.c groupfunctions.c
+#	$(CC) -c distanceMeshFunctions.c groupfunctions.c -o distanceMeshFunctions.o
 
 clean:
 	$(RM) -r $(OBJS) myprogram

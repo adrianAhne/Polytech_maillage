@@ -7,7 +7,7 @@
 
 
 typedef struct {
-  double    c[3],n[3],ref;
+  double    c[3],ref;
 } Point;
 typedef Point * pPoint;
 

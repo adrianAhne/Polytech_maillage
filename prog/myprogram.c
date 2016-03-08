@@ -6,7 +6,7 @@
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
-#include "distanceMeshFunctions.h"
+//#include "distanceMeshFunctions.h"
 
 
 /* read mesh */
@@ -137,6 +137,7 @@ int saveMesh(pMesh mesh) {
   pPoint       ppt;
   pTria        pt;
   pEdge        pa;
+  pNormal      pn;
   int          k,nr,outm;
   char         data[128];
 
@@ -186,8 +187,8 @@ int saveMesh(pMesh mesh) {
 if ( mesh->nn) {
   GmfSetKwd(outm,GmfNormals,mesh->nn);
   for(k=1; k<=mesh->nn; k++) {
-    ppt = &mesh->point[k];
-    GmfSetLin(outm,GmfNormals,ppt->n[0],ppt->n[1],ppt->n[2]);
+    pn = &mesh->Normal[k];
+    GmfSetLin(outm,GmfNormals,pn->n[0],pn->n[1],pn->n[2]);
   }
   GmfSetKwd(outm,GmfNormalAtVertices,mesh->np);
   for (k=1; k<=mesh->np; k++) {
@@ -326,7 +327,7 @@ int main(int argc,char *argv[]) {
 
 // Tupac : write data into a new file
 
-  checkPointInTriangle(&mesh, &mesh.point[1], &mesh.tria[4]);
+  //checkPointInTriangle(&mesh, &mesh.point[1], &mesh.tria[4]);
 
 
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
