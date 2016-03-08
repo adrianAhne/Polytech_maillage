@@ -472,11 +472,13 @@ void normalesOfTriangles(Mesh *mesh)
 	mesh->triaNorm = (pTriaNorm)calloc(mesh->nt+1, sizeof(TriaNorm));
 	assert(mesh->triaNorm);
 
+	mesh->Normal = (pNormal)calloc(mesh->np+1, sizeof(Normal));
+	assert(mesh->Normal);
 
 	int i, j, k;
 	pTria currentTria;
 	Point P1,P2,P3,N;
-	double weight;
+	double weight, norm;
 
 	// Loop over all triangles calculating the normales, the area and store data into mesh->triaNorm
 	for(i=1; i <= mesh->nt; i++)
@@ -564,9 +566,19 @@ void normalesOfTriangles(Mesh *mesh)
 
 	for (i = 1; i < mesh->nt ; i++) {
 		for (j = 0; j < 3 ; j++) {
-			mesh->point[mesh->tria[i].v[j]].n[0] += mesh->triaNorm[i].n[0];
-			mesh->point[mesh->tria[i].v[j]].n[1] += mesh->triaNorm[i].n[1];
-			mesh->point[mesh->tria[i].v[j]].n[2] += mesh->triaNorm[i].n[2];
+			for (k = 0; k < 3; k++)
+			{
+				mesh->Normal[mesh->tria[i].v[j]].n[k] += mesh->triaNorm[i].n[k];
+			}
+						
+		}
+	}
+
+	for (i = 1; i < mesh->np; ++i)
+	{
+		norm = sqrt( pow(mesh->Normal[i].n[0],2) + pow(mesh->Normal[i].n[1],2) + pow(mesh->Normal[i].n[2],2) );
+		for (j=0;j<3;j++) {
+			mesh->Normal[i].n[j] *= 1 / norm;
 		}
 	}
 

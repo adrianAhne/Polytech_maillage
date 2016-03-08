@@ -12,6 +12,11 @@ typedef struct {
 typedef Point * pPoint;
 
 typedef struct {
+  double    n[3];
+} Normal;
+typedef Normal * pNormal; 
+
+typedef struct {
   int       v[2],ref,tag;
 } Edge;
 typedef Edge * pEdge;
@@ -36,6 +41,7 @@ typedef struct {
   char     *namein,*nameout;
 	double   *sol,o[3],rad;
   pPoint    point;
+  pNormal   Normal;
   pEdge     edge;
   pTria     tria;
   pTriaNorm triaNorm;

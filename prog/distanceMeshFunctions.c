@@ -75,7 +75,7 @@ int checkPointInTriangle(pMesh mesh, pPoint P, pTria tria)
 
 }
 
-
+/*
 int calculeProjection(pMesh mesh, pTria tria)
 {
 
@@ -87,5 +87,5 @@ int calculeProjection(pMesh mesh, pTria tria)
 
 
 }
-
+*/
 
