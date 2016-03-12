@@ -311,24 +311,26 @@ int main(int argc,char *argv[]) {
 
 	
 	fprintf(stdout,"\n  -- COURBURE MESH \n");
-	if ( !courbure2D(&mesh) ) return (1) ;
+	//if ( !courbure2D(&mesh) ) return (1) ;
 
   fprintf(stdout,"\n  -- NORMALE OF TRIANGLES \n");
-  normalesOfTriangles(&mesh);
+  //normalesOfTriangles(&mesh);
 
 	if ( ! (&mesh)) return(1);
 
 	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
 
-	 //Adrian: Translation 2D
+	//Adrian: Translation 2D
 	//translation2D(&mesh, 0.5, 0);
 	//translation3D(&mesh, 0, 1, 1);
 		
 
-// Tupac : write data into a new file
+  // Tupac : write data into a new file
 
   //checkPointInTriangle(&mesh, &mesh.point[1], &mesh.tria[4]);
-
+  double a;
+  a =distPointToTriangle(&mesh, &mesh.tria[2], &mesh.point[mesh.tria[2].v[0]]);
+  printf("Distance : %f\n", a);
 
   fprintf(stdout,"\n  -- OUTPUT DATA\n");
   mesh.nameout = "meshWithNormale.mesh";
