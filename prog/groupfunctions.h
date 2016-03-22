@@ -24,7 +24,7 @@ void center2D(Mesh *mesh, float *xc, float *yc);
 	in order to fill the number of Vertices, Triangles and edges of each one.
 	After that we will go through the file of Mesh1 as a text file and find where is the last point
 */
-int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final ) ;
+int Superposition(pMesh Mesh1, pMesh Mesh2 , pMesh Mesh_final ) ;
 
 void translation2D(Mesh *mesh, float lengthX, float lengthY);
 
@@ -37,6 +37,8 @@ void translation2D(Mesh *mesh, float lengthX, float lengthY);
 						it return if it works ,  if not 
 */
 int courbure3D(pMesh mesh );
+
+int courbure2D(pMesh mesh ) ;
 
 // calculates the a new mesh translated by length length
 void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ);
