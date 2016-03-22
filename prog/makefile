@@ -4,7 +4,9 @@ OBJS= \
 	myprogram.o \
 	libmesh5.o \
 	groupfunctions.o \
-	distanceMeshFunctions.o 
+	distanceMeshFunctions.o \
+	bucket.o
+
 
 all: myprogram
 
@@ -17,8 +19,9 @@ libmesh5: libmesh.c
 groupfunctions: groupfunctions.c libmesh.c
 	$(CC) -c groupfunctions.c libmesh.c -o groupfunctions.o
 
-distanceMeshFunctions: distanceMeshFunctions.c groupfunctions.c
-	$(CC) -c distanceMeshFunctions.c groupfunctions.c -o distanceMeshFunctions.o
+	
+bucket: bucket.c 
+	$(CC) -c bucket.c -o bucket.o -lm 
 
 clean:
 	$(RM) -r $(OBJS) myprogram

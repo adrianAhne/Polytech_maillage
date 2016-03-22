@@ -29,7 +29,8 @@ int center(pMesh mesh, double *c);
 	After that we will go through the file of Mesh1 as a text file and find where is the last point
 */
 
-int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final) ;
+int Superposition(pMesh Mesh1, pMesh Mesh2 , pMesh Mesh_final ) ;
+
 
 void translation2D(pMesh mesh, double lengthX, double lengthY);
 
@@ -58,6 +59,7 @@ int courbure3D(pMesh mesh );
 		RETURN : 1 if everythings happen alright 
 */
 int courbure2D( pMesh mesh );
+
 
 
 #endif

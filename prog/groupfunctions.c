@@ -360,6 +360,7 @@ int courbure3D(pMesh mesh )
 			/* Here we have the angle for each triangle around the point */
 			angle +=  acos(costr) ;
 			
+			
 		}
 		
 		
@@ -372,39 +373,33 @@ int courbure3D(pMesh mesh )
 			 mesh->sol[i] = 0 ;*/
 		//else
 			mesh->sol[i] = 2.0*PI - angle ;
-		
+		free(triangle) ;
 		//fprintf(stdout," solu = %f \n" , mesh->sol[i] ) ;
 	}
 	return (1) ;
 	
 }
 
-/*** FUNCTION COURBURE ***/ 
-/* In this function we will calculate the curvature for each point in a 2D Mesh.
-		In order to do that we will use the gaussian curvature: this is the angular between two edge.
-		PARAMETERS : the 2D mesh ( pMesh )
-		RETURN : VOID 
-*/
+
+ 
 int courbure2D( pMesh mesh )
 {
-
 	int check = 0 , i , j ;
-	int *voisin = 0 ;
-	double u1=0,u2=0,v1=0,v2=0,normu=0,normv=0,costh=0;
+	int *voisin  ;
+	double u1=0,u2=0,v1=0,v2=0,normu=0,normv=0,costh=0,dist1,dist2,dist;
 	/* first we have to find the vertices */
 	
-
 	/* Go through all the vertices */
 	for(i=1;i<= mesh->np;i++)
 	{
-		fprintf(stdout, "i = %d \n" , i ) ;
+		//fprintf(stdout, "i = %d \n" , i ) ;
 		check = 0 ;
 		/* MEMORY ALLOCATION */
 		for(j=1;j<mesh->na;j++)
 			/* here we see in which edge is the vertice i */
 			if( mesh->edge[j].v[0] == i  ||  mesh->edge[j].v[1] == i )
 				check ++ ;
-		voisin = (int*) malloc ( check * sizeof(int)) ;
+		voisin = (int*) calloc (  check , sizeof(int)) ;
 		check =0;
 		/* going though all the edge to find the vertices which are important */
 		for(j=1;j<= mesh->na;j++)
@@ -414,14 +409,14 @@ int courbure2D( pMesh mesh )
 			{
 				/* here we stock the following point */
 				voisin [1] = mesh->edge[j].v[1] ;
-				fprintf(stdout," pt suivant = %d \n",mesh->edge[j].v[1]);
+				//fprintf(stdout," pt suivant = %d \n",mesh->edge[j].v[1]);
 				check++;
 			}
 			if ( mesh->edge[j].v[1] == i )
 			{
 				/* here we stock the last point */
 				voisin [0] = mesh->edge[j].v[0] ;
-				fprintf(stdout," pt précedent = %d \n",mesh->edge[j].v[0]);
+				//fprintf(stdout," pt précedent = %d \n",mesh->edge[j].v[0]);
 				check++;
 			}
 		
@@ -431,40 +426,50 @@ int courbure2D( pMesh mesh )
 		{
 			/* calcule de la courbure au point */
 			/* u is the vector for (pi-1,pi) and v for (pi,pi+1) */
-			u1 =  mesh->point[voisin[0]].c[0] - mesh->point[i].c[0]  ;
-			u2 =  mesh->point[voisin[0]].c[1] - mesh->point[i].c[1]  ;
+			u1 =  mesh->point[voisin[1]].c[0] - mesh->point[i].c[0]  ;
+			u2 =  mesh->point[voisin[1]].c[1] - mesh->point[i].c[1]  ;
 			v1 =  mesh->point[i].c[0] - mesh->point[voisin[0]].c[0]  ;
 			v2 =  mesh->point[i].c[1] - mesh->point[voisin[0]].c[1]  ;
 			/* NORM */
 			normu = sqrt(  pow(u1,2) + pow(u2,2) ) ;
 			normv = sqrt(  pow(v1,2) + pow(v2,2) ) ; 
+			dist1 = mesh->point[voisin[1]].c[0] - mesh->point[voisin[0]].c[0] ;
+			dist2 = mesh->point[voisin[1]].c[1] - mesh->point[voisin[0]].c[1]  ;
+			dist = sqrt ( pow ( dist1,2) + pow ( dist2,2));
 			/* SCALAR PRODUCT */
 			costh = ( (u1*v1) + (u2*v2) ) / ( normu * normv ) ;
+			
 			/* THETA */
-			mesh->sol[i] = acos(costh) ;
+			mesh->sol[i] = 2*sin(acos(costh));
+			//fprintf(stdout," acosth = %f \n" , mesh->sol[i]);
 			
 			
 			
 			/* pondération par les longueurs (li-1,li) et (li,li+1)*/
 		}
-		if ( check == 1 )
+		if ( check == 1 || check == 0 )
 		{
-			fprintf(stdout, " Point pas à l'intersection de 2 edges mais fait partie de l'un d'entre eux \n" );
-			mesh->sol[i] = 0.0 ;
-			fprintf(stdout," check = %d \n" ,check );
+			//fprintf(stdout, " Point pas à l'intersection de 2 edges mais fait partie de l'un d'entre eux \n" );
+			mesh->sol[i] = -1 ;
+			//fprintf(stdout," check = %d \n" ,check );
 			
 		}
-		if ( check > 2 )
+		if ( check > 2  )
 		{
-			fprintf(stdout ," PROBLEME point à l'intersection de plusieurs edges \n" );	
-			mesh -> sol[i] = 0.0 ;
+			//fprintf(stdout ," PROBLEME point à l'intersection de plusieurs edges \n" );	
+			mesh -> sol[i] = -1 ;
 			
 		}
-		free (voisin);
+		
 	}
+	free (voisin);
 	return 1;
 
 }
+
+
+
+
 
 void normalesOfTriangles(Mesh *mesh)
 {
