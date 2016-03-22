@@ -6,6 +6,7 @@ OBJS= \
 	groupfunctions.o \
 	bucket.o
 
+
 all: myprogram
 
 myprogram: $(OBJS)
@@ -16,9 +17,11 @@ libmesh5: libmesh.c
 
 groupfunctions: groupfunctions.c libmesh.c
 	$(CC) -c groupfunctions.c libmesh.c -o groupfunctions.o
+
 	
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o -lm 
+
 clean:
 	$(RM) -r $(OBJS) myprogram
 

@@ -9,7 +9,7 @@
 
 
 
-void rotation2D(Mesh *mesh, float angle)
+void rotation2D(Mesh *mesh, double angle)
 {
 	pPoint ppt;
 	int i;
@@ -18,7 +18,7 @@ void rotation2D(Mesh *mesh, float angle)
 	for (i = 0; i <= mesh->np; i++)
 	{
 		ppt = &mesh->point[i];
-		float x,y;
+		double x,y;
 		// Check if 2D or 3D
 		
 
@@ -31,12 +31,12 @@ void rotation2D(Mesh *mesh, float angle)
 }
 
 
-void rotation3D(Mesh *mesh, float angleX, float angleY, float angleZ)
+void rotation3D(Mesh *mesh, double angleX, double angleY, double angleZ)
 {
 	pPoint ppt;
 	int i;
 
-	float x,y,z;
+	double x,y,z;
 	
 	for (i = 0; i <= mesh->np; i++)
 	{
@@ -72,7 +72,7 @@ void rotation3D(Mesh *mesh, float angleX, float angleY, float angleZ)
 }
 
 // I don't know if it works
-void center2D(Mesh *mesh, float *xc, float *yc)
+void center2D(Mesh *mesh, double *xc, double *yc)
 {
 	pPoint ppt;
 	int i;
@@ -210,11 +210,11 @@ int Superposition(pMesh Mesh1, pMesh Mesh2, pMesh Mesh_final )
 }
 
 // calculates the a new mesh translated by length length
-void translation2D(Mesh *mesh, float lengthX, float lengthY)
+void translation2D(Mesh *mesh, double lengthX, double lengthY)
 {
 	int i;
 	pPoint ppt;
-	float x,y;
+	double x,y;
 	int refNew;
 	for(i=0; i <= mesh->np; i++)
 	{
@@ -231,11 +231,11 @@ void translation2D(Mesh *mesh, float lengthX, float lengthY)
 }
 
 // calculates the a new mesh translated by length length
-void translation3D(Mesh *mesh, float lengthX, float lengthY, float lengthZ)
+void translation3D(Mesh *mesh, double lengthX, double lengthY, double lengthZ)
 {
 	int i;
 	pPoint ppt;
-	float x,y,z;
+	double x,y,z;
 	int refNew;
 	for(i=0; i <= mesh->np; i++)
 	{
@@ -335,7 +335,7 @@ int courbure3D(pMesh mesh )
 			/* now we calculate the scalar product */
 			
 			
-			/*
+		/*	
 			fprintf(stdout," coordonnées de A = ( %f , %f , %f ) \n ", mesh->point[i].c[0] , mesh->point[i].c[1] , mesh->point[i].c[2] ) ;
 			fprintf(stdout," coordonnées de B %d = ( %f , %f , %f ) \n ", triangle[j].v[point1] , mesh->point[triangle[j].v[point1]].c[0] , mesh->point[triangle[j].v[point1]].c[1] , mesh->point[triangle[j].v[point1]].c[2] ) ;
 			fprintf(stdout," coordonnées de C %d = ( %f , %f , %f ) \n ", triangle[j].v[point2], mesh->point[triangle[j].v[point2]].c[0] , mesh->point[triangle[j].v[point2]].c[1] , mesh->point[triangle[j].v[point2]].c[2] ) ;
@@ -355,7 +355,7 @@ int courbure3D(pMesh mesh )
 			if ( distAB < 0 || distAC < 0 )
 				fprintf(stdout, "PROBLEME ! \n");
 			costr = ( AB[0] * AC [0] + AB[1] * AC [1] + AB[2] * AC[2] ) / (  distAB * distAC ) ;
-			//fprintf(stdout," costr = %f \n" , costr) ;
+			fprintf(stdout," costr = %f \n" , acos(costr)) ;
 			
 			/* Here we have the angle for each triangle around the point */
 			angle +=  acos(costr) ;
@@ -366,7 +366,7 @@ int courbure3D(pMesh mesh )
 		
 	
 	
-		//fprintf(stdout," angle = %f \n" , angle ) ;
+		fprintf(stdout," angle = %f \n" , angle ) ;
 		/* Here we save the solution for each vertice in the struct */
 		
 		/*if ( 2*PI - angle < 0.01 )
@@ -379,6 +379,7 @@ int courbure3D(pMesh mesh )
 	return (1) ;
 	
 }
+
 
  
 int courbure2D( pMesh mesh )
@@ -468,24 +469,129 @@ int courbure2D( pMesh mesh )
 
 
 
-/***** NEW NAME *****/
-/* this function will remove the .o.mesh for saving the solution 
-	Parameter : the data (char *)
-*/
-void newname( char* data )
+
+
+void normalesOfTriangles(Mesh *mesh)
 {
 
-	int i,indic = 0 ;
+	mesh->triaNorm = (pTriaNorm)calloc(mesh->nt+1, sizeof(TriaNorm));
+	assert(mesh->triaNorm);
+
+	mesh->Normal = (pNormal)calloc(mesh->np+1, sizeof(Normal));
+	assert(mesh->Normal);
+
+	int i, j, k;
+	pTria currentTria;
+	Point P1,P2,P3,N;
+	double weight, norm;
+
+	// Loop over all triangles calculating the normales, the area and store data into mesh->triaNorm
+	for(i=1; i <= mesh->nt; i++)
+	{
+		currentTria = &mesh->tria[i];
+		
+		/*
+		In this part, I'm calculating the normal of the face of the triangle
+		After, we'll average each normal
+		For this technique, we'll have to calculate the weighting of each face (= surface ratio)
+
+		Abstract : normal of 1 triangle (composed of 3 points P1, P2 and P3) :
+
+		The cross product of two sides of the triangle equals the surface normal. 
+		So, if V = P2 - P1 and W = P3 - P1, and N is the surface normal, then:
+
+		Nx=(Vy∗Wz)−(Vz∗Wy)=((P2y-P1y)*(P3z-P1z)-(P2z-P1z)*(P3y-P1y))
+		Ny=(Vz∗Wx)−(Vx∗Wz)=((P2z-P1z)*(P3x-P1x)-(P2x-P1x)*(P3z-P1z))
+		Nz=(Vx∗Wy)−(Vy∗Wx)=((P2x-P1x)*(P3y-P1y)-(P2y-P1y)*(P3x-P1x))
+
+		Weight=AreaOfTheTriangle=0.5*sqrt((Vy*Wz-Vz*Wy)^2+(Vz*Wx-Vx*Wz)^2+(Vx*Wy-Vx*Wx)^2)
+
+		Translation in code :
+		*/
+
+		P1 = mesh->point[(currentTria->v[0])];
+		P2 = mesh->point[(currentTria->v[1])];
+		P3 = mesh->point[(currentTria->v[2])];
+		
+		// Normal of the triangle
+		N.c[0] = (P2.c[1]-P1.c[1])*(P3.c[2]-P1.c[2]) - (P2.c[2]-P1.c[2])*(P3.c[1]-P1.c[1]);
+		N.c[1] = (P2.c[2]-P1.c[2])*(P3.c[0]-P1.c[0]) - (P2.c[0]-P1.c[0])*(P3.c[2]-P1.c[2]);
+		N.c[2] = (P2.c[0]-P1.c[0])*(P3.c[1]-P1.c[1]) - (P2.c[1]-P1.c[1])*(P3.c[0]-P1.c[0]);
+
+		// Weight of the triangle (let's say it the area)
+		weight = 0.5 * sqrt( pow(N.c[0],2)+pow(N.c[1],2)+pow(N.c[2],2) );
+		
+		// Normale is calculated at point P1 for the triangle; save both points defining the normale
+		(mesh->triaNorm[i]).n[0] = N.c[0];
+		(mesh->triaNorm[i]).n[1] = N.c[1];
+		(mesh->triaNorm[i]).n[2] = N.c[2];
+		printf("%f %f %f\n", N.c[0],N.c[1],N.c[2]);
+		(mesh->triaNorm[i]).weight = weight;
+		
+
+	}
+
+
+	// REMARQUES
+	// Faire plutot une boucle sur les triangles
+	// Calculer l'aire à chaque boucle après
+	//
+	// A la fin du calcul de normales, normaliser chaque normale pour chaque point par sa norme
+
 	
-	for (i=0;i< 128 ; i++ )
-		if (indic == 1)
-			data[i] = '\0' ;
-		if ( data[i] == '.' )
+	// Loop over all points and calculate weighted normales for each point by using neighbour triangles
+	// WARNING : Not optimized and not normalized normales ! 
+	/*
+	for (i = 1; i <= mesh->np; i++)
+	{
+		mesh->point[i].n[0] = 0;
+		mesh->point[i].n[1] = 0;
+		mesh->point[i].n[2] = 0;
+
+		for (j = 0; j <= mesh->nt; j++)
 		{
-			data[i] = '\0';
-			indic = 1;
+			currentTria = &mesh->tria[j];
+			for (k = 0; k < 3; k++)
+			{
+				if (currentTria->v[k] == i)
+				{
+
+					mesh->point[i].n[0] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[0]);
+					mesh->point[i].n[1] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[1]);
+					mesh->point[i].n[2] += mesh->triaNorm[j].weight * (mesh->triaNorm[j].n[2]);
+				}
+			}
 		}
-}
+		mesh->point[i].n[0] = mesh->point[i].n[0] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
+		mesh->point[i].n[1] = mesh->point[i].n[1] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
+		mesh->point[i].n[2] = mesh->point[i].n[2] / sqrt( pow(mesh->point[i].n[0],2) + pow(mesh->point[i].n[1],2) + pow(mesh->point[i].n[2],2) );
+
+	}
+	*/
+
+	for (i = 1; i < mesh->nt ; i++) {
+		for (j = 0; j < 3 ; j++) {
+			for (k = 0; k < 3; k++)
+			{
+				mesh->Normal[mesh->tria[i].v[j]].n[k] += mesh->triaNorm[i].n[k];
+			}
+						
+		}
+	}
+
+	for (i = 1; i < mesh->np; ++i)
+	{
+		norm = sqrt( pow(mesh->Normal[i].n[0],2) + pow(mesh->Normal[i].n[1],2) + pow(mesh->Normal[i].n[2],2) );
+		for (j=0;j<3;j++) {
+			mesh->Normal[i].n[j] *= 1 / norm;
+		}
+	}
+
+	mesh->nn = mesh->np;
+
 	
+
+}
+
 
 
