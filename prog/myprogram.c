@@ -6,6 +6,7 @@
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
+#include "bucket.h"
 
 
 
@@ -276,29 +277,293 @@ int hello(pMesh mesh,int ref) {
 
 int main(int argc,char *argv[]) {
  
-	Mesh	mesh;
+	
+	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n ");
+	fflush(stdin);
+  fscanf(stdin,"%d",&test);
+	
+	
+	/* Rotation 2D */
+	if( test == 1 )
+	{ 
+		Mesh	mesh;
+		float angle ;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Rotation 2D MESH \n\n Please type the angle for the rotation\n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&angle);
+		
+		rotation2D(&mesh, angle)  ;
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveMesh(&mesh) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n The new mesh created is a (name).o.mesh \n");	
+		
+	}
+	/* Rotation 3D */
+	if(test==2)
+	{
+		Mesh	mesh;
+		float angleX,angleY,angleZ ;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Rotation 2D MESH \n\n Please type the angles for the rotation\n angleX = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&angleX);
+		
+		fprintf(stdout,"\n  -- angleY = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&angleY);
+		
+		fprintf(stdout,"\n  -- angleZ = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&angleZ);
+		
+		
+		rotation3D(&mesh, angleX, angleY, angleZ);
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveMesh(&mesh) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n The new mesh created is a (name).o.mesh \n ");	
+	}
+	/* Superposition */
+	if( test == 3 )
+	{
+		Mesh	mesh1,mesh2,mesh3;
+		
+		/* default values */
+		memset(&mesh1,0,sizeof(Mesh));
+		memset(&mesh2,0,sizeof(Mesh));
+		memset(&mesh3,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH1\n");
+  	if ( !parsar(argc,argv,&mesh1) )  return(1);
+  	fprintf(stdout,"\n  -- DATA MESH2\n");
+  	if ( !parsar(argc,argv,&mesh2) )  return(1);
+  	fprintf(stdout,"\n  -- NAME FOR THE NEW MESH \n");
+  	if ( !parsar(argc,argv,&mesh3) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH1 \n");
+		if ( !loadMesh(&mesh1) )  return(1);
+		fprintf(stdout,"\n  -- INPUT DATA MESH2 \n");
+		if ( !loadMesh(&mesh2) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Superposition MESH \n");
+		Superposition(&mesh1,&mesh2 , &mesh3 ) ;
+		if ( ! (&mesh3)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveMesh(&mesh3) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n ");	
+	}
+	
+	/* Translation 2D */
+	if( test == 4 )
+	{
+		Mesh	mesh;
+		float lengthX,lengthY;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Translation 2D MESH \n\n Please type the lengths for the translation\n lengthX = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&lengthX);
+		
+		fprintf(stdout,"\n  -- lengthY = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&lengthY);
 
-  /* default values */
+		translation2D(&mesh, lengthX,lengthY);
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveMesh(&mesh) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n The new mesh created is a (name).o.mesh \n ");	
+	} 
+	/* Translation3D */ 
+	if (test == 5 )
+	{
+		Mesh	mesh;
+		float lengthX,lengthY,lengthZ;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Translation 3D MESH \n\n Please type the lengths for the translation\n lengthX = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&lengthX);
+		
+		fprintf(stdout,"\n  -- lengthY = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&lengthY);
+    
+    fprintf(stdout,"\n  -- lengthZ = ? \n");
+		fflush(stdin);
+    fscanf(stdin,"%f",&lengthZ);
 
-	memset(&mesh,0,sizeof(Mesh));
+		translation3D(&mesh, lengthX,lengthY,lengthZ);
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveMesh(&mesh) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n The new mesh created is a (name).o.mesh \n ");	
+	}
+	/* Courbure 2D */
+	if ( test == 6 )
+	{
+		Mesh	mesh;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Courbure 2D MESH \n\n ");
 
-  /* parse arguments */
-	fprintf(stdout,"\n  -- DATA MESH\n");
-  if ( !parsar(argc,argv,&mesh) )  return(1);
+		if ( ! courbure2D(&mesh)) return(1);
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveSol(&mesh,1) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
+	}
+	/* Courbure 3D */
+	if ( test == 7 )
+	{
+		Mesh	mesh;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Courbure 3D MESH \n\n ");
 
-  /* read data */
-
-  fprintf(stdout,"\n  -- INPUT DATA MESH \n");
-  if ( !loadMesh(&mesh) )  return(1);
-  fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		if ( ! courbure3D(&mesh)) return(1);
+		if ( ! (&mesh)) return(1);
+		
+		/* save mesh */
+		fprintf(stdout,"\n  -- OUTPUT DATA\n");
+  	if ( !saveSol(&mesh,1) )  return(1);
+  	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
+	}	
+	if ( test == 8 ) 
+	{
+		Mesh	mesh;
+		Bucket bucket ;
+		int N;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  	if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  	 /* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		/* FUNCTION */
+		fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
+		fflush(stdin);
+    fscanf(stdin,"%d",&N);
+    bucket.size = N ;
+    
+		init_bucket( &bucket , &mesh); 
+		fill_bucket( &bucket , &mesh , N) ;
+		free_bucket (&bucket) ;
+		
+		if ( ! (&mesh)) return(1);
+		
+	
+  	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
+	}
+	
+	
 
 	
-	fprintf(stdout,"\n  -- COURBURE MESH \n");
-	if ( !courbure3D(&mesh) ) return (1) ;
 
-	if ( ! (&mesh)) return(1);
+ 
+
+ 
+
+	
+	
+	/*if ( !courbure2D(&mesh) ) return (1) ;
+	if ( !saveSol(&mesh,1) )  return(1);
+	*/
 
 	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
 
@@ -309,10 +574,8 @@ int main(int argc,char *argv[]) {
 
 // Tupac : write data into a new file
 
-  fprintf(stdout,"\n  -- OUTPUT DATA\n");
-  if ( !saveSol(&mesh,1) )  return(1);
-  fprintf(stdout,"  -- WRITING COMPLETED\n");	
-
+ 
+	
 
   return(0);
 }

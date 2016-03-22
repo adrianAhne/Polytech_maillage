@@ -3,7 +3,8 @@ CC=gcc
 OBJS= \
 	myprogram.o \
 	libmesh5.o \
-	groupfunctions.o
+	groupfunctions.o \
+	bucket.o
 
 all: myprogram
 
@@ -15,7 +16,9 @@ libmesh5: libmesh.c
 
 groupfunctions: groupfunctions.c libmesh.c
 	$(CC) -c groupfunctions.c libmesh.c -o groupfunctions.o
-
+	
+bucket: bucket.c 
+	$(CC) -c bucket.c -o bucket.o -lm 
 clean:
 	$(RM) -r $(OBJS) myprogram
 
