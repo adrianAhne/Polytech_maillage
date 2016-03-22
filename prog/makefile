@@ -5,7 +5,8 @@ OBJS= \
 	libmesh5.o \
 	groupfunctions.o \
 	distanceMeshFunctions.o \
-	bucket.o
+	bucket.o \
+	hash.o
 
 
 all: myprogram
@@ -18,10 +19,12 @@ libmesh5: libmesh.c
 
 groupfunctions: groupfunctions.c libmesh.c
 	$(CC) -c groupfunctions.c libmesh.c -o groupfunctions.o
-
 	
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o -lm 
+
+hash: hash.c 
+	$(CC) -c hash.c -o bucket.o -lm
 
 clean:
 	$(RM) -r $(OBJS) myprogram

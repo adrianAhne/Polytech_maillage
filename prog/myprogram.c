@@ -300,7 +300,7 @@ int main(int argc,char *argv[]) {
 	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n ");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n ");
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
 	
@@ -570,7 +570,26 @@ int main(int argc,char *argv[]) {
   	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
 	}
 	
-	
+	if ( test == 9 )
+	{
+		Mesh	mesh;
+		int N;
+		double result;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		result = distPointToTriangle(&mesh, &mesh.tria[1], &mesh.point[mesh.tria[1].v[0]]);
+		printf("%f\n", result);
+	}
 
 	
 

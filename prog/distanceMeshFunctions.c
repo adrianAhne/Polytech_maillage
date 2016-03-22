@@ -380,9 +380,9 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
     {
         sqrDistance = 0;
     }
-    printf("before dist : %f\n", sqrDistance);
+    
     dist = sqrt(sqrDistance);
-    printf("after dist : %f\n", dist);
+    printf("Distance from point to triangle : %f\n", dist);
 
     return dist;
 
