@@ -537,15 +537,12 @@ int main(int argc,char *argv[]) {
   	if ( !saveSol(&mesh,1) )  return(1);
   	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
 	}	
-	if ( test == 8 ) 
+if ( test == 8 ) 
 	{
 		Mesh	mesh;
-		Bucket bucket ;
-		int N,indice =0;
-		
-		
-				
-		Point point;
+		Bucket bucket;
+		int N,indice =5207;
+    Point point;
 		               
 	
 		
@@ -561,15 +558,16 @@ int main(int argc,char *argv[]) {
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		
-		int resultat[mesh.np] ;
 		                                        
 			/* init point */
-		point.c[0] = 0.41432445094678499      ;
+		point.c[0] =  0.41432445094678499   ;
 		point.c[1] =  0.57143129563128348   ;
-		point.c[2] =   0.26905281038150675   ;
+		point.c[2] =  0.26905281038150675   ;
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
+    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
+    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
 		
 		
 		/* FUNCTION */
@@ -577,31 +575,25 @@ int main(int argc,char *argv[]) {
 		fflush(stdin);
     fscanf(stdin,"%d",&N);
     bucket.size = N ;
-    int i = max(0,(int)(N*point.c[0])-1) ; 
+    int i = max(0,(int)(N*point.c[0])-1) ;
 		int j = max(0,(int)(N*point.c[1])-1) ;
 		int k = max(0,(int)(N*point.c[2])-1) ;
-				fprintf(stdout," i = %d \n " , i ) ;
-		fprintf(stdout," j = %d \n " , j ) ;
-		fprintf(stdout," k = %d \n " , k ) ;
+    fprintf(stdout," i = %d p = %f  \n " , i, point.c[0]) ;
+		fprintf(stdout," j = %d p = %f  \n " , j , point.c[1]) ;
+		fprintf(stdout," k = %d  p = %f \n " , k , point.c[2]) ;
     fprintf(stdout, " key point = %d \n", (j*N+k)*N+i) ;
-    positive_boundingbox( &mesh , &point );
+    //positive_boundingbox( &mesh , &point );
 		init_bucket( &bucket , &mesh); 
 		fill_bucket( &bucket , &mesh ) ;
-		use_bucket( &bucket , &point , resultat) ;
-		free_bucket (&bucket) ;
+    use_bucket( &bucket , &mesh, &point);
+		free_bucket (&bucket);
 		
-		/* affichage des points */
-		while ( resultat[indice] != 0 )
-		{
-			fprintf(stdout, " points = %d \n " , resultat[indice] ) ;
-			indice ++ ;
-		}
+		//if ( ! (&mesh)) return(1);
+    
 		
-		if ( ! (&mesh)) return(1);
-		
-	
-  	fprintf(stdout,"  -- WRITING COMPLETED\n \n ");		
+    fprintf(stdout,"  -- WRITING COMPLETED\n \n ");
 	}
+
 	
 	if ( test == 9 )
 	{
