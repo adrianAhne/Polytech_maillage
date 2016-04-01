@@ -16,41 +16,30 @@
 
 void init_bucket ( pBucket bucket , pMesh mesh)
 {
-	int i ;
-	bucket->head = calloc(pow(bucket->size,3),sizeof(int));
-	bucket->link = calloc(mesh->np , sizeof(int));
 	
-	for ( i=0 ; i<  pow(bucket->size,3) ; i ++ )
-	{
-		bucket->head[i] = 0;
-	}
+	bucket->head = calloc(pow(bucket->size,3)+1,sizeof(int));
+	bucket->link = calloc(mesh->np+1 , sizeof(int));
 	
 }
 
 void fill_bucket( pBucket bucket , pMesh mesh)
 {
-	int indice,i,j,k, key  ;
+	int indice,i,j,k, key;
 	
 
 	/* go through all the points of the mesh */
-	/*for ( indice = 1 ; indice <= mesh->np ; indice ++ )
-	{ 	*/
+	for ( indice = 1 ; indice <= mesh->np ; indice ++ )
+	{
 	
-		
-		/* calcul i,j,k */
-		i = max(0,(int)(bucket->size*mesh->point[5207].c[0])-1) ; 
-		j = max(0,(int)(bucket->size*mesh->point[5207].c[1])-1) ;
-		k = max(0,(int)(bucket->size*mesh->point[5207].c[2])-1) ;
-		fprintf(stdout," i = %d \n " , i ) ;
-		fprintf(stdout," j = %d \n " , j ) ;
-		fprintf(stdout," k = %d \n " , k ) ;
-		
+    /* calcul i,j,k */
+		i = max( 0, (int)(bucket->size*mesh->point[5207].c[0]) -1) ;
+		j = max( 0, (int)(bucket->size*mesh->point[5207].c[1]) -1) ;
+		k = max( 0, (int)(bucket->size*mesh->point[5207].c[2]) -1) ;
 		
 		
 		/* calcul of the key */ 
 		key = (j*bucket->size+k)*bucket->size+i ;
-		if ( key == 1205 )
-			fprintf(stdout," indice = %d \n " , indice ) ;
+			
 		
 		/* we test the key in the bucket */
 		
@@ -65,7 +54,7 @@ void fill_bucket( pBucket bucket , pMesh mesh)
 			bucket->head[key] = indice ;
 		}
 		
-	//}
+	 }
 	/* end for */
 	
 }
@@ -207,17 +196,17 @@ int use_bucket_around(pBucket bucket,pPoint point,int increment, int* resultat ,
 /* FUNCTION use_bucket 
 		This function will use the coordinates of a point and associate the key.
 		With this key, we will define the neighbourhood  of the point.
-		Parameters : the bucket and a point 
-		Return : a tab of the nearest points 
+		Parameters : the bucket the mesh  and a point
+		Return : the point in the bucket
 */
 
-void use_bucket( pBucket bucket , pPoint point, int* resultat ) 
+void use_bucket( pBucket bucket , pMesh mesh ,  pPoint point )
 {
 		
 		
-		int i,j,k,key,N,cherche,indice = 0 , increment = 0 ; 
-		
-		//fprintf(stdout,"  point->c[0] = %.17f \n",point->c[0]);
+		int i,j,k,key,N,cherche,indice = 0 , increment = 0 ;
+    pPoint  pp1;
+  
 			/* calcul i,j,k */
 		i = max(0,(int)(bucket->size*point->c[0])-1) ; 
 		j = max(0,(int)(bucket->size*point->c[1])-1) ;
@@ -225,32 +214,31 @@ void use_bucket( pBucket bucket , pPoint point, int* resultat )
 		
 		key = (j*bucket->size+k)*bucket->size+i ;
 		//fprintf(stdout,"  key = %d \n",key);
-		int newkey = key ;
 		
 		
 		
 		/* we check if the tab head has a point in it */
-		if ( bucket->head[key] != 0 )
+		if ( bucket->head[key] )
 		{
+      
+      cherche = bucket->head[key];
+      pp1 = &mesh->point[cherche];
+      if(cherche == 5207)
+      fprintf(stdout,"  Point in Bucket head  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
 			
-			resultat[indice] =  bucket->head[key] ;
-			indice ++ ;
-			cherche = bucket->head[key] ;
-			while( bucket->link[ cherche ] != 0 )
+			while( bucket->link[ cherche ])
 			{
-				cherche =  bucket->link[ cherche ] ;
-				resultat[indice] = bucket->link[ cherche ] ;
-				indice ++ ;
+				cherche = bucket->link[cherche] ;
+         pp1 = &mesh->point[cherche];
+        if(cherche ==5207 )
+        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
 				
 			}
 		} 
 		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
 		else
-		{
-			increment ++ ;
-			indice = use_bucket_around(bucket,point,increment,resultat,key,newkey);
-		}
-		
+     
+      fprintf(stdout,"  The point is not in the current cell \n");
 		
 }
 
