@@ -39,8 +39,36 @@ void init_bucket( pBucket bucket , pMesh mesh) ;
 			End boucle
 			
 */
-			
-void fill_bucket( pBucket bucket , pMesh mesh , int N) ;
+void fill_bucket( pBucket bucket , pMesh mesh ) ;
+
+/* FUNCTION use_bucket_around  ( To search around ) 
+		This function will search the neighbourhood for the point in the subdomains around the main subdomains.
+		For this we will add one to the key or minus one
+		Parameters : The bucket , the point , an increment
+*/
+int use_bucket_around(pBucket bucket,pPoint point,int increment, int* resultat,int key, int newkey);
+
+/* FUNCTION use_bucket 
+		This function will use the coordinates of a point and associate the key.
+		With this key, we will define the neighbourhood  of the point.
+		Parameters : the bucket and a point 
+		Return : a tab of the nearest points 
+*/
+
+void use_bucket( pBucket bucket , pPoint point, int* resultat )  ;
+
+
+/* FUNCTION positive_boundingbox 
+This function will translate the mesh using the 3D translation function in order to have a bounding box in the positive part of the axis (x,y,z)
+PARAMETERS : a pointer to a mesh 
+*/
+void positive_boundingbox( pMesh mesh , pPoint point);
+
+/* FUNCTION point_min 
+In order to determine the minimum point  
+PARAMETERS : a pMesh , a char for the axis
+*/
+double point_min (pMesh mesh , char axis);
 
 /* FUNCTION free_bucket */
 void free_bucket (pBucket bucket) ;

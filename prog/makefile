@@ -9,7 +9,8 @@ OBJS= \
 	rotation.o \
 	normale.o \
 	distanceMeshFunctions.o \
-	bucket.o
+	bucket.o \
+	hash.o
 
 
 all: myprogram
@@ -19,6 +20,7 @@ myprogram: $(OBJS)
 
 libmesh5: libmesh.c
 	$(CC) -c libmesh5.c -o libmesh.o
+
 
 courbure: courbure.c libmesh.c
 	$(CC) -c courbure.c libmesh.c -o courbure.o $(CFLAG)
@@ -38,8 +40,13 @@ normale: normale.c libmesh.c
 distanceMeshFunctions: distanceMeshFunctions.c libmesh.c
 	$(CC) -c distanceMeshFunctions.c libmesh.c -o distanceMeshFunctions.o $(CFLAG)
 		
+
+
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
+
+hash: hash.c 
+	$(CC) -c hash.c -o bucket.o -lm
 
 clean:
 	$(RM) -r $(OBJS) myprogram
