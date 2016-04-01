@@ -23,9 +23,9 @@ int loadMesh(pMesh mesh) {
   float      fp1,fp2,fp3;
   int        k,i,inm,ia;
   char      *ptr,data[256];
-	fprintf(stdout,"ici\n");
+
   strcpy(data,mesh->namein);
-	fprintf(stdout,"là\n");
+	
 	/* test if we have a ".mesh"*/
   ptr = strstr(data,".mesh");
   if ( !ptr ) {
@@ -90,7 +90,7 @@ int loadMesh(pMesh mesh) {
       GmfGetLin(inm,GmfVertices,&ppt->c[0],&ppt->c[1],&ppt->c[2],&ppt->ref);
 		
   }
-
+	fprintf(stdout, " the xmax is %f \n ", xmax ) ;
 	/* Center of the mesh*/
 	mesh->o[0] = 0.5 * (xmin+xmax); 
 	mesh->o[1] = 0.5 * (ymin+ymax); 
@@ -541,7 +541,14 @@ int main(int argc,char *argv[]) {
 	{
 		Mesh	mesh;
 		Bucket bucket ;
-		int N;
+		int N,indice =0;
+		
+		
+				
+		Point point;
+		               
+	
+		
 		/* default values */
 		memset(&mesh,0,sizeof(Mesh));
 		
@@ -554,15 +561,41 @@ int main(int argc,char *argv[]) {
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		
+		int resultat[mesh.np] ;
+		                                        
+			/* init point */
+		point.c[0] = 0.41432445094678499      ;
+		point.c[1] =  0.57143129563128348   ;
+		point.c[2] =   0.26905281038150675   ;
+	
+		
+		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
+		
+		
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
 		fflush(stdin);
     fscanf(stdin,"%d",&N);
     bucket.size = N ;
-    
+    int i = max(0,(int)(N*point.c[0])-1) ; 
+		int j = max(0,(int)(N*point.c[1])-1) ;
+		int k = max(0,(int)(N*point.c[2])-1) ;
+				fprintf(stdout," i = %d \n " , i ) ;
+		fprintf(stdout," j = %d \n " , j ) ;
+		fprintf(stdout," k = %d \n " , k ) ;
+    fprintf(stdout, " key point = %d \n", (j*N+k)*N+i) ;
+    positive_boundingbox( &mesh , &point );
 		init_bucket( &bucket , &mesh); 
-		fill_bucket( &bucket , &mesh , N) ;
+		fill_bucket( &bucket , &mesh ) ;
+		use_bucket( &bucket , &point , resultat) ;
 		free_bucket (&bucket) ;
+		
+		/* affichage des points */
+		while ( resultat[indice] != 0 )
+		{
+			fprintf(stdout, " points = %d \n " , resultat[indice] ) ;
+			indice ++ ;
+		}
 		
 		if ( ! (&mesh)) return(1);
 		
