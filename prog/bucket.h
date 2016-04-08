@@ -55,7 +55,7 @@ int use_bucket_around(pBucket bucket,pPoint point,int increment, int* resultat,i
 		Return : a tab of the nearest points 
 */
 
-void use_bucket( pBucket bucket , pMesh,  pPoint point)  ;
+int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )  ;
 
 
 /* FUNCTION positive_boundingbox 

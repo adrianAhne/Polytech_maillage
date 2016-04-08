@@ -43,7 +43,7 @@ void fill_bucket( pBucket bucket , pMesh mesh)
 		
 		/* we test the key in the bucket */
 		
-		if ( bucket->head[key] == 0 )
+		if ( !bucket->head[key]  )
 		{
 			
 			bucket->head[key] = indice ;
@@ -136,81 +136,24 @@ void positive_boundingbox( pMesh mesh , pPoint point)
 	
 }
 
-/* FUNCTION use_bucket_around 
-		This function will search the neighbourhood for the point in the subdomains around the main subdomains.
-		For this we will add one to the key or minus one
-		Parameters : The bucket , the point , an increment
-*/
-int use_bucket_around(pBucket bucket,pPoint point,int increment, int* resultat , int key , int newkey )
-{
-		
-		int i,j,k,cherche, indice = 0 ; 
-		int N  ;
-		N = bucket -> size ;
-			/* calcul i,j,k */
-		if ( newkey < 0 )
-			newkey = 0 ;
-		
-		
-	/*	fprintf(stdout,"  newkey= %d \n",newkey);
-		fprintf(stdout,"  resultat[indice] = %d \n",resultat[indice]);
-		fprintf(stdout,"  bucket->head[key] = %d \n",bucket->head[newkey]);*/
-		/* we check if the tab head has a point in it */
-		if ( bucket->head[newkey] != 0 )
-		{
-			resultat[indice] =  bucket->head[newkey] ;
-			indice ++ ;
-			cherche = bucket->head[newkey] ;
-			while( bucket->link[ cherche ] != 0 )
-			{
-			//	fprintf(stdout,"  bucket->link[cherche] = %d \n",bucket->link[cherche]);
-				cherche =  bucket->link[ cherche ] ;
-				resultat[indice] = bucket->link[ cherche ] ;
-				indice ++ ;
-				
-			}
-		} 
-		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
-		else
-		{
-			if ( increment > 0 )
-			{
-				increment = (-increment) ;
-				
-				newkey = key + increment  ;
-				indice = use_bucket_around(bucket,point,increment,resultat,key,newkey);
-			}
-			else 
-			{
-				increment = (-increment ) ;
-				increment ++  ;
-				
-				newkey = key + increment ; 
-				indice = use_bucket_around(bucket,point,increment,resultat,key,newkey);
-			}
-		}
-		
-		return indice ;
-
-}
 /* FUNCTION use_bucket 
 		This function will use the coordinates of a point and associate the key.
 		With this key, we will define the neighbourhood  of the point.
 		Parameters : the bucket the mesh  and a point
-		Return : the point in the bucket
+		Return : the point in the bucket ( indice )
 */
 
-void use_bucket( pBucket bucket , pMesh mesh ,  pPoint point )
+int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 {
 		
 		
-		int i,j,k,key,N,cherche,indice = 0 , increment = 0 ;
-    pPoint  pp1;
+		int i,j,k,key,N,cherche,indice = 0 , ret ;
+    pPoint  pp1,pp2;
   
 			/* calcul i,j,k */
-		i = max(0,(int)(bucket->size*point->c[0])-1) ; 
-		j = max(0,(int)(bucket->size*point->c[1])-1) ;
-		k = max(0,(int)(bucket->size*point->c[2])-1) ;
+		i = max(0,(int)(bucket->size*point->c[0])-1) + increment ; 
+		j = max(0,(int)(bucket->size*point->c[1])-1) + increment;
+		k = max(0,(int)(bucket->size*point->c[2])-1) + increment;
 		
 		key = (j*bucket->size+k)*bucket->size+i ;
 		//fprintf(stdout,"  key = %d \n",key);
@@ -220,25 +163,35 @@ void use_bucket( pBucket bucket , pMesh mesh ,  pPoint point )
 		/* we check if the tab head has a point in it */
 		if ( bucket->head[key] )
 		{
+      fprintf(stdout,"  Point in Bucket head \n ");
+      ret     = bucket->head[key];
+      cherche = ret ;
+      pp1     = &mesh->point[cherche];
       
-      cherche = bucket->head[key];
-      pp1 = &mesh->point[cherche];
-      if(cherche == 5207)
-      fprintf(stdout,"  Point in Bucket head  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
-			
+      
+			/* on affiche les points du même subdomain */
 			while( bucket->link[ cherche ])
 			{
 				cherche = bucket->link[cherche] ;
-         pp1 = &mesh->point[cherche];
-        if(cherche ==5207 )
-        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
+        pp2 = &mesh->point[cherche];
+        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
+        indice ++ ;
 				
 			}
+			
 		} 
 		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
 		else
-     
+    {
       fprintf(stdout,"  The point is not in the current cell \n");
+      increment ++ ;
+      ret = use_bucket( bucket , mesh , point , increment ) ; 
+    }
+     pp1     = &mesh->point[ret];
+    fprintf(stdout," indice = %d \n" , indice );
+    fprintf(stdout,"  Point in Bucket head  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
+    return ret ;
+    
 		
 }
 

@@ -560,9 +560,9 @@ if ( test == 8 )
 		
 		                                        
 			/* init point */
-		point.c[0] =  0.41432445094678499   ;
-		point.c[1] =  0.57143129563128348   ;
-		point.c[2] =  0.26905281038150675   ;
+		point.c[0] =  0.4   ;
+		point.c[1] =  0.5  ;
+		point.c[2] =  0.3  ;
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
@@ -585,7 +585,7 @@ if ( test == 8 )
     //positive_boundingbox( &mesh , &point );
 		init_bucket( &bucket , &mesh); 
 		fill_bucket( &bucket , &mesh ) ;
-    use_bucket( &bucket , &mesh, &point);
+    use_bucket( &bucket , &mesh, &point , 0.0 );
 		free_bucket (&bucket);
 		
 		//if ( ! (&mesh)) return(1);
