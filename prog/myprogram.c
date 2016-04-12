@@ -559,22 +559,23 @@ if ( test == 8 )
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		
 		                                        
-			/* init point */
-		point.c[0] =  0.4   ;
-		point.c[1] =  0.5  ;
-		point.c[2] =  0.3  ;
+			/* init point */            
+		point.c[0] =  -3.29169692485065  ;
+		point.c[1] =  -1.6280599609887  ;
+		point.c[2] =  1.58560780723174  ;
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
     fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
     fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
 		
-		
+		positive_boundingbox( &mesh , &point );
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
 		fflush(stdin);
     fscanf(stdin,"%d",&N);
     bucket.size = N ;
+    printf(" size = %d ", bucket.size);
     int i = max(0,(int)(N*point.c[0])-1) ;
 		int j = max(0,(int)(N*point.c[1])-1) ;
 		int k = max(0,(int)(N*point.c[2])-1) ;
@@ -582,7 +583,7 @@ if ( test == 8 )
 		fprintf(stdout," j = %d p = %f  \n " , j , point.c[1]) ;
 		fprintf(stdout," k = %d  p = %f \n " , k , point.c[2]) ;
     fprintf(stdout, " key point = %d \n", (j*N+k)*N+i) ;
-    //positive_boundingbox( &mesh , &point );
+    
 		init_bucket( &bucket , &mesh); 
 		fill_bucket( &bucket , &mesh ) ;
     use_bucket( &bucket , &mesh, &point , 0.0 );

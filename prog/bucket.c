@@ -32,14 +32,15 @@ void fill_bucket( pBucket bucket , pMesh mesh)
 	{
 	
     /* calcul i,j,k */
-		i = max( 0, (int)(bucket->size*mesh->point[5207].c[0]) -1) ;
-		j = max( 0, (int)(bucket->size*mesh->point[5207].c[1]) -1) ;
-		k = max( 0, (int)(bucket->size*mesh->point[5207].c[2]) -1) ;
-		
-		
+		i = max( 0, (int)(bucket->size*mesh->point[indice].c[0]) -1) ;
+		j = max( 0, (int)(bucket->size*mesh->point[indice].c[1]) -1) ;
+		k = max( 0, (int)(bucket->size*mesh->point[indice].c[2]) -1) ;
+	/*	printf( " mesh->point[%d].c[0] = %f \n", indice,mesh->point[indice].c[0]);
+		printf( " mesh->point[%d].c[1] = %f \n", indice,mesh->point[indice].c[1]);
+		printf( " mesh->point[%d].c[2] = %f \n", indice,mesh->point[indice].c[2]);*/
 		/* calcul of the key */ 
 		key = (j*bucket->size+k)*bucket->size+i ;
-			
+		printf("key = %d \n",key);
 		
 		/* we test the key in the bucket */
 		
@@ -112,26 +113,37 @@ void positive_boundingbox( pMesh mesh , pPoint point)
 	/* First of all we have to determine the length of the translation */
 	/* so we determine the bounding box */
 	xmin = point_min ( mesh , 'x');
+	printf( "xmin = %f \n" , fabs(xmin) );
 	ymin = point_min ( mesh , 'y');
+	printf( "ymin = %f \n" , ymin );
 	zmin = point_min ( mesh , 'z');
+	printf( "zmin = %f \n" , zmin );
 	//fprintf(stdout , " xmin = %f \n ymin = %f \n zmin = %f \n", xmin , ymin , zmin ) ;
-	
-	if ( xmin >= 0 )
-		xmin = 0 ;
-	if ( ymin >= 0 )
-		ymin = 0 ;
-	if ( zmin >= 0 )
-		zmin = 0 ;
+	if ( xmin < 0 || ymin < 0 || zmin < 0 ) 
+	{
 		
-	/* now we translate */
-	translation3D(mesh, abs(xmin), abs(ymin), abs(zmin));	
+		/* now we translate */
+		translation3D(mesh, fabs(xmin), fabs(ymin), fabs(zmin));
+		
 	
-	/* and the point */
-	point->c[0] += xmin ;
-	point->c[1] += ymin ;
-	point->c[2] += zmin ;
 	
+		/* and the point */
+		point->c[0] = (point->c[0] + fabs(xmin))/10 ;
+		point->c[1] = (point->c[1] + fabs(ymin))/10 ;
+		point->c[2] = (point->c[2] + fabs(zmin))/10 ;
+	}
+	printf ( "nombre de points = %d  \n",mesh->np);
 	/* from now on we have a positive bounding box: GOOD */
+	/* NOT REALLY */
+	/* now between 0 and 1 */
+	int i ;
+	for ( i = 1; i <=  mesh->np ; i++ )
+	{
+	
+		mesh->point[i].c[0] = mesh->point[i].c[0] /10 ;
+		mesh->point[i].c[1] = mesh->point[i].c[1] /10 ;
+		mesh->point[i].c[2] = mesh->point[i].c[2] /10 ;
+	} 
 	
 	
 }
@@ -151,14 +163,17 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
     pPoint  pp1,pp2;
   
 			/* calcul i,j,k */
-		i = max(0,(int)(bucket->size*point->c[0])-1) + increment ; 
-		j = max(0,(int)(bucket->size*point->c[1])-1) + increment;
-		k = max(0,(int)(bucket->size*point->c[2])-1) + increment;
+		i = max(0,(int)((bucket->size)*(point->c[0]))-1) + increment ; 
+		//printf( " increment = %d \n",increment);
+		j = max(0,(int)((bucket->size)*(point->c[1]))-1) + increment;
+		//printf( " j = %d \n",j);
+		k = max(0,(int)((bucket->size)*(point->c[2]))-1) + increment;
+		//printf( " k = %d \n",k);
 		
 		key = (j*bucket->size+k)*bucket->size+i ;
 		//fprintf(stdout,"  key = %d \n",key);
 		
-		
+		//fprintf(stdout, "ici\n" ) ;
 		
 		/* we check if the tab head has a point in it */
 		if ( bucket->head[key] )
