@@ -19,9 +19,15 @@ typedef struct {
 } Hedge;
 typedef Hedge * pHedge;
 
-int hashHedge(pMesh mesh);
+int hashHedge(pMesh mesh, pHedge tab);
 
-int setAdj(pMesh mesh);
+int setAdj(pMesh mesh, pHedge tab);
+
+int localiseTriangleBruteForce(pMesh mesh, pPoint point);
+
+void baryCoord(pMesh mesh, int triangle, pPoint p, double cb[3]);
+
+int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 
 
 #endif

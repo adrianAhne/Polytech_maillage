@@ -10,6 +10,7 @@
 #include "distanceMeshFunctions.h"
 
 #include "bucket.h"
+#include "hash.h"
 
 
 
@@ -300,7 +301,7 @@ int main(int argc,char *argv[]) {
 	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n ");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n");
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
 	
@@ -617,7 +618,31 @@ if ( test == 8 )
 		printf("%f\n", result);
 	}
 
-	
+	if (test == 10)
+	{
+		Mesh	mesh;
+		int N,i;
+		double result;
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
+		hashHedge(&mesh, tab);
+		setAdj(&mesh, tab);
+		// Test de la fonction qui localise un point dans un triangle en brute force
+		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[15].v[1]]));
+		
+
+	}
 
  
 

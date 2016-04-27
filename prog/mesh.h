@@ -45,6 +45,7 @@ typedef struct {
   pEdge     edge;
   pTria     tria;
   pTriaNorm triaNorm;
+  int *adja;
 } Mesh;
 typedef Mesh * pMesh;
 
