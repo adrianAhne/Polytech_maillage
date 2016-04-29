@@ -46,7 +46,7 @@ bucket: bucket.c
 	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
 
 hash: hash.c 
-	$(CC) -c hash.c -o bucket.o -lm
+	$(CC) -c hash.c -o bucket.o $(CFLAG)
 
 clean:
 	$(RM) -r $(OBJS) myprogram

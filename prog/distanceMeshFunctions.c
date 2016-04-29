@@ -200,7 +200,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
     s = b*e - c*d;
     t = b*d - a*e;
 
-    printf("%f %f %f %f %f %f %f %f %f\n", a,b,c,d,e,f,det,s,t);
+    //printf("%f %f %f %f %f %f %f %f %f\n", a,b,c,d,e,f,det,s,t);
 
     if ((s+t) <= det) {
         if (s < 0) {

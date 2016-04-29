@@ -623,6 +623,9 @@ if ( test == 8 )
 		Mesh	mesh;
 		int N,i;
 		double result;
+
+		double cb[3] = {.0,.0,.0};
+
 		/* default values */
 		memset(&mesh,0,sizeof(Mesh));
 		
@@ -640,6 +643,10 @@ if ( test == 8 )
 		setAdj(&mesh, tab);
 		// Test de la fonction qui localise un point dans un triangle en brute force
 		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[15].v[1]]));
+
+		// Test de la fonction qui localise un point dans une triangle grace aux fonctions d'approche
+		//int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
+		printf("%d\n", locelt(&mesh, 4, &mesh.point[mesh.tria[2].v[1]], cb));
 		
 
 	}

@@ -152,31 +152,44 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 {
 	// distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 	int triaRef = startTriangle;
-	pTria t = mesh->tria[triaRef];
+	pTria t = &mesh->tria[triaRef];
 
 	double distOld = 1e20;
 	double distCurrent;
 	int refClosest = 0;
-	int i;
+	int i, it = 0;
 
 	while(1)
 	{
 		baryCoord(mesh, triaRef, p, cb);
-		if (cb[0] > 0 && cb[1] > 0 && cb[2] > 0)
+		if (cb[0] >= 0 && cb[1] >= 0 && cb[2] >= 0)
 		{
 			return triaRef;
 		} else {
 			for(i=0; i<3; i++)
 			{
-				t = mesh->adja[3*triaRef + i];
+				t = &mesh->tria[mesh->adja[3*triaRef + i]];
+				printf("Triangle numero %d\n", mesh->adja[3*triaRef + i]);
 				distCurrent = distPointToTriangle(mesh, t, p);
+				
 				if (distCurrent < distOld)
 				{
 					distOld = distCurrent;
 					triaRef = mesh->adja[3*triaRef + i];
 					break;
 				}
+				if (i == 2)
+				{
+					return 0; 
+					// c'est à dire que parmis les voisins d'un triangle, il n'a pas trouvé un voisin qui est plus proche
+					// donc s'il continue il va s'éloigner du traingle à chercher
+				}
 			}
+		}
+		it++;
+		if (it > 1000)
+		{
+			return 0;
 		}
 	}
 }
