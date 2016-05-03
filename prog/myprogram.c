@@ -640,18 +640,46 @@ if ( test == 8 )
 
 		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
 		hashHedge(&mesh, tab);
+		for (i = 0; i < 3*mesh.nt+1; ++i)
+		{
+			printf("%d : %d %d %d %d %d\n", i, tab[i].ia, tab[i].ib, tab[i].adj1, tab[i].adj2, tab[i].nxt);
+		}
 		setAdj(&mesh, tab);
+		for (i = 0; i < 3; ++i)
+		{
+			printf("%d\n", mesh.adja[3*(5-1)+1+i]);
+		}		
 		// Test de la fonction qui localise un point dans un triangle en brute force
-		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[15].v[1]]));
+		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[5].v[1]]));
 
 		// Test de la fonction qui localise un point dans une triangle grace aux fonctions d'approche
 		//int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
-		printf("%d\n", locelt(&mesh, 4, &mesh.point[mesh.tria[2].v[1]], cb));
+		printf("%d\n", locelt(&mesh, 5, &mesh.point[mesh.tria[345].v[1]], cb));
 		
 
 	}
 
- 
+	//Normales
+ 	if (test == 11)
+ 	{
+ 		Mesh	mesh;
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		normalesOfTriangles(&mesh);
+		mesh.nameout = "normales.mesh";
+		saveMesh(&mesh);
+ 	}
 
  
 

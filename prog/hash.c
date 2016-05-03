@@ -28,11 +28,18 @@ int hashHedge(pMesh mesh, pHedge tab)
 			adj = 3*i+j;
 			if (tab[key].adj1 == 0)
 			{
-				tab[key].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-				tab[key].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-				tab[key].adj1 = adj;
+				// modif 30 avril 
+				if (MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]) != 0 && MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]) != 0)
+				{
+					tab[key].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
+					tab[key].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
+					tab[key].adj1 = adj;
+				}
+				//tab[key].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
+				//tab[key].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
+				//tab[key].adj1 = adj;
 			} else {
-				while(tab[key].adj1)
+				while(tab[key].adj1 > 0)
 				{
 					// Doit-on regarder tab[key].nxt ou peut-il y avoir qq chose sur tab[key]
 					if ((tab[key].ia == MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])) && (tab[key].ib == MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])))
@@ -52,7 +59,6 @@ int hashHedge(pMesh mesh, pHedge tab)
 							key = tab[key].nxt;
 						}
 					}
-					
 				}
 			}
 		}
@@ -71,7 +77,7 @@ int setAdj(pMesh mesh, pHedge tab)
 	// 3 arrêt per triangle
 	mesh->adja = (int *)calloc(3*mesh->nt+1,sizeof(int));
 
-	for(i=1; i<mesh->nt; i++)
+	for(i=1; i<=mesh->nt; i++)
 	{
 		for(j=0; j<3; j++)
 		{
@@ -153,7 +159,7 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 	// distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 	int triaRef = startTriangle;
 	pTria t = &mesh->tria[triaRef];
-
+	printf("Tria = %d\n", t->v[0]);
 	double distOld = 1e20;
 	double distCurrent;
 	int refClosest = 0;
@@ -168,19 +174,21 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 		} else {
 			for(i=0; i<3; i++)
 			{
-				t = &mesh->tria[mesh->adja[3*triaRef + i]];
-				printf("Triangle numero %d\n", mesh->adja[3*triaRef + i]);
+
+				t = &mesh->tria[mesh->adja[3*(triaRef-1) + 1 + i]];
+				assert(mesh->adja[3*(triaRef-1) + 1 + i] <= 3*mesh->nt);
+				printf("Triangle numero %d\n", mesh->adja[3*(triaRef-1) + 1 + i]);
 				distCurrent = distPointToTriangle(mesh, t, p);
 				
 				if (distCurrent < distOld)
 				{
 					distOld = distCurrent;
-					triaRef = mesh->adja[3*triaRef + i];
+					triaRef = mesh->adja[3*(triaRef-1) + 1 + i];
 					break;
 				}
 				if (i == 2)
 				{
-					return 0; 
+					return -2; 
 					// c'est à dire que parmis les voisins d'un triangle, il n'a pas trouvé un voisin qui est plus proche
 					// donc s'il continue il va s'éloigner du traingle à chercher
 				}
@@ -189,7 +197,7 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 		it++;
 		if (it > 1000)
 		{
-			return 0;
+			return -1;
 		}
 	}
 }

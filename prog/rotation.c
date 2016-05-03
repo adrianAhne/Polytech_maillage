@@ -20,7 +20,6 @@ void rotation2D(Mesh *mesh, double angle)
 		double x,y;
 		// Check if 2D or 3D
 		
-
 		x = ppt->c[0] * cos(angle) - ppt->c[1] * sin(angle);
 		y = ppt->c[1] * cos(angle) + ppt->c[0] * sin(angle);
 
