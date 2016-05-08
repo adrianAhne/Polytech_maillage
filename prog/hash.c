@@ -10,68 +10,106 @@
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
-int hashHedge(pMesh mesh, pHedge tab)
+unsigned char idir[5]     = {0,1,2,0,1};
+
+int hashHedge(pMesh mesh, Hedge *tab)
 {
-	int i,j,k;
-
-	int hnxt = mesh->np + 1;
-	int hsize = mesh->np;
-	int key;
-	int adj;
-
-
-	for(i=1; i<mesh->nt;i++)
-	{
-		for(j=0;j<3;j++)
-		{
-			key = (KA*MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])+KB*MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]))%hsize;
-			adj = 3*i+j;
-			if (tab[key].adj1 == 0)
-			{
-				// modif 30 avril 
-				if (MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]) != 0 && MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]) != 0)
-				{
-					tab[key].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-					tab[key].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-					tab[key].adj1 = adj;
-				}
-				//tab[key].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-				//tab[key].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-				//tab[key].adj1 = adj;
-			} else {
-				while(tab[key].adj1 > 0)
-				{
-					// Doit-on regarder tab[key].nxt ou peut-il y avoir qq chose sur tab[key]
-					if ((tab[key].ia == MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])) && (tab[key].ib == MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])))
-					{
-						tab[key].adj2 = adj;
-						break; // On sort du while	
-					} else {
-						if (tab[key].nxt == 0)
-						{
-							tab[hnxt].ia = MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-							tab[hnxt].ib = MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]);
-							tab[hnxt].adj1 = adj;
-							tab[key].nxt = hnxt;
-							hnxt++;
-							break; // On sort du while
-						} else {
-							key = tab[key].nxt;
-						}
-					}
-				}
-			}
-		}
-	}
-	return 0;
-
+  pHedge ph;
+  pTria  pt;
+  int i,j,k,i1,i2,min,max;
+  
+  int hnxt = mesh->np + 1;
+  int hsize = mesh->np;
+  int key;
+  int adj,control=2;
+  
+  
+  for(i=1; i<=mesh->nt;i++)
+  {
+    pt = &mesh->tria[i];
+    if ( !pt->v[0] )  continue;
+    
+    for(j=0;j<3;j++)
+    {       i1 = idir[j+1];
+      i2 = idir[j+2];
+      min = MIN(pt->v[i1], pt->v[i2]);
+      max = MAX(pt->v[i1], pt->v[i2]);
+      /* compute key */
+      key = (KA*min +KB*max)%hsize + 1;
+      /* insert */
+      adj = 3*i+j;
+      
+      
+      if (tab[key].adj1 == 0) // si tab[key] est visité pour la premiere fois
+      {
+        tab[key].ia = min;
+        tab[key].ib = max;
+        tab[key].adj1 = adj;
+      }
+      
+      else { // tab[key].adj1 a déjà été rempli
+        control =2 ;
+        do {
+          if ( (tab[key].ia == min ) && (tab[key].ib == max)  )
+          { tab[key].adj2 = adj; control =1 ;}
+          
+          key = tab[key].nxt;
+        }
+        while(( tab[key].nxt) && ( control==2 ) );
+        
+        
+        if(control==2) {
+          tab[hnxt].ia = min;
+          tab[hnxt].ib = max;
+          tab[hnxt].adj1 = adj;
+          tab[key].nxt = hnxt;
+          hnxt++;
+        }
+      }
+    }
+  }
+  
+  
+//  /* test debugging */
+//  /* On cherche les trois voisins du triangle 9629 */
+//  pt = &mesh->tria[9629];
+//  for(j=0;j<3;j++)
+//  {  i1 = idir[j+1];
+//    i2 = idir[j+2];
+//    fprintf(stdout,"  -- j %d  i1 %d  i2 %d \n",j,i1,i2);
+//    min = MIN(pt->v[i1], pt->v[i2]);
+//    max = MAX(pt->v[i1], pt->v[i2]);
+//    /* compute key */
+//    key = (KA*min +KB*max)%hsize + 1;
+//    /* insert */
+//   
+//     
+//    do {
+//      if ( (tab[key].ia == min) &&  (tab[key].ib == max) )
+//
+//    fprintf(stdout,"  -- ad1 %d  adj2 %d  \n",tab[key].adj1/3,tab[key].adj2/3);
+//
+//       key = tab[key].nxt;
+//        
+//    }
+//    
+//    while(tab[key].nxt);
+//  
+//  }
+  
+  
+  return 0;
+  
 }
 
+
 // Calculate neighbour triangles of a given triangle (only at edges -> max 3 triangles)
-int setAdj(pMesh mesh, pHedge tab)
+int setAdj(pMesh mesh, Hedge * tab)
 {
-	int i,j;
-	int key;
+  pTria  pt;
+  Hedge  *ph;
+	int i,j,i1,i2,min,max,adj;
+	int key,control;
 	int hsize = mesh->np; // gives first indice disponible in the tableau
 
 	// 3 arrêt per triangle
@@ -79,30 +117,46 @@ int setAdj(pMesh mesh, pHedge tab)
 
 	for(i=1; i<=mesh->nt; i++)
 	{
+    pt = &mesh->tria[i];
+    if ( !pt->v[0] )  continue;
+    
 		for(j=0; j<3; j++)
-		{
-			key = (KA*MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3])+KB*MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]))%hsize;
-			while(tab[key].adj1)
-			{
-				// On parcourt la chaine de tab jusqu'à ce que l'objet correspondant à l'arrete soit trouvé
-				if (tab[key].ia == MIN(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]) && tab[key].ib == MAX(mesh->tria[i].v[j%3], mesh->tria[i].v[(j+1)%3]))
-				{
-					mesh->adja[3*(i-1)+1+j] = tab[key].adj2;
-					break;
-				} else {
-					if (tab[key].nxt)
-					{
-						key = tab[key].nxt;
-					} else {
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	return 0;
+    {
+      i1 = idir[j+1];
+      i2 = idir[j+2];
+      min = MIN(pt->v[i1], pt->v[i2]);
+      max = MAX(pt->v[i1], pt->v[i2]);
+			key = (KA*min+KB*max)%hsize+1;
+			
+      // On parcourt la chaine de tab jusqu'à ce que l'objet correspondant à l'arrete soit trouvé
+      do{
+       if ( (tab[key].ia == min) &&  (tab[key].ib == max) )
+        { adj = 3*i+j;
+          if( (tab[key].adj2) == adj)  mesh->adja[3*(i-1)+1+j] = tab[key].adj1;
+          else   mesh->adja[3*(i-1)+1+j] = tab[key].adj2;
+          break;
+        }
+        key = tab[key].nxt;
+      }
+      while(tab[key].nxt);
+    }
+  }
+  
+  /* Test debugging: on cherche les trois voisins du triangle 34 */
+  int iadr,iel, *adja;
+  iadr = (34-1)*3 + 1;
+  adja = &mesh->adja[iadr];
+  
+  iel = (adja[0]) / 3 ;
+  printf("Tria = %d\n", iel);
+  iel = (adja[1]) / 3 ;
+  printf("Tria = %d\n", iel);
+  iel = (adja[2] ) / 3  ;
+  printf("Tria = %d\n", iel);
+  
+  return 0;
 }
+
 
 int localiseTriangleBruteForce(pMesh mesh, pPoint point){
 	int i,j;
