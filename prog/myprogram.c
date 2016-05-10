@@ -10,6 +10,7 @@
 #include "distanceMeshFunctions.h"
 
 #include "bucket.h"
+#include "hash.h"
 
 
 
@@ -300,7 +301,7 @@ int main(int argc,char *argv[]) {
 	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n ");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n");
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
 	
@@ -617,9 +618,68 @@ if ( test == 8 )
 		printf("%f\n", result);
 	}
 
-	
+	if (test == 10)
+	{
+		Mesh	mesh;
+		int N,i;
+		double result;
 
- 
+		double cb[3] = {.0,.0,.0};
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
+		hashHedge(&mesh, tab);
+		for (i = 0; i < 3*mesh.nt+1; ++i)
+		{
+			printf("%d : %d %d %d %d %d\n", i, tab[i].ia, tab[i].ib, tab[i].adj1, tab[i].adj2, tab[i].nxt);
+		}
+		setAdj(&mesh, tab);
+		for (i = 0; i < 3; ++i)
+		{
+			printf("%d\n", mesh.adja[3*(5-1)+1+i]);
+		}		
+		// Test de la fonction qui localise un point dans un triangle en brute force
+		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[5].v[1]]));
+
+		// Test de la fonction qui localise un point dans une triangle grace aux fonctions d'approche
+		//int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
+		printf("%d\n", locelt(&mesh, 5, &mesh.point[mesh.tria[345].v[1]], cb));
+		
+
+	}
+
+	//Normales
+ 	if (test == 11)
+ 	{
+ 		Mesh	mesh;
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		normalesOfTriangles(&mesh);
+		mesh.nameout = "normales.mesh";
+		saveMesh(&mesh);
+ 	}
 
  
 

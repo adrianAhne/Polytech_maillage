@@ -4,7 +4,7 @@
 
 #ifndef DISTANCEMESHFUNCTIONS_H
 #define DISTANCEMESHFUNCTIONS_H
-
+#include <assert.h>
 
 // calculate dot product of two three-dimensional vectors
 double dotProduct3D(Point a, Point b);
