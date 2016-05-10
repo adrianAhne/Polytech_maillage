@@ -131,19 +131,21 @@ void positive_boundingbox( pMesh mesh , pPoint point)
 		point->c[0] = (point->c[0] + fabs(xmin))/10 ;
 		point->c[1] = (point->c[1] + fabs(ymin))/10 ;
 		point->c[2] = (point->c[2] + fabs(zmin))/10 ;
+		
+		int i ;
+		for ( i = 1; i <=  mesh->np ; i++ )
+		{
+	
+			mesh->point[i].c[0] = mesh->point[i].c[0] /10 ;
+			mesh->point[i].c[1] = mesh->point[i].c[1] /10 ;
+			mesh->point[i].c[2] = mesh->point[i].c[2] /10 ;
+		} 
 	}
 	printf ( "nombre de points = %d  \n",mesh->np);
 	/* from now on we have a positive bounding box: GOOD */
 	/* NOT REALLY */
 	/* now between 0 and 1 */
-	int i ;
-	for ( i = 1; i <=  mesh->np ; i++ )
-	{
-	
-		mesh->point[i].c[0] = mesh->point[i].c[0] /10 ;
-		mesh->point[i].c[1] = mesh->point[i].c[1] /10 ;
-		mesh->point[i].c[2] = mesh->point[i].c[2] /10 ;
-	} 
+
 	
 	
 }
@@ -163,11 +165,11 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
     pPoint  pp1,pp2;
   
 			/* calcul i,j,k */
-		i = max(0,(int)((bucket->size)*(point->c[0]))-1) + increment ; 
+		i = max(0,(int)((bucket->size)*(point->c[0]))-1 + increment) ; 
 		//printf( " increment = %d \n",increment);
-		j = max(0,(int)((bucket->size)*(point->c[1]))-1) + increment;
+		j = max(0,(int)((bucket->size)*(point->c[1]))-1 + increment) ;
 		//printf( " j = %d \n",j);
-		k = max(0,(int)((bucket->size)*(point->c[2]))-1) + increment;
+		k = max(0,(int)((bucket->size)*(point->c[2]))-1 + increment) ;
 		//printf( " k = %d \n",k);
 		
 		key = (j*bucket->size+k)*bucket->size+i ;
@@ -190,7 +192,7 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 				cherche = bucket->link[cherche] ;
         pp2 = &mesh->point[cherche];
         fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
-        indice ++ ;
+        
 				
 			}
 			
