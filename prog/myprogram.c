@@ -640,22 +640,18 @@ if ( test == 8 )
 
 		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
 		hashHedge(&mesh, tab);
-		for (i = 0; i < 3*mesh.nt+1; ++i)
-		{
-			printf("%d : %d %d %d %d %d\n", i, tab[i].ia, tab[i].ib, tab[i].adj1, tab[i].adj2, tab[i].nxt);
-		}
 		setAdj(&mesh, tab);
 		for (i = 0; i < 3; ++i)
 		{
-			printf("%d\n", mesh.adja[3*(5-1)+1+i]);
+			printf("Adj %d\n", mesh.adja[3*(5465-1)+1+i]/3);
 		}		
 		// Test de la fonction qui localise un point dans un triangle en brute force
-		printf("%d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[5].v[1]]));
+		printf("Localise brute force: %d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[5465].v[1]]));
 
 		// Test de la fonction qui localise un point dans une triangle grace aux fonctions d'approche
-		//int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
-		printf("%d\n", locelt(&mesh, 5, &mesh.point[mesh.tria[345].v[1]], cb));
-		
+		printf("locelt : %d\n", locelt(&mesh, 4493, &mesh.point[mesh.tria[5465].v[1]], cb));
+
+		// Tester avec un point qui est situé au centre d'un triangle, calculer ses coordonnées cartésiennes
 
 	}
 

@@ -202,11 +202,29 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 
     //printf("%f %f %f %f %f %f %f %f %f\n", a,b,c,d,e,f,det,s,t);
 
+    //  \     |
+    //   \reg2|
+    //    \   |
+    //     \  |
+    //      \ |
+    //       \|
+    //        *P3
+    //        |\
+    //        | \
+    //  reg3  |  \ reg1
+    //        |   \
+    //        |reg0\ 
+    //        |     \ 
+    //        |      \ P2
+    // -------*-------*------->s
+    //        |P1      \ 
+    //  reg4  | reg5    \ reg6
+
     if ((s+t) <= det) {
         if (s < 0) {
             if (t < 0) {
                 // region4
-                printf("Region4\n");
+                //printf("Region4\n");
                 if (d < 0) {
                     t = 0;
                     if (-d >= a) {
@@ -240,7 +258,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
                 // end of region 4
             } else {
                 // region 3
-                printf("Region3\n");
+                //printf("Region3\n");
                 s = 0;
                 if (e >= 0) {
                     t = 0;
@@ -260,7 +278,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
         else {
             if (t < 0) {
                 // region 5
-                printf("Region5\n");
+                //printf("Region5\n");
                 t = 0;
                 if (d >= 0) {
                     s = 0;
@@ -285,7 +303,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
     } else {
         if (s < 0) {
             // region 2
-            printf("Region2\n");
+            //printf("Region2\n");
             tmp0 = b + d;
             tmp1 = c + e;
             if (tmp1 > tmp0) { // minimum on edge s+t=1
@@ -320,7 +338,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
         else {
             if (t < 0) {
                 // region 6
-                printf("Region6\n");
+                //printf("Region6\n");
                 tmp0 = b + e;
                 tmp1 = a + d;
                 if (tmp1 > tmp0) {
@@ -354,7 +372,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
             // end of region 6
             else {
                 // region 1
-                printf("Region1\n");
+                //printf("Region1\n");
                 numer = c + e - b - d;
                 if (numer <= 0) {
                     s = 0;
@@ -389,3 +407,26 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 
 
 }
+
+double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0)
+{
+    int i;
+    Tria temp;
+    double dAverage = 0;
+    for (i = 0; i < 3; i++)
+    {
+        temp.v[0] = tria->v[i%3];
+        temp.v[1] = tria->v[(i+1)%3];
+        temp.v[2] = tria->v[(i+2)%3];
+        
+        dAverage += distPointToTriangle(mesh, &temp, P0);
+    }
+
+    dAverage /= 3;
+    return dAverage;
+}
+
+
+
+
+

@@ -18,4 +18,6 @@ Point calculeProjection(pMesh mesh, pTria tria, pPoint point);
 
 double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0);
 
+double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0);
+
 #endif
