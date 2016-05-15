@@ -1,5 +1,5 @@
 CC=gcc
-CFLAG = -lm
+CFLAG = -lm 
 OBJS= \
 	myprogram.o \
 	libmesh5.o \
@@ -10,7 +10,8 @@ OBJS= \
 	normale.o \
 	distanceMeshFunctions.o \
 	bucket.o \
-	hash.o
+	hash.o \
+	boule.o
 
 
 all: myprogram
@@ -18,7 +19,7 @@ all: myprogram
 myprogram: $(OBJS)
 	$(CC) -o main $(OBJS) $(CFLAG)
 
-libmesh5: libmesh.c
+libmesh5: libmesh.c 
 	$(CC) -c libmesh5.c -o libmesh.o
 
 
@@ -45,7 +46,7 @@ distanceMeshFunctions: distanceMeshFunctions.c libmesh.c
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
 
-hash: hash.c 
+hash: hash.c bucket.c
 	$(CC) -c hash.c -o bucket.o $(CFLAG)
 
 clean:

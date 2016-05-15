@@ -11,7 +11,7 @@
 
 #include "bucket.h"
 #include "hash.h"
-
+#include "boule.h" 
 
 
 
@@ -301,7 +301,9 @@ int main(int argc,char *argv[]) {
 	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n");
+
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule");
+
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
 	
@@ -561,9 +563,9 @@ if ( test == 8 )
 		
 		                                        
 			/* init point */            
-		point.c[0] =  -3.29169692485065  ;
-		point.c[1] =  -1.6280599609887  ;
-		point.c[2] =  1.58560780723174  ;
+		point.c[0] =   0.59149757132316072 ;
+		point.c[1] =   0.52414378752244195 ;
+		point.c[2] =   0.50863001183634415 ;
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
@@ -676,6 +678,56 @@ if ( test == 8 )
 		mesh.nameout = "normales.mesh";
 		saveMesh(&mesh);
  	}
+
+
+	if(test == 12 )
+	{
+		Mesh	mesh;
+		
+		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		
+  	/* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		Point p;
+		p.c[0] = .10;
+		p.c[1] = .20;
+		p.c[2] = .30;
+		double dist = distanceUsingBucket(&mesh, &p);
+
+ 	}
+
+ 	// Bucket sort algorithm for the computation of the distance point-triangulation
+ 	if (test == 13)
+ 	{
+ 		Mesh	mesh;
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&mesh) )  return(1);
+  		 
+  	/* read data */
+  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		int** list = (int**)malloc(sizeof(int*)) ;
+		int nb_triangle = boulep(&mesh,7,3,list),i;
+		
+		printf("Nombre de triangles autour = %d \n ", nb_triangle );
+		printf("Liste des triangles autour :  \n " );
+		for (i=0;i<nb_triangle;i++)
+			printf("triangle %d = %d \n ", i,(*list)[i] );
+		
+		fprintf(stdout,"  -- WRITING COMPLETED\n \n ");
+	}
+		
+
 
  
 
