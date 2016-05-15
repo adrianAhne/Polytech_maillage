@@ -301,7 +301,7 @@ int main(int argc,char *argv[]) {
 	int test;
 
   fprintf(stdout,"  -- Main3 (2016)\n");
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n");
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
 	
@@ -675,6 +675,31 @@ if ( test == 8 )
 		normalesOfTriangles(&mesh);
 		mesh.nameout = "normales.mesh";
 		saveMesh(&mesh);
+ 	}
+
+ 	// Bucket sort algorithm for the computation of the distance point-triangulation
+ 	if (test == 12)
+ 	{
+ 		Mesh	mesh;
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
+  	
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+
+		Point p;
+		p.c[0] = .10;
+		p.c[1] = .20;
+		p.c[2] = .30;
+		double dist = distanceUsingBucket(&mesh, &p);
+
  	}
 
  

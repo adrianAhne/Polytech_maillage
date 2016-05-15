@@ -45,7 +45,7 @@ distanceMeshFunctions: distanceMeshFunctions.c libmesh.c
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
 
-hash: hash.c 
+hash: hash.c bucket.c
 	$(CC) -c hash.c -o bucket.o $(CFLAG)
 
 clean:
