@@ -1,0 +1,3 @@
+To check if point is in triangle:
+
+http://www.blackpawn.com/texts/pointinpoly/
