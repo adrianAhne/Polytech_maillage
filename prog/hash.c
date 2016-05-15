@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>  // you need to add -lm for link edition
+//#include <omp.h> // parallel computing
 #include "mesh.h"
 #include "hash.h"
 #include "distanceMeshFunctions.h"
+#include "bucket.h"
 
 #define KA 7
 #define KB 11
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
-unsigned char idir[5]     = {0,1,2,0,1};
+
+unsigned char idir[5]     = {0,1,2,0,1}; 
 
 int hashHedge(pMesh mesh, Hedge *tab)
 {
@@ -121,6 +124,7 @@ int setAdj(pMesh mesh, Hedge * tab)
     if ( !pt->v[0] )  continue;
     
 		for(j=0; j<3; j++)
+
     {
       i1 = idir[j+1];
       i2 = idir[j+2];
@@ -142,7 +146,7 @@ int setAdj(pMesh mesh, Hedge * tab)
     }
   }
   
-  /* Test debugging: on cherche les trois voisins du triangle 34 */
+  /* Test debugging: on cherche les trois voisins du triangle 34 
   int iadr,iel, *adja;
   iadr = (34-1)*3 + 1;
   adja = &mesh->adja[iadr];
@@ -153,8 +157,9 @@ int setAdj(pMesh mesh, Hedge * tab)
   printf("Tria = %d\n", iel);
   iel = (adja[2] ) / 3  ;
   printf("Tria = %d\n", iel);
-  
+  */
   return 0;
+
 }
 
 
@@ -213,8 +218,8 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 	// distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 	int triaRef = startTriangle;
 	pTria t = &mesh->tria[triaRef];
-	printf("Tria = %d\n", t->v[0]);
-	double distOld = 1e20;
+	printf("Start point = %d\n", t->v[0]);
+	double distOld = distPointToTriangle(mesh, t, p);
 	double distCurrent;
 	int refClosest = 0;
 	int i, it = 0;
@@ -222,22 +227,26 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 	while(1)
 	{
 		baryCoord(mesh, triaRef, p, cb);
+		printf("triaref : %d, cb : %f %f %f\n", triaRef, cb[0], cb[1], cb[2]);
 		if (cb[0] >= 0 && cb[1] >= 0 && cb[2] >= 0)
 		{
+			printf("%d\n", triaRef);
 			return triaRef;
 		} else {
 			for(i=0; i<3; i++)
 			{
 
-				t = &mesh->tria[mesh->adja[3*(triaRef-1) + 1 + i]];
-				assert(mesh->adja[3*(triaRef-1) + 1 + i] <= 3*mesh->nt);
-				printf("Triangle numero %d\n", mesh->adja[3*(triaRef-1) + 1 + i]);
-				distCurrent = distPointToTriangle(mesh, t, p);
+				t = &mesh->tria[mesh->adja[3*(triaRef-1) + 1 + i]/3];
+				assert(mesh->adja[3*(triaRef-1) + 1 + i]/3 <= 3*mesh->nt);
+				printf("Triangle numero %d\n", mesh->adja[3*(triaRef-1) + 1 + i]/3);
+				//distCurrent = distPointToTriangle(mesh, t, p);
+				distCurrent = averageDistancePTT(mesh, t, p);
 				
 				if (distCurrent < distOld)
 				{
 					distOld = distCurrent;
-					triaRef = mesh->adja[3*(triaRef-1) + 1 + i];
+					triaRef = mesh->adja[3*(triaRef-1) + 1 + i]/3;
+					printf("dist Old : %f triaRef : %d\n", distOld, triaRef);
 					break;
 				}
 				if (i == 2)
@@ -249,7 +258,7 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 			}
 		}
 		it++;
-		if (it > 1000)
+		if (it > 100000)
 		{
 			return -1;
 		}
@@ -257,7 +266,57 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 }
 
 
+int boulep(pMesh mesh, int start, int i0, int *list)
+{
+	return 0;
+}
 
+// Following the algorithm given in github/doc/main.pdf
+// Compute the distance between a point and a surface using buckets and adjacences
+double distanceUsingBucket(pMesh mesh, pPoint p)
+{
+ 	unsigned N = 0;
+	double d = 10000.0, dapp = 10000.0, d0;
+	int kel = 0, iel = 0, C, p0;
+
+	// Hash et adja relations
+	Hedge *tab = (Hedge*)calloc(3*mesh->nt+1,sizeof(Hedge));
+	hashHedge(mesh, tab);
+	setAdj(mesh, tab);
+
+	// Bucket creation
+	Bucket bucket;
+	Point point;
+	point.c[0] =  .3;
+	point.c[1] =  .4;
+	point.c[2] =  .5;
+	positive_boundingbox( mesh , &point );
+	fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
+	fflush(stdin);
+	fscanf(stdin,"%d",&N);
+	bucket.size = N ;
+	init_bucket( &bucket , mesh); 
+	fill_bucket( &bucket , mesh ) ;
+
+	// Find the cell grid C to which point belongs
+	C = use_bucket( &bucket , mesh, &point , 0.0 ); // doesn't work
+	printf("Cell grid of the point : %d\n", C);
+
+	p0 = 0; // false : one point in the cell grid with it's distance to point
+	d0 = 1000.0; // false
+	
+	while(p0)
+	{
+		
+	}
+
+
+
+
+	free_bucket (&bucket);
+
+	return d;
+}
 
 
 
