@@ -302,7 +302,7 @@ int main(int argc,char *argv[]) {
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule\n Choose: \n");
 
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
@@ -545,7 +545,7 @@ if ( test == 8 )
 		Mesh	mesh;
 		Bucket bucket;
 		int N,indice =5207;
-    Point point;
+    	Point point;
 		               
 	
 		
@@ -557,7 +557,7 @@ if ( test == 8 )
   	if ( !parsar(argc,argv,&mesh) )  return(1);
   	
   	 /* read data */
-  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		
@@ -569,27 +569,27 @@ if ( test == 8 )
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
-    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
-    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
+    	fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
+    	fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
 		
 		positive_boundingbox( &mesh , &point );
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
 		fflush(stdin);
-    fscanf(stdin,"%d",&N);
-    bucket.size = N ;
-    printf(" size = %d ", bucket.size);
-    int i = max(0,(int)(N*point.c[0])-1) ;
+    	fscanf(stdin,"%d",&N);
+    	bucket.size = N ;
+    	printf(" size = %d ", bucket.size);
+    	int i = max(0,(int)(N*point.c[0])-1) ;
 		int j = max(0,(int)(N*point.c[1])-1) ;
 		int k = max(0,(int)(N*point.c[2])-1) ;
-    fprintf(stdout," i = %d p = %f  \n " , i, point.c[0]) ;
+    	fprintf(stdout," i = %d p = %f  \n " , i, point.c[0]) ;
 		fprintf(stdout," j = %d p = %f  \n " , j , point.c[1]) ;
 		fprintf(stdout," k = %d  p = %f \n " , k , point.c[2]) ;
-    fprintf(stdout, " key point = %d \n", (j*N+k)*N+i) ;
+    	fprintf(stdout, " key point = %d \n", (j*N+k)*N+i) ;
     
 		init_bucket( &bucket , &mesh); 
 		fill_bucket( &bucket , &mesh ) ;
-    use_bucket( &bucket , &mesh, &point , 0.0 );
+    	use_bucket( &bucket , &mesh, &point , 0.0 );
 		free_bucket (&bucket);
 		
 		//if ( ! (&mesh)) return(1);
@@ -684,11 +684,15 @@ if ( test == 8 )
 	{
 		Mesh	mesh;
 		
-		if ( !parsar(argc,argv,&mesh) )  return(1);
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));
+		
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+  		if ( !parsar(argc,argv,&mesh) )  return(1);
   	
-  		
-  	/* read data */
-  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+  		 /* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 

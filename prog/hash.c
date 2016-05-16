@@ -265,19 +265,23 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 	}
 }
 
-
+/*
 int boulep(pMesh mesh, int start, int i0, int *list)
 {
 	return 0;
 }
+*/
 
 // Following the algorithm given in github/doc/main.pdf
 // Compute the distance between a point and a surface using buckets and adjacences
 double distanceUsingBucket(pMesh mesh, pPoint p)
 {
  	unsigned N = 0;
-	double d = 10000.0, dapp = 10000.0, d0;
-	int kel = 0, iel = 0, C, p0;
+	double d = 10000.0, dapp = 10000.0, d0, dk, d_pk;
+	int kel = 0, iel = 0, C, p0, i,j,k ;
+	int TriaInBoule, TriaInBoulePK;
+	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
+	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
 
 	// Hash et adja relations
 	Hedge *tab = (Hedge*)calloc(3*mesh->nt+1,sizeof(Hedge));
@@ -291,7 +295,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	point.c[1] =  .4;
 	point.c[2] =  .5;
 	positive_boundingbox( mesh , &point );
-	fprintf(stdout,"\n  -- Creation bucket MESH \n\n Please type the number of subdivision : \n");
+	fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
 	fflush(stdin);
 	fscanf(stdin,"%d",&N);
 	bucket.size = N ;
@@ -302,18 +306,65 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	C = use_bucket( &bucket , mesh, &point , 0.0 ); // doesn't work
 	printf("Cell grid of the point : %d\n", C);
 
+	// TO DO: how to choose p0???
 	p0 = 0; // false : one point in the cell grid with it's distance to point
 	d0 = 1000.0; // false
 	
+	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)
 	{
+		// get list of all triangles in the ball B(p0) of p0
+		// TO DO: give startTriangle and startpoint
+		TriaInBoule = boulep(mesh, int start, int point , list);
+		
+		// for each triangle K_k' in the ball B(p0)
+		for(k=0; k < TriaInBoule; k++)
+		{
+			// calculate distance d_k = d(p, K_k');
+			dk = distPointToTriangle(mesh, list[k]/3, p0);
+			if (dk < d)
+			{
+				//update the distance d= dk
+				d = dk;
+				// store index of current triangle kel = k
+				kel = k;
+			}
+		}
+		
+		// for each vertex pk belonging to the trianlge kel
+		for(i=0; i < 2; i++)
+		{
+			// get list of all triangles in the ball B(pk) of pk
+			// TO DO: give startTriangle
+			TriaInBouleBK = boulep(mesh, int start, mesh->tria[kel].v[i], listLocal);
+			// for each triangle K_pk' in the ball B(pk) 
+			for (j=0; j < TriaInBouleBK; j++)
+			{
+				//compute the distance d_pk = d(p, K_pk')
+				d_pk = distPointToTriangle(mesh, list[j]/3, p);
+				
+				if(d_pk < dapp)
+				{
+					// update the distance
+					dapp = d_pk;
+					
+					// store the index of current triangle iel = j
+					iel = j;
+				}
+			}
+			
+			if (dapp > d)
+				p0 = pk;
+			else
+				p0 = 0;
+		}
 		
 	}
-
-
-
+	
 
 	free_bucket (&bucket);
+	free(list);
+	free(listLocal);
 
 	return d;
 }
