@@ -29,8 +29,6 @@ void baryCoord(pMesh mesh, int triangle, pPoint p, double cb[3]);
 
 int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 
-int boulep(pMesh mesh, int start, int i0, int *list);
-
 double distanceUsingBucket(pMesh mesh, pPoint p);
 
 #endif

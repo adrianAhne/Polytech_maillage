@@ -1,4 +1,7 @@
-CC=gcc
+#let's pass the compil in make argument, eg:clang
+COMPIL=gcc
+
+CC=$(COMPIL)
 CFLAG = -lm 
 OBJS= \
 	myprogram.o \
@@ -22,7 +25,6 @@ myprogram: $(OBJS)
 libmesh5: libmesh.c 
 	$(CC) -c libmesh5.c -o libmesh.o
 
-
 courbure: courbure.c libmesh.c
 	$(CC) -c courbure.c libmesh.c -o courbure.o $(CFLAG)
 
@@ -40,15 +42,17 @@ normale: normale.c libmesh.c
 
 distanceMeshFunctions: distanceMeshFunctions.c libmesh.c
 	$(CC) -c distanceMeshFunctions.c libmesh.c -o distanceMeshFunctions.o $(CFLAG)
-		
-
 
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
 
-hash: hash.c bucket.c
-	$(CC) -c hash.c -o bucket.o $(CFLAG)
+hash: hash.c bucket.c boule.c
+	$(CC) -c hash.c bucket.c boule.c -o hash.o $(CFLAG)
+
+boule: boule.c hash.c
+	$(CC) -c boule.c -o boule.o $(CFLAG)
 
 clean:
 	$(RM) -r $(OBJS) myprogram
+
 

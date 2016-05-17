@@ -6,6 +6,7 @@
 #include "hash.h"
 #include "distanceMeshFunctions.h"
 #include "bucket.h"
+#include "boule.h"
 
 #define KA 7
 #define KB 11
@@ -265,12 +266,6 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 	}
 }
 
-/*
-int boulep(pMesh mesh, int start, int i0, int *list)
-{
-	return 0;
-}
-*/
 
 // Following the algorithm given in github/doc/main.pdf
 // Compute the distance between a point and a surface using buckets and adjacences
@@ -278,7 +273,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 {
  	unsigned N = 0;
 	double d = 10000.0, dapp = 10000.0, d0, dk, d_pk;
-	int kel = 0, iel = 0, C, p0, i,j,k ;
+	int kel = 0, iel = 0, C, p0, pk, i,j,k, start, pointN ;
 	int TriaInBoule, TriaInBoulePK;
 	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
@@ -313,15 +308,16 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)
 	{
+
 		// get list of all triangles in the ball B(p0) of p0
 		// TO DO: give startTriangle and startpoint
-		TriaInBoule = boulep(mesh, int start, int point , list);
+		TriaInBoule = boulep(mesh, start, pointN , list);
 		
 		// for each triangle K_k' in the ball B(p0)
 		for(k=0; k < TriaInBoule; k++)
 		{
 			// calculate distance d_k = d(p, K_k');
-			dk = distPointToTriangle(mesh, list[k]/3, p0);
+			dk = distPointToTriangle(mesh, *list[k]/3, p0);
 			if (dk < d)
 			{
 				//update the distance d= dk
@@ -336,12 +332,12 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 		{
 			// get list of all triangles in the ball B(pk) of pk
 			// TO DO: give startTriangle
-			TriaInBouleBK = boulep(mesh, int start, mesh->tria[kel].v[i], listLocal);
+			TriaInBoulePK = boulep(mesh, start, mesh->tria[kel].v[i], listLocal);
 			// for each triangle K_pk' in the ball B(pk) 
-			for (j=0; j < TriaInBouleBK; j++)
+			for (j=0; j < TriaInBoulePK; j++)
 			{
 				//compute the distance d_pk = d(p, K_pk')
-				d_pk = distPointToTriangle(mesh, list[j]/3, p);
+				d_pk = distPointToTriangle(mesh, *list[j]/3, p);
 				
 				if(d_pk < dapp)
 				{
@@ -358,7 +354,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 			else
 				p0 = 0;
 		}
-		
+
 	}
 	
 
