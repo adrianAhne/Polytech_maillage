@@ -569,8 +569,8 @@ if ( test == 8 )
 	
 		
 		fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[0] ) ;
-    	fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
-    	fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
+    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[1] ) ;
+    fprintf(stdout," pointx = %f \n " , mesh.point[5207].c[2] ) ;
 		
 		positive_boundingbox( &mesh , &point );
 		/* FUNCTION */
@@ -589,7 +589,8 @@ if ( test == 8 )
     
 		init_bucket( &bucket , &mesh); 
 		fill_bucket( &bucket , &mesh ) ;
-    	use_bucket( &bucket , &mesh, &point , 0.0 );
+   	int ret = bucket_retour_key( &bucket , &mesh, &point , 0.0 );
+   	fprintf(stdout," Retour de la fonction bucket = %d \n",ret); 
 		free_bucket (&bucket);
 		
 		//if ( ! (&mesh)) return(1);

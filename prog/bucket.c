@@ -214,6 +214,57 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 	return ret ;	
 }
 
+int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
+{
+		
+		
+	int i,j,k,key,N,cherche,indice = 0 , ret ;
+	pPoint  pp1,pp2;
+  
+
+			/* calcul i,j,k */
+		i = max(0,(int)((bucket->size)*(point->c[0]))-1 + increment) ; 
+		//printf( " increment = %d \n",increment);
+		j = max(0,(int)((bucket->size)*(point->c[1]))-1 + increment) ;
+		//printf( " j = %d \n",j);
+		k = max(0,(int)((bucket->size)*(point->c[2]))-1 + increment) ;
+		//printf( " k = %d \n",k);
+
+		
+	key = (j*bucket->size+k)*bucket->size+i ;
+	fprintf(stdout,"  key = %d \n",key);
+		
+	//fprintf(stdout, "ici\n" ) ;
+		
+	/* we check if the tab head has a point in it */
+	if ( bucket->head[key] )
+	{
+     	fprintf(stdout,"  Point in Bucket head \n ");
+      	ret     = key;
+      	cherche = bucket->head[key] ;
+      
+      
+
+			/* on affiche les points du même subdomain */
+			while( bucket->link[ cherche ])
+			{
+				cherche = bucket->link[cherche] ;
+        
+
+				
+		}
+			
+	} 
+		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
+	else
+	{
+		fprintf(stdout,"  The point is not in the current cell \n");
+		increment ++ ;
+		ret = use_bucket( bucket , mesh , point , increment ) ; 
+	}
+	fprintf(stdout," indice = %d \n" , indice );
+	return ret ;	
+}
 
 
 void free_bucket (pBucket bucket)

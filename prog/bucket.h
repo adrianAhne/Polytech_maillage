@@ -73,6 +73,9 @@ double point_min (pMesh mesh , char axis);
 /* FUNCTION free_bucket */
 void free_bucket (pBucket bucket) ;
 
+/* Fonction ou la fonction use bucket renvoi la valeur de la clé associé à la case ou se situe le point */
+int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double increment );
+
 
 
 
