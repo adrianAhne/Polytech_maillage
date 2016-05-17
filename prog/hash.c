@@ -282,28 +282,34 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	Hedge *tab = (Hedge*)calloc(3*mesh->nt+1,sizeof(Hedge));
 	hashHedge(mesh, tab);
 	setAdj(mesh, tab);
+	
+	int *hashT = (int*)calloc(mesh->np+1, sizeof(int));
+	hashTria(mesh, hashT);
 
 	// Bucket creation
 	Bucket bucket;
 	Point point;
+	// point aleatoire
 	point.c[0] =  .3;
 	point.c[1] =  .4;
 	point.c[2] =  .5;
 	positive_boundingbox( mesh , &point );
 	fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
-	fflush(stdin);
+	fflush(stdin);	// just to be able to do a scanf without conflicts
 	fscanf(stdin,"%d",&N);
 	bucket.size = N ;
 	init_bucket( &bucket , mesh); 
-	fill_bucket( &bucket , mesh ) ;
+	fill_bucket( &bucket , mesh );
 
-	// Find the cell grid C to which point belongs
-	C = use_bucket( &bucket , mesh, &point , 0.0 ); // doesn't work
+	// Find the cell grid C to which point belongs 
+	// returns number of bucket
+	C = bucket_retour_key( &bucket , mesh, &point , 0.0 ); // doesn't work
 	printf("Cell grid of the point : %d\n", C);
 
 	// TO DO: how to choose p0???
-	p0 = 0; // false : one point in the cell grid with it's distance to point
+	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
 	d0 = 1000.0; // false
+	d0 = 
 	
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)
@@ -354,7 +360,6 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 			else
 				p0 = 0;
 		}
-
 	}
 	
 

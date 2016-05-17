@@ -10,7 +10,7 @@
 #include "mesh.h"
 #include "groupfunctions.h"
 #include "distanceMeshFunctions.h"
-
+#include "hash.h"
 
 
 // calculate dot product of two three-dimensional vectors
@@ -81,34 +81,6 @@ void checkPointInTriangle(pMesh mesh, pPoint P, pTria tria, double* re, double* 
 
 }
 
-double distancePointToTriangle(pMesh mesh, pTria tria, pPoint point)
-{
-    Point proj;
-    proj = calculeProjection(mesh, tria, point);
-
-    double tup[3], dotProduct[3], u,v, diff1uv, dist;
-    checkPointInTriangle(&mesh, &proj, &tria, tup, dotProduct);
-    u = tup[0];
-    v = tup[1];
-    diff1uv = tup[2];
-    
-    if ((u > 0) && (v > 0) && (u + v < 1))
-    {
-        // In this case, the point is in the triangle, the distance is POproj
-         
-    }
-    else
-    {
-        if (u<0)
-        {
-            
-        }
-    }
-    
-
-    return 0;
-
-}
 
 
 Point calculeProjection(pMesh mesh, pTria tria, pPoint PO)
@@ -153,8 +125,8 @@ Point calculeProjection(pMesh mesh, pTria tria, pPoint PO)
 
     return proj;
 
-
 }
+
 
 double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 {
@@ -424,6 +396,21 @@ double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0)
 
     dAverage /= 3;
     return dAverage;
+}
+
+
+// calculates distance from two points, P0 and P1, to each other
+double distancePointToBoule(pMesh mesh, int P0, pPoint P1)
+{
+	int i
+	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
+	int numbTria;
+	
+	
+	
+    numbTria = boulep(mesh, start, pointN , list);
+	
+	free(list);
 }
 
 
