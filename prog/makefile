@@ -1,7 +1,7 @@
 #let's pass the compil in make argument, eg:clang
 COMPIL=gcc
 
-CC=$(COMPIL)
+CC=$(COMPIL) -g
 CFLAG = -lm 
 OBJS= \
 	myprogram.o \

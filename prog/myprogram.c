@@ -302,7 +302,7 @@ int main(int argc,char *argv[]) {
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule\n Choose: \n");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule\n 14. distPointToBoule\nChoose: \n");
 
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
@@ -717,8 +717,8 @@ if ( test == 8 )
 		memset(&mesh,0,sizeof(Mesh));  	
 		if ( !parsar(argc,argv,&mesh) )  return(1);
   		 
-  	/* read data */
-  	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+	  	/* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		int** list = (int**)malloc(sizeof(int*)) ;
@@ -733,30 +733,39 @@ if ( test == 8 )
 	}
 		
 
+	// test function hashTria
+	if (test == 14)
+	{
+ 		Mesh	mesh;
+ 		int i;
+ 		double dist;
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
 
+
+		/* default values */
+		memset(&mesh,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&mesh) )  return(1);
+  		 
+  		/* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&mesh) )  return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
+		
+	
+		int* tab = (int*)calloc(mesh.np+1, sizeof(int));
+		hashTria(&mesh, tab);
+		printf("tab[877]=%d\n", tab[877]);
+		//for(i=0; i<mesh.np+1; i++)
+			//printf("i=%d triangle=%d\n", i, tab[i]);
+		
+		pTria tria = &mesh.tria[877];
+		dist = distancePointToBoule(&mesh, 877, mesh.point[1377], tab);
+		printf("dist=%f\n", dist);
+		
+		free(tab);
+	}
  
 
-	
-
-
-	
-	/*if ( !courbure2D(&mesh) ) return (1) ;
-	if ( !saveSol(&mesh,1) )  return(1);
-	*/
-
-
-
-	/*rotation3D(&mesh, 3.14 , 0 , 0);*/
-
-	//Adrian: Translation 2D
-	//translation2D(&mesh, 0.5, 0);
-	//translation3D(&mesh, 0, 1, 1);
-		
-
-  // Tupac : write data into a new file
-
-
-
-
-  return(0);
+	return(0);
 }

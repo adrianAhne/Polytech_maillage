@@ -309,7 +309,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	// TO DO: how to choose p0???
 	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
 	d0 = 1000.0; // false
-	d0 = 
+	//d0 = ...
 	
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)

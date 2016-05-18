@@ -399,18 +399,29 @@ double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0)
 }
 
 
-// calculates distance from two points, P0 and P1, to each other
-double distancePointToBoule(pMesh mesh, int P0, pPoint P1)
+// calculates distance from a point P0 to P1 by calculating a ball around P0 and using the function distPointToTriangle then ; tab 
+double distancePointToBoule(pMesh mesh, int P0, pPoint P1, int* tab)
 {
-	int i
+	int i;
 	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	int numbTria;
-	
-	
-	
-    numbTria = boulep(mesh, start, pointN , list);
+	double sum;
+	pTria tria;
+	printf("tab[%d]=%d\n", P0, tab[P0]);
+	printf("tab[%d]=%d\n", P0, &tab[P0]);
+	//printf("tab[%d]=%d\n", P0, *tab[P0]);
+    numbTria = boulep(mesh, tab[P0], P1->ref , list);
+    
+    for (i=0; i < numbTria; i++)
+    	printf("Tria = %d\n", *list[i]/3);
+    	tria = &mesh->tria[*list[i]/3];
+		sum += distPointToTriangle(mesh, tria, P1);
+		
+	sum /= numbTria;
 	
 	free(list);
+	
+	return sum;
 }
 
 
