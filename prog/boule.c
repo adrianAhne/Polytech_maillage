@@ -113,3 +113,30 @@ int boule_adj(pMesh mesh, int start, int point , int** list)
 	fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt;
 }
+
+
+
+// This function takes a array of all the points in the mesh
+// It completes the array it in order to associate one triangle to each point
+void hashTria(pMesh mesh, int *tab)
+{
+	int i, j, k;
+	unsigned control = 0;
+
+	for(i=1; i<=mesh->np; i++)
+	{
+		for(j=1; j<=mesh->nt && control == 0; j++)
+		{
+			for(k=0; k<3 && control == 0; k++)
+			{
+				if (mesh->point[i].c[0] == mesh->point[mesh->tria[j].v[k]].c[0] && mesh->point[i].c[1] == mesh->point[mesh->tria[j].v[k]].c[1] && mesh->point[i].c[2] == mesh->point[mesh->tria[j].v[k]].c[2])
+				{
+					tab[i] = j;
+					control = 1;
+					break;
+				}
+			}
+		} 
+		control = 0;
+	}
+}

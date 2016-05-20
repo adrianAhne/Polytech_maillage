@@ -21,7 +21,10 @@ La liste des triangles est classée de la manière suivante: liste[i] = 3*k+j av
 
 int boulep(pMesh mesh, int start, int point , int** list);
 
+
 int boule_adj(pMesh mesh, int start, int point , int** list);
+
+void hashTria(pMesh mesh, int *tab);
 
 #endif
 
