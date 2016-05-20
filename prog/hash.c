@@ -312,6 +312,31 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
 	
 	//ALEXANDRE: Comment peux-je avoir accès aux elements du bucket? 
+	// Réponse: je vais te créer un tableau avec tout les points d'une case 
+	int* points ; // le tableau d'indice des points
+	int cherche = bucket->head[C] ;
+	int compte = 0 ;
+	/* Allocation mémoire : je compte les élements */ 
+	while ( bucket.link[cherche] ) 
+	{
+		cherche = bucket.link[cherche] ;
+		compte ++ ;
+	}
+	points =(int*) malloc((compte+1) * sizeof(int)	 ) ;
+	/* je remplie le tableau d'indice des points */
+	points[0] = bucket->head[C] ;
+	for( i = 1 ; i <= compte ; i++ ) 
+	{
+		points[i] = bucket.link[cherche] ;
+		cherche  = bucket.link[cherche] ;
+	} 
+	
+	
+	/* ICI tu as le tableau remplis tu peux calculer la distance : bon courage */
+	
+
+	 
+	
 	// Je veux calculer pour chaque element la distance au point et le point avec la distance minimal d0 est mon p0
 	double dist0 = 100000000000000;
 	double dCurrent;
