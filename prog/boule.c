@@ -13,15 +13,21 @@
 #include <math.h>
 #include "libmesh5.h"
 #include "mesh.h"
-
+#include <time.h>
 #include "boule.h"
+
 
 
 
 int boulep(pMesh mesh, int start, int point , int** list)
 {
 	int i,j,compt=0;
+	clock_t debut;
+	clock_t fin;
+	double difference;
+	
 	fprintf(stdout," Le point considéré est le %d \n",mesh->tria[start].v[point]);
+	debut= clock();
 	/* Méthode actuelle méthode naïve avec parcours de tout les triangles*/
 	for(i=1 ; i <= mesh->nt ; i ++ )
 	{
@@ -42,16 +48,68 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	for(i=1 ; i <= mesh->nt ; i ++ )
 	{
 		/* parcours des 3 points de chaques triangles */
-		for ( j=0 ; j<2 ; j++ )
+		for ( j=0 ; j<=2 ; j++ )
 		{
 			if (  mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
 				/* on remplit la list */
 				(*list)[compt] = 3*(i) + j ;
-				fprintf(stdout," calcul %d \n",(*list)[compt]);
+				//fprintf(stdout," calcul %d \n",(*list)[compt]);
 				compt++;
 			}
 		}
 	}
+	fin = clock ();
+	difference = difftime (fin, debut);
+	fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt ; 
+	
+	 
+	
+	 
+	
+	
+}
+
+int boule_adj(pMesh mesh, int start, int point , int** list)
+{
+	int i,j,compt = 0;
+	int triangle , triangle_av;
+	*list = (int*)malloc(10 *sizeof(int)) ;
+	int triangle_ori = start ;
+	clock_t debut;
+	clock_t fin;
+	double difference;
+	debut = clock ();
+	do
+	{
+		for ( i = 0 ; i<3 ; i++ )
+		{
+			//fprintf(stdout," ici  " );
+			triangle =  mesh->adja[3*(triangle_ori-1)+1+i]/3 ; 
+			//fprintf(stdout," triangle_ori = %d " , triangle_ori ) ;
+			if ( triangle != triangle_av )
+			{
+				for ( j=0 ; j<=2 ; j++ )
+				{
+					if (  mesh->tria[triangle].v[j] == mesh->tria[start].v[point] )
+					{
+						/* on remplit la list */
+						(*list)[compt] = triangle ;
+						//fprintf(stdout," calcul %d \n",(*list)[compt]);
+						triangle_av = triangle_ori ;
+						triangle_ori = triangle ;
+						compt++;
+					}
+				}
+			}
+		}
+		
+		
+	
+	}while ( triangle_ori != start  );
+	fin = clock ();
+	difference = difftime (fin, debut);
+	fprintf(stdout," temps d'éxécution %f \n",difference );
+	return compt;
 }

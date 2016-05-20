@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <time.h>
 #include "libmesh5.h"
 #include "mesh.h"
 #include "groupfunctions.h"
@@ -646,7 +647,7 @@ if ( test == 8 )
 		setAdj(&mesh, tab);
 		for (i = 0; i < 3; ++i)
 		{
-			printf("Adj %d\n", mesh.adja[3*(5465-1)+1+i]/3);
+			printf("Adj %d\n", mesh.adja[3*(5727-1)+1+i]/3);
 		}		
 		// Test de la fonction qui localise un point dans un triangle en brute force
 		printf("Localise brute force: %d\n", localiseTriangleBruteForce(&mesh, &mesh.point[mesh.tria[5465].v[1]]));
@@ -709,25 +710,45 @@ if ( test == 8 )
  	if (test == 13)
  	{
  		Mesh	mesh;
+		time_t debut;
+		time_t fin;
+		double difference;
 		/* parse arguments */
 		fprintf(stdout,"\n  -- DATA MESH\n");
 
-
+		
 		/* default values */
 		memset(&mesh,0,sizeof(Mesh));  	
 		if ( !parsar(argc,argv,&mesh) )  return(1);
-  		 
+  	
   	/* read data */
   	fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
+		debut = time(NULL) ;
+		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
+		hashHedge(&mesh, tab);
+		setAdj(&mesh, tab);
+		fin = time(NULL);
+		difference = difftime (fin, debut);
+		fprintf(stdout," temps d'éxécution %f \n",difference );
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 		int** list = (int**)malloc(sizeof(int*)) ;
-		int nb_triangle = boulep(&mesh,7,3,list),i;
+		int nb_triangle = boulep(&mesh,5727,0,list),i;
+		printf("le point considéré = %d \n ", mesh.tria[5727].v[0] );
+		
 		
 		printf("Nombre de triangles autour = %d \n ", nb_triangle );
 		printf("Liste des triangles autour :  \n " );
 		for (i=0;i<nb_triangle;i++)
 			printf("triangle %d = %d \n ", i,(*list)[i] );
+			
+		printf("En utilisant les relations d'adjacences \n " );
+		int** list2 = (int**)malloc(sizeof(int*)) ;
+		int compt = boule_adj(&mesh, 5727, 0 , list2);
+		printf("Nombre de triangles autour = %d \n ", compt );
+		printf("Liste des triangles autour :  \n " );
+		for (i=0;i<compt;i++)
+			printf("triangle %d = %d \n ", i,(*list2)[i] );
 		
 		fprintf(stdout,"  -- WRITING COMPLETED\n \n ");
 	}

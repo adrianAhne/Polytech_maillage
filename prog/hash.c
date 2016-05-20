@@ -163,7 +163,7 @@ int setAdj(pMesh mesh, Hedge * tab)
 
 }
 
-
+/* A paralléliser*/
 int localiseTriangleBruteForce(pMesh mesh, pPoint point){
 	int i,j;
 	for(i=1; i<mesh->nt; i++){
