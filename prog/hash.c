@@ -269,11 +269,12 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 
 // Following the algorithm given in github/doc/main.pdf
 // Compute the distance between a point and a surface using buckets and adjacences
-double distanceUsingBucket(pMesh mesh, pPoint p)
+// tab gives an array which tells us to which triangle a given point belongs to
+double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 {
  	unsigned N = 0;
 	double d = 10000.0, dapp = 10000.0, d0, dk, d_pk;
-	int kel = 0, iel = 0, C, p0, pk, i,j,k, start, pointN ;
+	int kel = 0, iel = 0, C, p0, pk, i,j,k, start, pointN, ind ;
 	int TriaInBoule, TriaInBoulePK;
 	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
@@ -307,9 +308,26 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 	printf("Cell grid of the point : %d\n", C);
 
 	// TO DO: how to choose p0???
+	// check for each point in the bucket the distance to the given point and take the minimum as p0 (Norm2)
 	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
-	d0 = 1000.0; // false
-	//d0 = ...
+	
+	//ALEXANDRE: Comment peux-je avoir accès aux elements du bucket? 
+	// Je veux calculer pour chaque element la distance au point et le point avec la distance minimal d0 est mon p0
+	double dist0 = 100000000000000;
+	double dCurrent;
+	for(i=0, ... , i++)
+	{
+		// 3-dimensional case: calculate distance between point in bucket and given point p by : dCurrent = (x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
+		dCurrent = (... - p.c[0])*(... - p.c[0]) + (... - p.c[1])*(... - p.c[1]) + (... - p.c[2])*(... - p.c[2])
+		
+		if (dCurrent < dist0)
+		{
+			dist0 = dCurrent;
+			p0 = ... // integer of current point in bucket	
+		}
+	}
+	
+	d0 = dist0;
 	
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)
@@ -317,7 +335,8 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 
 		// get list of all triangles in the ball B(p0) of p0
 		// TO DO: give startTriangle and startpoint
-		TriaInBoule = boulep(mesh, start, pointN , list);
+		// TUPAC: 
+		TriaInBoule = boulep(mesh, mesh->tria[tab[p0]], p0 , list);
 		
 		// for each triangle K_k' in the ball B(p0)
 		for(k=0; k < TriaInBoule; k++)
@@ -330,35 +349,43 @@ double distanceUsingBucket(pMesh mesh, pPoint p)
 				d = dk;
 				// store index of current triangle kel = k
 				kel = k;
+				
 			}
 		}
 		
 		// for each vertex pk belonging to the trianlge kel
+		// TO DO: Check that really the two other points in triangle are chosen and not the already handled first one
+		// TO DO: Remember index of points in triangle
 		for(i=0; i < 2; i++)
 		{
-			// get list of all triangles in the ball B(pk) of pk
-			// TO DO: give startTriangle
-			TriaInBoulePK = boulep(mesh, start, mesh->tria[kel].v[i], listLocal);
-			// for each triangle K_pk' in the ball B(pk) 
-			for (j=0; j < TriaInBoulePK; j++)
+			// check that current point is not the point, which was already handled in the for loop before. Consider only the two vertices of the triangle which are left
+			if (p0 != mesh->tria[kel].v[i])
 			{
-				//compute the distance d_pk = d(p, K_pk')
-				d_pk = distPointToTriangle(mesh, *list[j]/3, p);
-				
-				if(d_pk < dapp)
+		
+				// get list of all triangles in the ball B(pk) of pk
+				// TO DO: give startTriangle
+				TriaInBoulePK = boulep(mesh, mesh->tria[tab[mesh->tria[kel].v[i]]], mesh->tria[kel].v[i], listLocal);
+				// for each triangle K_pk' in the ball B(pk) 
+				for (j=0; j < TriaInBoulePK; j++)
 				{
-					// update the distance
-					dapp = d_pk;
+					//compute the distance d_pk = d(p, K_pk')
+					d_pk = distPointToTriangle(mesh, *list[j]/3, p);
+				
+					if(d_pk < dapp)
+					{
+						// update the distance
+						dapp = d_pk;
 					
-					// store the index of current triangle iel = j
-					iel = j;
+						// store the index of current triangle iel = j
+						iel = j;
+					}
 				}
-			}
 			
-			if (dapp > d)
-				p0 = pk;
-			else
-				p0 = 0;
+				if (dapp > d)
+					p0 = pk; 
+				else
+					p0 = 0;
+			}
 		}
 	}
 	
