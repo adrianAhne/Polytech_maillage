@@ -399,6 +399,8 @@ double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0)
 }
 
 
+/* DELETE FUNCTION */
+/*
 // calculates distance from a point P0 to P1 by calculating a ball around P0 and using the function distPointToTriangle then ; tab 
 double distancePointToBoule(pMesh mesh, int P0, pPoint P1, int* tab)
 {
@@ -424,7 +426,7 @@ double distancePointToBoule(pMesh mesh, int P0, pPoint P1, int* tab)
 	return sum;
 }
 
-
+*/
 
 
 

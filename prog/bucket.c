@@ -243,16 +243,12 @@ int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double incr
       	ret     = key;
       	cherche = bucket->head[key] ;
       
-      
-
+     
 			/* on affiche les points du même subdomain */
 			while( bucket->link[ cherche ])
 			{
-				cherche = bucket->link[cherche] ;
-        
-
-				
-		}
+				cherche = bucket->link[cherche] ;			
+			}
 			
 	} 
 		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */

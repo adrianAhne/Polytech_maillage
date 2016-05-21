@@ -269,8 +269,8 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 
 // Following the algorithm given in github/doc/main.pdf
 // Compute the distance between a point and a surface using buckets and adjacences
-// tab gives an array which tells us to which triangle a given point belongs to
-double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
+// VertToTria gives an array which tells us to which triangle a given point belongs to
+double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 {
  	unsigned N = 0;
 	double d = 10000.0, dapp = 10000.0, d0, dk, d_pk;
@@ -299,9 +299,10 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 	fflush(stdin);	// just to be able to do a scanf without conflicts
 	fscanf(stdin,"%d",&N);
 	bucket.size = N ;
+	printf("lalal\n");
 	init_bucket( &bucket , mesh); 
 	fill_bucket( &bucket , mesh );
-
+	printf("soso\n");
 	// Find the cell grid C to which point belongs 
 	// returns number of bucket
 	C = bucket_retour_key( &bucket , mesh, &point , 0.0 ); // doesn't work
@@ -310,11 +311,11 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 	// TO DO: how to choose p0???
 	// check for each point in the bucket the distance to the given point and take the minimum as p0 (Norm2)
 	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
-	
+	printf("hhh\n");
 	//ALEXANDRE: Comment peux-je avoir accès aux elements du bucket? 
 	// Réponse: je vais te créer un tableau avec tout les points d'une case 
 	int* points ; // le tableau d'indice des points
-	int cherche = bucket->head[C] ;
+	int cherche = bucket.head[C] ;
 	int compte = 0 ;
 	/* Allocation mémoire : je compte les élements */ 
 	while ( bucket.link[cherche] ) 
@@ -324,31 +325,29 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 	}
 	points =(int*) malloc((compte+1) * sizeof(int)	 ) ;
 	/* je remplie le tableau d'indice des points */
-	points[0] = bucket->head[C] ;
+	points[0] = bucket.head[C] ;
 	for( i = 1 ; i <= compte ; i++ ) 
 	{
 		points[i] = bucket.link[cherche] ;
 		cherche  = bucket.link[cherche] ;
 	} 
 	
-	
+	printf("dd\n");
 	/* ICI tu as le tableau remplis tu peux calculer la distance : bon courage */
-	
-
-	 
 	
 	// Je veux calculer pour chaque element la distance au point et le point avec la distance minimal d0 est mon p0
 	double dist0 = 100000000000000;
 	double dCurrent;
-	for(i=0, ... , i++)
+	for(i=0; i <= compte; i++)
 	{
 		// 3-dimensional case: calculate distance between point in bucket and given point p by : dCurrent = (x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
-		dCurrent = (... - p.c[0])*(... - p.c[0]) + (... - p.c[1])*(... - p.c[1]) + (... - p.c[2])*(... - p.c[2])
-		
+		printf("CurrentPoint = points[%d]\n", i);
+		dCurrent = sqrt((mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]));
+		printf("CurrentPoint = %d, currentDist = %f \n\n", points[i], dCurrent);
 		if (dCurrent < dist0)
 		{
 			dist0 = dCurrent;
-			p0 = ... // integer of current point in bucket	
+			p0 = points[i]; // integer of current point in bucket	
 		}
 	}
 	
@@ -359,15 +358,13 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 	{
 
 		// get list of all triangles in the ball B(p0) of p0
-		// TO DO: give startTriangle and startpoint
-		// TUPAC: 
-		TriaInBoule = boulep(mesh, mesh->tria[tab[p0]], p0 , list);
+		TriaInBoule = boulep(mesh, VertToTria[p0], p0 , list);
 		
 		// for each triangle K_k' in the ball B(p0)
 		for(k=0; k < TriaInBoule; k++)
 		{
 			// calculate distance d_k = d(p, K_k');
-			dk = distPointToTriangle(mesh, *list[k]/3, p0);
+			dk = distPointToTriangle(mesh, &mesh->tria[*(list[k])/3], p);
 			if (dk < d)
 			{
 				//update the distance d= dk
@@ -379,8 +376,6 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 		}
 		
 		// for each vertex pk belonging to the trianlge kel
-		// TO DO: Check that really the two other points in triangle are chosen and not the already handled first one
-		// TO DO: Remember index of points in triangle
 		for(i=0; i < 2; i++)
 		{
 			// check that current point is not the point, which was already handled in the for loop before. Consider only the two vertices of the triangle which are left
@@ -388,13 +383,12 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *tab)
 			{
 		
 				// get list of all triangles in the ball B(pk) of pk
-				// TO DO: give startTriangle
-				TriaInBoulePK = boulep(mesh, mesh->tria[tab[mesh->tria[kel].v[i]]], mesh->tria[kel].v[i], listLocal);
+				TriaInBoulePK = boulep(mesh, VertToTria[mesh->tria[kel].v[i]], mesh->tria[kel].v[i], listLocal);
 				// for each triangle K_pk' in the ball B(pk) 
 				for (j=0; j < TriaInBoulePK; j++)
 				{
 					//compute the distance d_pk = d(p, K_pk')
-					d_pk = distPointToTriangle(mesh, *list[j]/3, p);
+					d_pk = distPointToTriangle(mesh, &mesh->tria[*listLocal[j]/3], p);
 				
 					if(d_pk < dapp)
 					{

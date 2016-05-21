@@ -682,6 +682,7 @@ if ( test == 8 )
  	}
 
 
+	// distance using bucket
 	if(test == 12 )
 	{
 		Mesh	mesh;
@@ -698,13 +699,22 @@ if ( test == 8 )
 		if ( !loadMesh(&mesh) )  return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
 
+		int* VertToTria = (int*)calloc(mesh.np+1, sizeof(int));
+		hashTria(&mesh, VertToTria);
+		//printf("tab[2010]=%d\n", VertToTria[2010]);
+		//printf("tab[2085]=%d\n", VertToTria[2085]);
+		//printf("tab[2011]=%d\n", VertToTria[2011]);
+
 		Point p;
 		p.c[0] = .10;
 		p.c[1] = .20;
 		p.c[2] = .30;
-		double dist = distanceUsingBucket(&mesh, &p);
-
+		
+		double dist;
+		dist = distanceUsingBucket(&mesh, &p, VertToTria);
+		printf("DistanceUsingBucket = %f\n", dist);
  	}
+
 
  	// Bucket sort algorithm for the computation of the distance point-triangulation
  	if (test == 13)
@@ -780,10 +790,12 @@ if ( test == 8 )
 		printf("tab[877]=%d\n", tab[877]);
 		//for(i=0; i<mesh.np+1; i++)
 			//printf("i=%d triangle=%d\n", i, tab[i]);
-		
+		/*
 		pTria tria = &mesh.tria[877];
 		dist = distancePointToBoule(&mesh, 877, mesh.point[1377], tab);
 		printf("dist=%f\n", dist);
+		*/
+		
 		
 		free(tab);
 	}
