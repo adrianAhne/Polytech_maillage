@@ -248,6 +248,8 @@ int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double incr
 			while( bucket->link[ cherche ])
 			{
 				cherche = bucket->link[cherche] ;			
+				pp2 = &mesh->point[cherche];
+        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
 			}
 			
 	} 
@@ -256,7 +258,7 @@ int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double incr
 	{
 		fprintf(stdout,"  The point is not in the current cell \n");
 		increment ++ ;
-		ret = use_bucket( bucket , mesh , point , increment ) ; 
+		ret = bucket_retour_key( bucket , mesh , point , increment ) ; 
 	}
 	fprintf(stdout," indice = %d \n" , indice );
 	return ret ;	

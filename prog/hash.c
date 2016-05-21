@@ -291,10 +291,10 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	Bucket bucket;
 	Point point;
 	// point aleatoire
-	point.c[0] =  .3;
-	point.c[1] =  .4;
+	point.c[0] =  .5;
+	point.c[1] =  .5;
 	point.c[2] =  .5;
-	positive_boundingbox( mesh , &point );
+	//positive_boundingbox( mesh , &point );
 	fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
 	fflush(stdin);	// just to be able to do a scanf without conflicts
 	fscanf(stdin,"%d",&N);
@@ -326,13 +326,15 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	points =(int*) malloc((compte+1) * sizeof(int)	 ) ;
 	/* je remplie le tableau d'indice des points */
 	points[0] = bucket.head[C] ;
+	cherche = bucket.head[C] ;
 	for( i = 1 ; i <= compte ; i++ ) 
 	{
 		points[i] = bucket.link[cherche] ;
+		fprintf(stdout,"  Points[i]  x = %f  y = %f  z =  %f \n", mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
 		cherche  = bucket.link[cherche] ;
 	} 
 	
-	printf("dd\n");
+	printf("compte = %d \n" , compte);
 	/* ICI tu as le tableau remplis tu peux calculer la distance : bon courage */
 	
 	// Je veux calculer pour chaque element la distance au point et le point avec la distance minimal d0 est mon p0
@@ -342,12 +344,13 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	{
 		// 3-dimensional case: calculate distance between point in bucket and given point p by : dCurrent = (x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
 		printf("CurrentPoint = points[%d]\n", i);
-		dCurrent = sqrt((mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]));
+		dCurrent = (mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]);
 		printf("CurrentPoint = %d, currentDist = %f \n\n", points[i], dCurrent);
 		if (dCurrent < dist0)
 		{
 			dist0 = dCurrent;
 			p0 = points[i]; // integer of current point in bucket	
+			printf("ici\n");
 		}
 	}
 	
