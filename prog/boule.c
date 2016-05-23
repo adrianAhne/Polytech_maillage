@@ -26,7 +26,7 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	clock_t fin;
 	double difference;
 	
-	fprintf(stdout," Le point considéré est le %d \n",mesh->tria[start].v[point]);
+	//fprintf(stdout," Le point considéré est le %d \n",mesh->tria[start].v[point]);
 	debut= clock();
 	/* Méthode actuelle méthode naïve avec parcours de tout les triangles*/
 	for(i=1 ; i <= mesh->nt ; i ++ )
@@ -36,7 +36,7 @@ int boulep(pMesh mesh, int start, int point , int** list)
 		{
 			if ( mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
-				fprintf(stdout," face %d \n",i);
+				//fprintf(stdout," face %d \n",i);
 				/* on incremente le compteur qui nous servira pour le malloc du tableau list*/
 				compt++;
 			}
@@ -55,7 +55,8 @@ int boulep(pMesh mesh, int start, int point , int** list)
 				/* on remplit la list */
 				printf( "i  %d \n",i);
 				(*list)[compt] = 3*(i) + j ;
-				fprintf(stdout," calcul %d \n",(*list)[compt]);
+
+				//fprintf(stdout,"*(list[%d] = 3*%d + %d = %d \n",compt, i, j,(*list)[compt]);
 				compt++;
 			}
 		}
@@ -65,12 +66,10 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt ; 
 	
-	 
-	
-	 
-	
 	
 }
+
+
 
 int boule_adj(pMesh mesh, int start, int point , int** list)
 {

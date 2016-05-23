@@ -1,0 +1,28 @@
+#  File created with Medit 4.1a
+#  Release Mar. 30, 2012
+# Created: Mon Oct  6 16:18:59 2014
+
+#  Assign background color
+BackgroundColor
+1.000000 1.000000 1.000000
+
+RenderMode
+fill
+
+#  Window Size
+WindowSize
+600 600
+# Color palette
+Palette
+0.000000 0.000000 0.000000 0.000000 0.000000 
+
+# Subdomains colors
+NbMaterials
+1
+# Material DEFAULT_MAT 0
+Material DEFAULT_MAT 0
+0.00 0.00 0.00 1.00
+0.94 0.91 0.89 1.00
+0.07 0.00 0.00 1.00
+0.00 0.00 0.00 1.00
+80.00

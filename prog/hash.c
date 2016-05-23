@@ -302,7 +302,6 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	printf("lalal\n");
 	init_bucket( &bucket , mesh); 
 	fill_bucket( &bucket , mesh );
-	printf("soso\n");
 	// Find the cell grid C to which point belongs 
 	// returns number of bucket
 	C = bucket_retour_key( &bucket , mesh, &point , 0.0 ); // doesn't work
@@ -311,7 +310,6 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	// TO DO: how to choose p0???
 	// check for each point in the bucket the distance to the given point and take the minimum as p0 (Norm2)
 	p0 = bucket.head[C]; // false : one point in the cell grid with it's distance to point
-	printf("hhh\n");
 	//ALEXANDRE: Comment peux-je avoir accès aux elements du bucket? 
 	// Réponse: je vais te créer un tableau avec tout les points d'une case 
 	int* points ; // le tableau d'indice des points
@@ -344,12 +342,14 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	{
 		// 3-dimensional case: calculate distance between point in bucket and given point p by : dCurrent = (x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
 		//printf("CurrentPoint = points[%d]\n", i);
+
 		dCurrent = (mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]);
 		//printf("CurrentPoint = %d, currentDist = %f \n\n", points[i], dCurrent);
 		if (dCurrent < dist0)
 		{
 			dist0 = dCurrent;
 			p0 = points[i]; // integer of current point in bucket	
+
 		}
 	}
 	
@@ -389,6 +389,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 				*/
 			dk = distPointToTriangle(mesh, &mesh->tria[((*list)[k]-indice_point)/3], p);
 			
+
 			if (dk < d)
 			{
 				//update the distance d= dk
@@ -399,6 +400,8 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 				
 			}
 		}
+			
+		
 		
 		// for each vertex pk belonging to the triangle kel
 		for(i=0; i <= 2; i++)
@@ -430,6 +433,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 					//compute the distance d_pk = d(p, K_pk')
 					d_pk = distPointToTriangle(mesh, &mesh->tria[((*listLocal)[j]-indice_point)/3], p);
 			
+
 					if(d_pk < dapp)
 					{
 						// update the distance
@@ -449,9 +453,8 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 		}
 	}
 	
-
-	free_bucket (&bucket);
 	free(list);
+	free_bucket (&bucket);
 	free(listLocal);
 
 	return d;

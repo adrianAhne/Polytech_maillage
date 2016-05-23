@@ -706,8 +706,8 @@ if ( test == 8 )
 		//printf("tab[2011]=%d\n", VertToTria[2011]);
 
 		Point p;
-		p.c[0] = .10;
-		p.c[1] = .20;
+		p.c[0] = .90;
+		p.c[1] = .90;
 		p.c[2] = .30;
 		
 		double dist;
