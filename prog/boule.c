@@ -53,8 +53,9 @@ int boulep(pMesh mesh, int start, int point , int** list)
 			if (  mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
 				/* on remplit la list */
+				printf( "i  %d \n",i);
 				(*list)[compt] = 3*(i) + j ;
-				//fprintf(stdout," calcul %d \n",(*list)[compt]);
+				fprintf(stdout," calcul %d \n",(*list)[compt]);
 				compt++;
 			}
 		}
@@ -95,7 +96,7 @@ int boule_adj(pMesh mesh, int start, int point , int** list)
 					if (  mesh->tria[triangle].v[j] == mesh->tria[start].v[point] )
 					{
 						/* on remplit la list */
-						(*list)[compt] = triangle ;
+						(*list)[compt] = 3*triangle + j ;
 						//fprintf(stdout," calcul %d \n",(*list)[compt]);
 						triangle_av = triangle_ori ;
 						triangle_ori = triangle ;

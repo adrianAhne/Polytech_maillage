@@ -278,12 +278,12 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	int TriaInBoule, TriaInBoulePK;
 	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
-
+				int indice_point ;
 	// Hash et adja relations
 	Hedge *tab = (Hedge*)calloc(3*mesh->nt+1,sizeof(Hedge));
 	hashHedge(mesh, tab);
 	setAdj(mesh, tab);
-	
+	int real_indic ;
 	int *hashT = (int*)calloc(mesh->np+1, sizeof(int));
 	hashTria(mesh, hashT);
 
@@ -330,7 +330,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	for( i = 1 ; i <= compte ; i++ ) 
 	{
 		points[i] = bucket.link[cherche] ;
-		fprintf(stdout,"  Points[i]  x = %f  y = %f  z =  %f \n", mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
+		//fprintf(stdout,"  Points[i]  x = %f  y = %f  z =  %f \n", mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
 		cherche  = bucket.link[cherche] ;
 	} 
 	
@@ -343,18 +343,18 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	for(i=0; i <= compte; i++)
 	{
 		// 3-dimensional case: calculate distance between point in bucket and given point p by : dCurrent = (x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
-		printf("CurrentPoint = points[%d]\n", i);
+		//printf("CurrentPoint = points[%d]\n", i);
 		dCurrent = (mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]);
-		printf("CurrentPoint = %d, currentDist = %f \n\n", points[i], dCurrent);
+		//printf("CurrentPoint = %d, currentDist = %f \n\n", points[i], dCurrent);
 		if (dCurrent < dist0)
 		{
 			dist0 = dCurrent;
 			p0 = points[i]; // integer of current point in bucket	
-			printf("ici\n");
 		}
 	}
 	
 	d0 = dist0;
+	
 	
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
 	while(p0)
@@ -362,52 +362,90 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 
 		// get list of all triangles in the ball B(p0) of p0
 		TriaInBoule = boulep(mesh, VertToTria[p0], p0 , list);
-		
+		/*printf ( "nombre de triangles = %d \n", TriaInBoule ) ;
+		printf("Liste des triangles autour :  \n " );
+		for (i=0;i<TriaInBoule;i++)
+			printf("triangle %d = %d \n ", i,((*list)[k]-indice_point)/3 );
+		*/
 		// for each triangle K_k' in the ball B(p0)
 		for(k=0; k < TriaInBoule; k++)
 		{
+			//printf(" %d \n",k);
+			//printf(" *(list)[k]/3 = %d \n",(*list)[k]/3 ) ; 
 			// calculate distance d_k = d(p, K_k');
-			dk = distPointToTriangle(mesh, &mesh->tria[*(list[k])/3], p);
+			int indice_point ;
+			if ( (*list)[k] % 3 == 0 )
+				indice_point = 0 ;
+			else 
+			{
+				if (((*list)[k] - 1 ) %3 == 0 )
+					indice_point = 1 ;
+				else
+					indice_point = 2 ;
+			}
+			/*printf("Liste des triangles autour :  \n " );
+			for (i=0;i<TriaInBoule;i++)
+				printf("triangle %d = %d \n ", i,((*list)[k] - indice_point)/3 );
+				*/
+			dk = distPointToTriangle(mesh, &mesh->tria[((*list)[k]-indice_point)/3], p);
+			
 			if (dk < d)
 			{
 				//update the distance d= dk
 				d = dk;
 				// store index of current triangle kel = k
-				kel = k;
+				kel = ((*list)[k]-indice_point)/3 ;
+				real_indic = indice_point ;
 				
 			}
 		}
 		
-		// for each vertex pk belonging to the trianlge kel
-		for(i=0; i < 2; i++)
+		// for each vertex pk belonging to the triangle kel
+		for(i=0; i <= 2; i++)
 		{
+		
+			
 			// check that current point is not the point, which was already handled in the for loop before. Consider only the two vertices of the triangle which are left
 			if (p0 != mesh->tria[kel].v[i])
 			{
-		
+				printf("ICI \n");
 				// get list of all triangles in the ball B(pk) of pk
-				TriaInBoulePK = boulep(mesh, VertToTria[mesh->tria[kel].v[i]], mesh->tria[kel].v[i], listLocal);
-				// for each triangle K_pk' in the ball B(pk) 
+				TriaInBoulePK = boulep(mesh, kel, i, listLocal);
+				for (i=0;i<TriaInBoulePK;i++)
+					printf("triangle %d = %d \n ", i,(*listLocal)[i] );
+				// for each triangle K_pk' in the ball B(pk)
 				for (j=0; j < TriaInBoulePK; j++)
 				{
+						int indice_point ;
+						if ( (*listLocal)[k] % 3 == 0 )
+							indice_point = 0 ;
+						else 
+						{
+							if (((*listLocal)[k] - 1 ) %3 == 0 )
+								indice_point = 1 ;
+							else
+								indice_point = 2 ;
+						}
+					
 					//compute the distance d_pk = d(p, K_pk')
-					d_pk = distPointToTriangle(mesh, &mesh->tria[*listLocal[j]/3], p);
-				
+					d_pk = distPointToTriangle(mesh, &mesh->tria[((*listLocal)[j]-indice_point)/3], p);
+			
 					if(d_pk < dapp)
 					{
 						// update the distance
 						dapp = d_pk;
-					
+				
 						// store the index of current triangle iel = j
 						iel = j;
 					}
 				}
-			
+		
 				if (dapp > d)
 					p0 = pk; 
 				else
 					p0 = 0;
 			}
+			
 		}
 	}
 	
