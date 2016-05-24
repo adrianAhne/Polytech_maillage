@@ -278,7 +278,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 	int TriaInBoule, TriaInBoulePK;
 	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
-				int indice_point ;
+	int indice_point ;
 	// Hash et adja relations
 	Hedge *tab = (Hedge*)calloc(3*mesh->nt+1,sizeof(Hedge));
 	hashHedge(mesh, tab);
@@ -459,6 +459,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria)
 
 	return d;
 }
+
 
 
 

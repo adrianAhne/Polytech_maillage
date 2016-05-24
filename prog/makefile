@@ -14,7 +14,8 @@ OBJS= \
 	distanceMeshFunctions.o \
 	bucket.o \
 	hash.o \
-	boule.o
+	boule.o \
+	hausdorff.o
 
 
 all: myprogram
@@ -51,6 +52,9 @@ hash: hash.c bucket.c boule.c
 
 boule: boule.c hash.c
 	$(CC) -c boule.c -o boule.o $(CFLAG)
+	
+hausdorff: hausdorff.c hash.c
+	$(CC) -c hausdorff.c hash.c -o hausdorff.o $(CFLAG)
 
 clean:
 	$(RM) -r $(OBJS) myprogram

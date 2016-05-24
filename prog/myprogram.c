@@ -303,7 +303,7 @@ int main(int argc,char *argv[]) {
 
   fprintf(stdout,"  -- Main3 (2016)\n");
 
-	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule\n 14. distPointToBoule\nChoose: \n");
+	fprintf(stdout,"  TEST SELECTION\n\n Do you want to test ?: \n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Courbure 2D\n 7. Courbure 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Bucket sort algorithm for the computation of the distance point-triangulation \n 13. Boule\n 14. distPointToBoule\n 15. distance Hausdorff\nChoose: \n");
 
 	fflush(stdin);
   fscanf(stdin,"%d",&test);
@@ -713,6 +713,7 @@ if ( test == 8 )
 		double dist;
 		dist = distanceUsingBucket(&mesh, &p, VertToTria);
 		printf("DistanceUsingBucket = %f\n", dist);
+		free(VertToTria);
  	}
 
 
@@ -800,6 +801,30 @@ if ( test == 8 )
 		free(tab);
 	}
  
+ 
+ 	// test hausdorff distance between two mesh
+	if (test == 15)
+	{
+ 		Mesh	meshA, meshB;
+
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+
+		/* default values */
+		memset(&meshA,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&meshA) )  return(1);
+		memset(&meshB,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&meshB) )  return(1);
+  		 
+  		/* read data */
+  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
+		if ( !loadMesh(&meshA) )  return(1);
+		if ( !loadMesh(&meshB) ) return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
+		
+		double distHausdorff = Hausdorff(&meshA, &meshB);
+		printf("distHausdorff = %f\n", distHausdorff);
+ 	}
 
 	return(0);
 }
