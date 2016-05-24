@@ -42,7 +42,7 @@ void rotation3D(Mesh *mesh, double angleX, double angleY, double angleZ)
 		
 		
 		// Si l'angle est sufisamment grand pour que la rotation puisse se faire
-		if (fabsf(angleX) > 1e-10)
+		if (fabs(angleX) > 1e-10)
 		{
 			y = ppt->c[1] * cos(angleX) - ppt->c[2] * sin(angleX);
 			z = ppt->c[1] * sin(angleX) + ppt->c[2] * cos(angleX);
@@ -50,7 +50,7 @@ void rotation3D(Mesh *mesh, double angleX, double angleY, double angleZ)
 			ppt->c[2] = z;
 		}
 
-		if (fabsf(angleY) > 1e-10)
+		if (fabs(angleY) > 1e-10)
 		{
 			x = ppt->c[2] * sin(angleY) + ppt->c[0] * cos(angleY);
 			z = ppt->c[2] * cos(angleY) - ppt->c[0] * sin(angleY);
@@ -58,7 +58,7 @@ void rotation3D(Mesh *mesh, double angleX, double angleY, double angleZ)
 			ppt->c[2] = z;
 		}
 
-		if (fabsf(angleZ) > 1e-10)
+		if (fabs(angleZ) > 1e-10)
 		{
 			x = ppt->c[0] * cos(angleZ) - ppt->c[1] * sin(angleZ);
 			y = ppt->c[0] * sin(angleZ) + ppt->c[1] * cos(angleZ);

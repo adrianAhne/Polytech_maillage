@@ -399,7 +399,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 				/*for (i=0;i<TriaInBoulePK && kel!= (* listLocal)[i] ;i++)
 					printf("triangle %d = %d \n ", i,(* listLocal)[i] );*/
 				// for each triangle K_pk' in the ball B(pk)
-				for (j=0; j < TriaInBoulePK && kel ; j++)
+				for (j=0; j < TriaInBoulePK && kel != (*listLocal)[j] ; j++)
 				{
 						int indice_point = (*listLocal)[j] %3;
 

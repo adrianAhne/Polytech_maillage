@@ -16,7 +16,6 @@ void Change2Dto3D( pMesh Mesh )
 	int i;
 	for(i=0;i<=Mesh -> np;i++)
 	{
-		Mesh->point[i].c[3] = Mesh->point[i].c[2] ;
 		Mesh->point[i].c[2] = 0.0 ;
 	}
 }

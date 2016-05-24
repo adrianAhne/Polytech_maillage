@@ -108,8 +108,11 @@ int loadMesh(pMesh mesh) {
   for (k=1; k<=mesh->nt; k++) {
     pt = &mesh->tria[k];
     GmfGetLin(inm,GmfTriangles,&pt->v[0],&pt->v[1],&pt->v[2],&pt->ref);
-		for (i=0; i<3; i++)
-			mesh->point[pt->v[i]].ref = pt->ref;
+    	// add to structure point an integer which indicates a triangle he belongs to
+		for (i=0; i<3; i++){
+			ppt = &mesh->point[pt->v[i]];	
+			if(!(ppt->s))
+				ppt->s = k;	
   }
 
   /* read edges */
@@ -332,7 +335,6 @@ int main(int argc,char *argv[]) {
     fscanf(stdin,"%f",&angle);
 		
 		rotation2D(&mesh, angle)  ;
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -372,7 +374,6 @@ int main(int argc,char *argv[]) {
 		
 		
 		rotation3D(&mesh, angleX, angleY, angleZ);
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -407,7 +408,6 @@ int main(int argc,char *argv[]) {
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Superposition MESH \n");
 		Superposition(&mesh1,&mesh2 , &mesh3 ) ;
-		if ( ! (&mesh3)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -442,7 +442,6 @@ int main(int argc,char *argv[]) {
     fscanf(stdin,"%f",&lengthY);
 
 		translation2D(&mesh, lengthX,lengthY);
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -480,7 +479,6 @@ int main(int argc,char *argv[]) {
     fscanf(stdin,"%f",&lengthZ);
 
 		translation3D(&mesh, lengthX,lengthY,lengthZ);
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -507,7 +505,6 @@ int main(int argc,char *argv[]) {
 		fprintf(stdout,"\n  -- Courbure 2D MESH \n\n ");
 
 		if ( ! courbure2D(&mesh)) return(1);
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -534,7 +531,6 @@ int main(int argc,char *argv[]) {
 		fprintf(stdout,"\n  -- Courbure 3D MESH \n\n ");
 
 		if ( ! courbure3D(&mesh)) return(1);
-		if ( ! (&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -594,8 +590,6 @@ if ( test == 8 )
    	fprintf(stdout," Retour de la fonction bucket = %d \n",ret); 
 		free_bucket (&bucket);
 		
-		//if ( ! (&mesh)) return(1);
-    
 		
     fprintf(stdout,"  -- WRITING COMPLETED\n \n ");
 	}
