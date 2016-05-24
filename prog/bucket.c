@@ -12,7 +12,7 @@
 #include <math.h>  // you need to add -lm for link edition
 #include "mesh.h"
 #include "bucket.h"
-#include "translation.h"
+#include "rigidtransformation.h"
 
 
 void init_bucket ( pBucket bucket , pMesh mesh)

@@ -5,9 +5,9 @@
 #include "mesh.h"
 #include "bucket.h"
 #include "hash.h"
-#include "distanceMeshFunctions.h"
+#include "distance.h"
 
-#include "boule.h"
+#include "ball.h"
 
 #define KA 7
 #define KB 11

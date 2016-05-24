@@ -4,56 +4,52 @@ COMPIL=gcc
 CC=$(COMPIL) -g
 CFLAG = -lm 
 OBJS= \
-	myprogram.o \
+	main.o \
+	InOut.o \
 	libmesh5.o \
-	courbure.o \
-	translation.o \
-	superposition.o \
-	rotation.o \
-	normale.o \
-	distanceMeshFunctions.o \
+	curvature.o \
+	rigidtransformation.o \
+	normal.o \
+	ball.o \
 	bucket.o \
+	distance.o \
 	hash.o \
-	boule.o \
 	hausdorff.o
 
 
-all: myprogram
+all: main
 
-myprogram: $(OBJS)
+main: $(OBJS)
 	$(CC) -o main $(OBJS) $(CFLAG)
 
 libmesh5: libmesh.c 
 	$(CC) -c libmesh5.c -o libmesh.o
 
-courbure: courbure.c libmesh.c
-	$(CC) -c courbure.c libmesh.c -o courbure.o $(CFLAG)
+InOut: InOut.c
+	$(CC) -c InOut.c -o InOut.o $(CFLAG)
 
-translation: translation.c libmesh.c
-	$(CC) -c translation.c libmesh.c -o translation.o $(CFLAG)
+curvature: curvature.c libmesh.c
+	$(CC) -c curvature.c libmesh.c -o curvature.o $(CFLAG)
 
-superposition: superposition.c libmesh.c
-	$(CC) -c superposition.c libmesh.c -o superposition.o $(CFLAG)
+rigidtransformation: rigidtransformation.c libmesh.c
+	$(CC) -c rigidtransformation.c libmesh.c -o rigidtransformation.o $(CFLAG)
 
-rotation: rotation.c libmesh.c
-	$(CC) -c rotation.c libmesh.c -o rotation.o $(CFLAG)
-
-normale: normale.c libmesh.c
-	$(CC) -c normale.c libmesh.c -o normale.o $(CFLAG)
+normal: normal.c libmesh.c
+	$(CC) -c normal.c libmesh.c -o normal.o $(CFLAG)
 	
+ball: ball.c hash.c
+	$(CC) -c ball.c -o ball.o $(CFLAG)
 
-
-distanceMeshFunctions: distanceMeshFunctions.c libmesh.c bucket.c
-	$(CC) -c distanceMeshFunctions.c libmesh.c bucket.c -o distanceMeshFunctions.o $(CFLAG)
+distance: distance.c libmesh.c bucket.c
+	$(CC) -c distance.c libmesh.c bucket.c -o distance.o $(CFLAG)
 
 bucket: bucket.c 
 	$(CC) -c bucket.c -o bucket.o $(CFLAG)  
 
-hash: hash.c bucket.c boule.c
-	$(CC) -c hash.c bucket.c boule.c -o hash.o $(CFLAG)
+hash: hash.c bucket.c ball.c
+	$(CC) -c hash.c bucket.c ball.c -o hash.o $(CFLAG)
 
-boule: boule.c hash.c
-	$(CC) -c boule.c -o boule.o $(CFLAG)
+
 	
 hausdorff: hausdorff.c hash.c
 	$(CC) -c hausdorff.c hash.c -o hausdorff.o $(CFLAG)
