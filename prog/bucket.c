@@ -12,6 +12,7 @@
 #include <math.h>  // you need to add -lm for link edition
 #include "mesh.h"
 #include "bucket.h"
+#include "translation.h"
 
 
 void init_bucket ( pBucket bucket , pMesh mesh)
@@ -113,11 +114,11 @@ void positive_boundingbox( pMesh mesh , pPoint point)
 	/* First of all we have to determine the length of the translation */
 	/* so we determine the bounding box */
 	xmin = point_min ( mesh , 'x');
-	printf( "xmin = %f \n" , fabs(xmin) );
+//	printf( "xmin = %f \n" , fabs(xmin) );
 	ymin = point_min ( mesh , 'y');
-	printf( "ymin = %f \n" , ymin );
+	//printf( "ymin = %f \n" , ymin );
 	zmin = point_min ( mesh , 'z');
-	printf( "zmin = %f \n" , zmin );
+	//printf( "zmin = %f \n" , zmin );
 	//fprintf(stdout , " xmin = %f \n ymin = %f \n zmin = %f \n", xmin , ymin , zmin ) ;
 	if ( xmin < 0 || ymin < 0 || zmin < 0 ) 
 	{
@@ -141,7 +142,7 @@ void positive_boundingbox( pMesh mesh , pPoint point)
 			mesh->point[i].c[2] = mesh->point[i].c[2] /10 ;
 		} 
 	}
-	printf ( "nombre de points = %d  \n",mesh->np);
+	//printf ( "nombre de points = %d  \n",mesh->np);
 	/* from now on we have a positive bounding box: GOOD */
 	/* NOT REALLY */
 	/* now between 0 and 1 */
@@ -175,14 +176,14 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 
 		
 	key = (j*bucket->size+k)*bucket->size+i ;
-	fprintf(stdout,"  key = %d \n",key);
+	//fprintf(stdout,"  key = %d \n",key);
 		
 	//fprintf(stdout, "ici\n" ) ;
 		
 	/* we check if the tab head has a point in it */
 	if ( bucket->head[key] )
 	{
-     	fprintf(stdout,"  Point in Bucket head \n ");
+    // 	fprintf(stdout,"  Point in Bucket head \n ");
       	ret     = bucket->head[key];
       	cherche = ret ;
       	pp1     = &mesh->point[cherche];
@@ -194,7 +195,7 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 			{
 				cherche = bucket->link[cherche] ;
         pp2 = &mesh->point[cherche];
-        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
+      //  fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
         
 
 				
@@ -204,13 +205,13 @@ int use_bucket( pBucket bucket , pMesh mesh ,  pPoint point , double increment )
 		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
 	else
 	{
-		fprintf(stdout,"  The point is not in the current cell \n");
+		//fprintf(stdout,"  The point is not in the current cell \n");
 		increment ++ ;
 		ret = use_bucket( bucket , mesh , point , increment ) ; 
 	}
 	pp1     = &mesh->point[ret];
-	fprintf(stdout," indice = %d \n" , indice );
-	fprintf(stdout,"  Point in Bucket head  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
+	//fprintf(stdout," indice = %d \n" , indice );
+	//fprintf(stdout,"  Point in Bucket head  x = %f  y = %f  z =  %f \n", pp1->c[0],pp1->c[1],pp1->c[2]);
 	return ret ;	
 }
 
@@ -232,14 +233,14 @@ int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double incr
 
 		
 	key = (j*bucket->size+k)*bucket->size+i ;
-	fprintf(stdout,"  key = %d \n",key);
+	//fprintf(stdout,"  key = %d \n",key);
 		
 	//fprintf(stdout, "ici\n" ) ;
 		
 	/* we check if the tab head has a point in it */
 	if ( bucket->head[key] )
 	{
-     	fprintf(stdout,"  Point in Bucket head \n ");
+    // 	fprintf(stdout,"  Point in Bucket head \n ");
       	ret     = key;
       	cherche = bucket->head[key] ;
       
@@ -249,18 +250,18 @@ int bucket_retour_key( pBucket bucket , pMesh mesh ,  pPoint point , double incr
 			{
 				cherche = bucket->link[cherche] ;			
 				pp2 = &mesh->point[cherche];
-        fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
+      //  fprintf(stdout,"  Point in Bucket link  x = %f  y = %f  z =  %f \n", pp2->c[0],pp2->c[1],pp2->c[2]);
 			}
 			
 	} 
 		/* else there is no neighbourgh in this subdomain so we explore the subdomain around */
 	else
 	{
-		fprintf(stdout,"  The point is not in the current cell \n");
+		//fprintf(stdout,"  The point is not in the current cell \n");
 		increment ++ ;
 		ret = bucket_retour_key( bucket , mesh , point , increment ) ; 
 	}
-	fprintf(stdout," indice = %d \n" , indice );
+	//fprintf(stdout," indice = %d \n" , indice );
 	return ret ;	
 }
 

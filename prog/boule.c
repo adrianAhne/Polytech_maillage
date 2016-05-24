@@ -32,7 +32,7 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	for(i=1 ; i <= mesh->nt ; i ++ )
 	{
 		/* parcours des 3 points de chaques triangles */
-		for ( j=0 ; j<2 ; j++ )
+		for ( j=0 ; j<=2 ; j++ )
 		{
 			if ( mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
@@ -53,7 +53,7 @@ int boulep(pMesh mesh, int start, int point , int** list)
 			if (  mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
 				/* on remplit la list */
-				printf( "i  %d \n",i);
+			//	printf( "i  %d \n",i);
 				(*list)[compt] = 3*(i) + j ;
 
 				//fprintf(stdout,"*(list[%d] = 3*%d + %d = %d \n",compt, i, j,(*list)[compt]);
@@ -63,7 +63,7 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	}
 	fin = clock ();
 	difference = difftime (fin, debut);
-	fprintf(stdout," temps d'éxécution %f \n",difference );
+	//fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt ; 
 	
 	
@@ -110,7 +110,7 @@ int boule_adj(pMesh mesh, int start, int point , int** list)
 	}while ( triangle_ori != start  );
 	fin = clock ();
 	difference = difftime (fin, debut);
-	fprintf(stdout," temps d'éxécution %f \n",difference );
+	//fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt;
 }
 
@@ -122,7 +122,7 @@ void hashTria(pMesh mesh, int *tab)
 {
 	int i, j, k;
 	unsigned control = 0;
-
+	//printf("ICI\n");
 	for(i=1; i<=mesh->np; i++)
 	{
 		for(j=1; j<=mesh->nt && control == 0; j++)

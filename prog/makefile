@@ -40,12 +40,14 @@ rotation: rotation.c libmesh.c
 
 normale: normale.c libmesh.c
 	$(CC) -c normale.c libmesh.c -o normale.o $(CFLAG)
+	
 
-distanceMeshFunctions: distanceMeshFunctions.c libmesh.c
-	$(CC) -c distanceMeshFunctions.c libmesh.c -o distanceMeshFunctions.o $(CFLAG)
+
+distanceMeshFunctions: distanceMeshFunctions.c libmesh.c bucket.c
+	$(CC) -c distanceMeshFunctions.c libmesh.c bucket.c -o distanceMeshFunctions.o $(CFLAG)
 
 bucket: bucket.c 
-	$(CC) -c bucket.c -o bucket.o $(CFLAG) 
+	$(CC) -c bucket.c -o bucket.o $(CFLAG)  
 
 hash: hash.c bucket.c boule.c
 	$(CC) -c hash.c bucket.c boule.c -o hash.o $(CFLAG)

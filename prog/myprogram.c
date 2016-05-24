@@ -709,9 +709,16 @@ if ( test == 8 )
 		p.c[0] = .90;
 		p.c[1] = .90;
 		p.c[2] = .30;
-		
+		Bucket bucket ;
+		int N;
+		init_bucket( &bucket , &mesh ); 
+		fill_bucket( &bucket , &mesh );
+		fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
+		fflush(stdin);	// just to be able to do a scanf without conflicts
+		fscanf(stdin,"%d",&N);
+		bucket.size = N ;
 		double dist;
-		dist = distanceUsingBucket(&mesh, &p, VertToTria);
+		dist = distanceUsingBucket(&mesh, &p, VertToTria , &bucket);
 		printf("DistanceUsingBucket = %f\n", dist);
 		free(VertToTria);
  	}
@@ -813,12 +820,9 @@ if ( test == 8 )
 		/* default values */
 		memset(&meshA,0,sizeof(Mesh));  	
 		if ( !parsar(argc,argv,&meshA) )  return(1);
+		if ( !loadMesh(&meshA) )  return(1);
 		memset(&meshB,0,sizeof(Mesh));  	
 		if ( !parsar(argc,argv,&meshB) )  return(1);
-  		 
-  		/* read data */
-  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
-		if ( !loadMesh(&meshA) )  return(1);
 		if ( !loadMesh(&meshB) ) return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
 		

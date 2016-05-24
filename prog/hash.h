@@ -32,6 +32,6 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 // Following the algorithm given in github/doc/main.pdf
 // Compute the distance between a point and a surface using buckets and adjacences
 // tab gives an array which tells us to which triangle a given point belongs to
-double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria);
+double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , pBucket bucket);
 
 #endif
