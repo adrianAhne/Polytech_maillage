@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +8,7 @@
 #include "rigidtransformation.h"
 #include "distance.h"
 #include "hash.h"
-
+#include "bucket.h"
 
 // calculate dot product of two three-dimensional vectors
 double dotProduct3D(Point a, Point b)
