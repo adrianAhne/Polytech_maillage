@@ -9,13 +9,13 @@
 #include "curvature.h"
 
 
-/*** FUNCTION COURBURE ***/
-/* 
-	This functions will calculate the curve for each point 
-	For that we will add up all the angle of the triangles around the point and make the difference to 2PI 
-	Parameters : a mesh 
-	return : it create the sol file in the current repository
-						it return if it works ,  if not 
+
+/*
+	Calculates the curvature for each point by adding up
+	all the angles of the triangles around the point
+	and substract this sum from 2*PI
+	It creates the sol file in the current working directory	
+	3 dimensional
 */
 int courbure3D(pMesh mesh )
 {
@@ -27,44 +27,33 @@ int courbure3D(pMesh mesh )
 	int pos = 0 ;
 	double AB[3],AC[3] ;
 	
-
-	
 	
 	/* CALCUL */
 	for (i=1 ; i<= mesh->np ; i++ )
 	{
-	
 		angle = 0.000000000000 ;
-
-		
+	
 		/* for each point of the mesh we stock in a tab the triangles with the point */ 
 		for (j=1 ; j <= mesh -> nt ; j++)
-		{		
-			
+		{					
 			if ( mesh -> tria[j].v[0] == i || mesh -> tria[j].v[1] == i || mesh -> tria[j].v[2] == i )
-			{
-					/*triangle[pos] = mesh->tria[j] ;*/
 					pos ++ ;
-			}
 		}
-			/* MEMORY ALLOCATION */
-	
+			
+		/* MEMORY ALLOCATION */
 		triangle = ( pTria ) calloc ( (pos+1) , sizeof(Tria) ) ;
 		pos = 0 ;
 		
 		for (j=1 ; j <= mesh -> nt ; j++)
 		{		
-			
 			if ( mesh -> tria[j].v[0] == i || mesh -> tria[j].v[1] == i || mesh -> tria[j].v[2] == i )
-			{		
-					
+			{							
 					triangle[pos] = mesh->tria[j] ;
 					pos ++ ;
 			}
-			
 		}
-		//fprintf(stdout," pos = %d \n" , pos );
-		
+
+
 		/* first we calcule the cosinus of each angle around the point */
 		for (j=0 ; j < pos ; j++ )
 		{
@@ -104,18 +93,14 @@ int courbure3D(pMesh mesh )
 			
 			if ( distAB < 0 || distAC < 0 )
 				fprintf(stdout, "PROBLEME ! \n");
+				
 			costr = ( AB[0] * AC [0] + AB[1] * AC [1] + AB[2] * AC[2] ) / (  distAB * distAC ) ;
 			
 			/* Here we have the angle for each triangle around the point */
 			angle +=  acos(costr) ;
-			
-			
+						
 		}
-		
-		
-	
-	
-	
+			
 		mesh->sol[i] = 2.0*PI - angle ;
 		free(triangle) ;
 	}
@@ -124,7 +109,13 @@ int courbure3D(pMesh mesh )
 }
 
 
- 
+/*
+	Calculates the curvature for each point by adding up
+	all the angles of the triangles around the point
+	and substract this sum from 2*PI
+	It creates the sol file in the current working directory	
+	2 dimensional
+*/
 int courbure2D( pMesh mesh )
 {
 	int check = 0 , i , j ;
@@ -135,15 +126,19 @@ int courbure2D( pMesh mesh )
 	/* Go through all the vertices */
 	for(i=1;i<= mesh->np;i++)
 	{
-		//fprintf(stdout, "i = %d \n" , i ) ;
 		check = 0 ;
+		
 		/* MEMORY ALLOCATION */
-		for(j=1;j<mesh->na;j++)
+		for(j=1;j<mesh->na;j++) 
+		{
 			/* here we see in which edge is the vertice i */
 			if( mesh->edge[j].v[0] == i  ||  mesh->edge[j].v[1] == i )
 				check ++ ;
+		}
+		
 		voisin = (int*) calloc (  check , sizeof(int)) ;
 		check =0;
+		
 		/* going though all the edge to find the vertices which are important */
 		for(j=1;j<= mesh->na;j++)
 		{
@@ -152,9 +147,9 @@ int courbure2D( pMesh mesh )
 			{
 				/* here we stock the following point */
 				voisin [1] = mesh->edge[j].v[1] ;
-				//fprintf(stdout," pt suivant = %d \n",mesh->edge[j].v[1]);
 				check++;
 			}
+			
 			if ( mesh->edge[j].v[1] == i )
 			{
 				/* here we stock the last point */
@@ -165,47 +160,45 @@ int courbure2D( pMesh mesh )
 		
 		}
 		
+		
 		if( check == 2 )
 		{
-			/* calcule de la courbure au point */
+			/* calculate curvature at the point */
 			/* u is the vector for (pi-1,pi) and v for (pi,pi+1) */
 			u1 =  mesh->point[voisin[1]].c[0] - mesh->point[i].c[0]  ;
 			u2 =  mesh->point[voisin[1]].c[1] - mesh->point[i].c[1]  ;
 			v1 =  mesh->point[i].c[0] - mesh->point[voisin[0]].c[0]  ;
 			v2 =  mesh->point[i].c[1] - mesh->point[voisin[0]].c[1]  ;
+			
 			/* NORM */
 			normu = sqrt(  pow(u1,2) + pow(u2,2) ) ;
 			normv = sqrt(  pow(v1,2) + pow(v2,2) ) ; 
 			dist1 = mesh->point[voisin[1]].c[0] - mesh->point[voisin[0]].c[0] ;
 			dist2 = mesh->point[voisin[1]].c[1] - mesh->point[voisin[0]].c[1]  ;
 			dist = sqrt ( pow ( dist1,2) + pow ( dist2,2));
+			
 			/* SCALAR PRODUCT */
 			costh = ( (u1*v1) + (u2*v2) ) / ( normu * normv ) ;
 			
 			/* THETA */
 			mesh->sol[i] = 2*sin(acos(costh));
-			//fprintf(stdout," acosth = %f \n" , mesh->sol[i]);
 			
-			
-			
-			/* pondération par les longueurs (li-1,li) et (li,li+1)*/
-		}
-		if ( check == 1 || check == 0 )
-		{
-			//fprintf(stdout, " Point pas à l'intersection de 2 edges mais fait partie de l'un d'entre eux \n" );
-			mesh->sol[i] = -1 ;
-			//fprintf(stdout," check = %d \n" ,check );
-			
-		}
-		if ( check > 2  )
-		{
-			//fprintf(stdout ," PROBLEME point à l'intersection de plusieurs edges \n" );	
-			mesh -> sol[i] = -1 ;
 			
 		}
 		
+		// TO DO: Explain this if????
+		if ( check == 1 || check == 0 )
+		{
+			mesh->sol[i] = -1 ;			
+		}
+		if ( check > 2  )
+		{
+			mesh -> sol[i] = -1 ;
+		}
 	}
+	
 	free (voisin);
+	
 	return 1;
 
 }

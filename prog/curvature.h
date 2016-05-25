@@ -3,21 +3,21 @@
 
 #define PI         3.14159265
 
-/*** FUNCTION COURBURE 3D***/
-/* 
-	This functions will calculate the curve for each point 
-	For that we will add up all the angle of the triangles around the point and make the difference to 2PI 
-	Parameters : a mesh 
-	return : it create the sol file in the current repository
-						it return if it works ,  if not 
+/*
+	Calculates the curvature for each point by adding up
+	all the angles of the triangles around the point
+	and substract this sum from 2*PI
+	It creates the sol file in the current working directory	
+	3 dimensional
 */
 int courbure3D(pMesh mesh ) ;
 
-/*** FUNCTION COURBURE 2D***/ 
-/* In this function we will calculate the curvature for each point in a 2D Mesh.
-		In order to do that we will use the gaussian curvature: this is the angular between two edge.
-		PARAMETERS : the 2D mesh ( pMesh )
-		RETURN : 1 if everythings happen alright 
+/*
+	Calculates the curvature for each point by adding up
+	all the angles of the triangles around the point
+	and substract this sum from 2*PI
+	It creates the sol file in the current working directory	
+	2 dimensional
 */
 int courbure2D( pMesh mesh );
 

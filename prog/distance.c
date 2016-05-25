@@ -22,7 +22,7 @@ double dotProduct3D(Point a, Point b)
 }
 
 /*
-// Check if point is in triangle tria
+// Check if point is in triangle tria (NOT USED CURRENTLY)
 void checkPointInTriangle(pMesh mesh, pPoint P, pTria tria, double* re, double* dotProduct)
 {
     // points of the triangle
@@ -362,9 +362,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
     }
 
     if (sqrDistance < 0)
-    {
         sqrDistance = 0;
-    }
     
     dist = sqrt(sqrDistance);
     printf("Distance from point to triangle : %f\n", dist);
@@ -373,7 +371,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
 }
 
 
-// DO WE uSE THIS FUNCTION ?!?!?
+/* Calculating the average distance of a point to the triangle */
 double averageDistancePTT(pMesh mesh, pTria tria, pPoint P0)
 {
     int i;
