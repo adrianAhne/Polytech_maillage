@@ -2,7 +2,7 @@
 COMPIL=gcc
 
 CC=$(COMPIL) -g
-CFLAG = -lm 
+CFLAG = -lm -Wall
 OBJS= \
 	main.o \
 	InOut.o \
