@@ -64,6 +64,7 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	for(i=2; i<=meshA->np; i++)
 	{
 		distCurrent = distanceUsingBucket(meshB, &meshA->point[i], VertToTriaB , &bucketB);
+		fprintf(stdout," INDICE DE LA BOUCLE = %d \nDISTANCE ENTRE LE PT %d DE MAILLAGE A ET LE MAILLAGE B = %f\n",i,i,distCurrent);
 		if (distCurrent > distAB)
 	  		distAB = distCurrent;
 	}
