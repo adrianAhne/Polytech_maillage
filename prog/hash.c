@@ -4,10 +4,11 @@
 //#include <omp.h> // parallel computing
 #include "mesh.h"
 #include "bucket.h"
-#include "hash.h"
 #include "distance.h"
 
 #include "ball.h"
+#include "hash.h"
+
 
 #define KA 7
 #define KB 11
@@ -274,11 +275,11 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucket )
 {
  	unsigned N = 0;
-	double d = 10000.0, dapp = 10000.0, d0, dk, d_pk;
+	double d = 100000000.0, dapp = 10000.0, d0, dk, d_pk;
 	int kel = 0, iel = 0, C, p0, pk, i,j,k, start, pointN, ind ;
 	int TriaInBoule, TriaInBoulePK;
-	int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
-	int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
+
+
 	int indice_point ;
 	// Hash et adja relations
 
@@ -293,7 +294,7 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 	// Find the cell grid C to which point belongs 
 	// returns number of bucket
 	C = bucket_retour_key( bucket , mesh, p , 0.0 ); // doesn't work
-	//printf("Cell grid of the point : %d\n", C);
+	printf("Cell grid of the point : %d\n", C);
 
 	// TO DO: how to choose p0???
 	// check for each point in the bucket the distance to the given point and take the minimum as p0 (Norm2)
@@ -316,11 +317,11 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 	for( i = 1 ; i <= compte ; i++ ) 
 	{
 		points[i] = bucket->link[cherche] ;
-		//fprintf(stdout,"  Points[i]  x = %f  y = %f  z =  %f \n", mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
+		//fprintf(stdout,"  Points[%d]  x = %f  y = %f  z =  %f \n",i, mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
 		cherche  = bucket->link[cherche] ;
 	} 
 	
-	//printf("compte = %d \n" , compte);
+	printf("compte = %d \n" , compte);
 	/* ICI tu as le tableau remplis tu peux calculer la distance : bon courage */
 	
 	// Je veux calculer pour chaque element la distance au point et le point avec la distance minimal d0 est mon p0
@@ -340,14 +341,19 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 
 		}
 	}
-	
+
 	d0 = dist0;
-	
+		printf("d0 = %f \n",d0 ) ;
+
+	if ( !d0 )
+		return d0 ;
 	
 	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
+	int thepoint = p0 ;
+	printf(" p0 = %d\n",p0);
 	while(p0)
 	{
-		printf(" p0 = %d\n",p0);
+		int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
 	
 		// get list of all triangles in the ball B(p0) of p0
 		TriaInBoule = boulep(mesh, VertToTria[p0], p0 , list);
@@ -359,27 +365,30 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 		// for each triangle K_k' in the ball B(p0)
 		for(k=0; k < TriaInBoule; k++)
 		{
+				
 			//printf(" %d \n",k);
 			//printf(" *(list)[k]/3 = %d \n",(*list)[k]/3 ) ; 
 			// calculate distance d_k = d(p, K_k');
 			int indice_point =  (*list)[k] % 3;
-			/*printf("Liste des triangles autour :  \n " );
-			for (i=0;i<TriaInBoule;i++)
-				printf("triangle %d = %d \n ", i,((*list)[k] - indice_point)/3 );
-				*/
+			//printf("Liste des triangles autour :  \n " );
+			/*for (i=0;i<TriaInBoule;i++)
+				printf("triangle %d = %d \n ", i,((*list)[i] - indice_point)/3 );
+			*/
 			dk = distPointToTriangle(mesh, &mesh->tria[((*list)[k]-indice_point)/3], p);
-			
+			//printf(" dk = %f \n",dk);
 
-			if (dk < d)
+			if (dk < d0)
 			{
 				//update the distance d= dk
-				d = dk;
+				d0 = dk;
 				// store index of current triangle kel = k
 				kel = ((*list)[k]-indice_point)/3 ;
 				real_indic = indice_point ;
 				
 			}
+
 		}
+		free(list);
 			
 		
 		
@@ -387,56 +396,65 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 		for(i=0; i <= 2; i++)
 		{
 			
-			printf("p0 = %d et mesh->tria[kel].v[i] = %d \n" , p0 , mesh->tria[kel].v[i] );
+			//printf("p0 = %d et mesh->tria[kel].v[i] = %d \n" , p0 , mesh->tria[kel].v[i] );
 			// check that current point is not the point, which was already handled in the for loop before. Consider only the two vertices of the triangle which are left
-			if (p0 != mesh->tria[kel].v[i])
+			if (mesh->tria[kel].v[i] != p0)
 			{
-				printf("ICI\n") ; 
+				int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
+				//printf("ICI\n") ; 
 				pk = mesh->tria[kel].v[i] ;
 			//	printf("ICI \n");
 				// get list of all triangles in the ball B(pk) of pk
-				TriaInBoulePK = boule_adj(mesh, kel, i, listLocal);
+				TriaInBoulePK = boulep(mesh, kel, i, listLocal);
 				/*for (i=0;i<TriaInBoulePK && kel!= (* listLocal)[i] ;i++)
 					printf("triangle %d = %d \n ", i,(* listLocal)[i] );*/
 				// for each triangle K_pk' in the ball B(pk)
-				for (j=0; j < TriaInBoulePK && kel != (*listLocal)[j] ; j++)
+		
+				for (j=0; j < TriaInBoulePK  ;j++)
 				{
-						int indice_point = (*listLocal)[j] %3;
+						
+					int indice_point = (*listLocal)[j] %3;
 
-					
-					//compute the distance d_pk = d(p, K_pk')
-					d_pk = distPointToTriangle(mesh, &mesh->tria[((*listLocal)[j]-indice_point)/3], p);
+					if ( (*listLocal)[j] != kel ) 
+					{
+						//compute the distance d_pk = d(p, K_pk')
+						d_pk = distPointToTriangle(mesh, &mesh->tria[((*listLocal)[j]-indice_point)/3], p);
 			
 
-					if(d_pk < dapp)
-					{
-						// update the distance
-						dapp = d_pk;
-				
-						// store the index of current triangle iel = j
-						iel = j;
+						if(d_pk < dapp)
+						{
+							// update the distance
+							dapp = d_pk;
+							
+							// store the index of current triangle iel = j
+							iel = j;
+						}
 					}
 				}
-			
-				printf("dapp = %f  d = %f\n ", dapp,d) ;
-			
+					free(listLocal);
+				//printf("dapp = %f  d = %f\n ", dapp,d) ;
+
 		
-				if (dapp < d)
-					p0 = pk; 
-			
-				else
+			if (dapp < d0)
+			{
+				p0 = pk; 
+				if (p0 == thepoint )
 					p0 = 0;
-			}	
-		}
-			
-			
+			}
+			else
+				p0 = 0;
 		
+			
+			}
+			
+		}	
+
 	}
 	
-	free(list);
-	free(listLocal);
 
-	return d;
+
+
+	return d0;
 }
 
 

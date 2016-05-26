@@ -7,8 +7,9 @@
 #include "mesh.h"
 #include "rigidtransformation.h"
 #include "distance.h"
-#include "hash.h"
 #include "bucket.h"
+#include "hash.h"
+
 
 // calculate dot product of two three-dimensional vectors
 double dotProduct3D(Point a, Point b)
@@ -367,7 +368,7 @@ double distPointToTriangle(pMesh mesh, pTria tria, pPoint P0)
     }
     
     dist = sqrt(sqrDistance);
-    printf("Distance from point to triangle : %f\n", dist);
+    //printf("Distance from point to triangle : %f\n", dist);
 
     return dist;
 }

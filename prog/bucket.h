@@ -8,7 +8,7 @@ typedef struct {
   int *head ; // this is a tab of N³ in order to stock the points
   int *link ; // this tab has a size of mesh->np and this will contain the old_Points
 } Bucket;
-typedef Bucket * pBucket;
+typedef Bucket* pBucket;
 
 /* FUNCTION init_bucket 
 			Parameters : a pointer for a bucket 

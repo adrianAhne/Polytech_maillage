@@ -5,8 +5,8 @@
 #include "mesh.h"
 #include "bucket.h"
 #include "hash.h"
-#include "distanceMeshFunctions.h"
-#include "boule.h"
+#include "distance.h"
+#include "ball.h"
 
 
 // calculate hausdorff distance between two meshes
