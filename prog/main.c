@@ -11,7 +11,7 @@
 #include "bucket.h"
 #include "hash.h"
 #include "ball.h" 
-
+#include "hausdorff.h"
 #include "InOut.h"
 
 

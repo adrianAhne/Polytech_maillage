@@ -449,6 +449,8 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 	int cherche = bucket_meshB->head[C] ;
 	/* on calcule la distance pour le premier point */
 	d0 = sqrt( ( pt.c[0] - p->c[0] ) * ( pt.c[0] - p->c[0] ) + ( pt.c[1] - p->c[1] ) * ( pt.c[1] - p->c[1] ) + ( pt.c[2] - p->c[2] ) * ( pt.c[2] - p->c[2] )) ;
+	p0 = meshB->point[ bucket_meshB->head[C] ] ;
+	p0.s =  cherche ;
 	while(bucket_meshB->link[cherche])
 	{
 		/* on récupère le point */
@@ -469,7 +471,10 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 		
 	
 	}
-	//printf ( " d0 = %f  ",d0) ;
+ /* printf ( " d0 = %f  ",d0) ;
+	printf ( " p0.s = %d  ",p0.s) ;*/
+	if (!d0) 
+		return d0 ; 
 	/* A présent on a le point p0 de la case le plus proche de p */
 	/* On rentre dans la boucle */
 	int test = 1 ;
@@ -515,7 +520,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 		{
 			/* on récupère l'indice du point p0 pour chaque triangle k*/
 			indice_point =  (*list_trianglep0)[i] % 3 ;
-			
+			//printf ( " indice_point = %d ", indice_point ) ;
 			/* on calcule à présent la distance entre le point p et chaque triangle k*/
 			dk = distPointToTriangle(meshB, &meshB->tria[((*list_trianglep0)[i]-indice_point)/3], p);
 		
@@ -527,7 +532,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 				indice_p0 = indice_point;
 			}
 		}
-		
+	//	printf( " d = %f  ",d); 
 		/* A présent on a le triangle, autour du point p0, le plus proche du point du meshA  */
 		/* Maintenant pour tous les points de ce triangles différents de p0 :
 				on construit la boule autour de ces points 
@@ -583,6 +588,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 		free(list_trianglep0) ;
 	
 	}
+//	printf("d return = %f \n",d);
 	return d ;
 	
 }
