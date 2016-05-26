@@ -59,29 +59,33 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	setAdj(meshB, tabB);
 
 	// calculate shortest distance from the mesh A to mesh B
-	double distAB = distanceUsingBucket(meshB, &meshA->point[1], VertToTriaB, &bucketB );
+	double distAB = distbuck( &meshA->point[1] , &bucketB , meshB );
 	double distCurrent;
 	for(i=2; i<=meshA->np; i++)
 	{
-		distCurrent = distanceUsingBucket(meshB, &meshA->point[i], VertToTriaB , &bucketB);
-		fprintf(stdout," INDICE DE LA BOUCLE = %d \nDISTANCE ENTRE LE PT %d DE MAILLAGE A ET LE MAILLAGE B = %f\n",i,i,distCurrent);
+		distCurrent = distbuck( &meshA->point[i] , &bucketB , meshB );
+		//fprintf(stdout," INDICE DE LA BOUCLE = %d \nDISTANCE ENTRE LE PT %d DE MAILLAGE A ET LE MAILLAGE B = %f\n",i,i,distCurrent);
 		if (distCurrent > distAB)
 	  		distAB = distCurrent;
 	}
-	
+	printf( "distAB = %f \n " , distAB ) ;
 
 	// calculate shortest distance from meshB to meshA
-	double distBA = distanceUsingBucket(meshA, &meshB->point[1], VertToTriaA, &bucketA);
+	double distBA = distbuck( &meshB->point[1] , &bucketA , meshA );
 	for(i=2; i<=meshB->np; i++)
 	{
-		distCurrent = distanceUsingBucket(meshA, &meshB->point[i], VertToTriaA , &bucketA);
+		distCurrent = distbuck( &meshB->point[i] , &bucketA , meshA );
 		if (distCurrent > distBA)
 	  		distBA = distCurrent;
 	}
-
+	printf( "distBA = %f \n" , distBA ) ;
 	// hausdorff distance is the maximum of both calculated distances
 	//printf("distAB = %f et dist BA = %f \n", distAB, distBA);
-	double distHausdorff = (distAB > distBA) ? distAB : distBA;
+	double distHausdorff ;
+	if ( distAB > distBA ) 
+		return distAB ;
+	else 
+		return distBA ;
 
 	free(VertToTriaA);
 	free(VertToTriaB);

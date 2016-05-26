@@ -39,4 +39,6 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 	 VertToTria gives an array which tells us to which triangle a given point belongs to */
 double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , pBucket bucket);
 
+double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB );
+
 #endif
