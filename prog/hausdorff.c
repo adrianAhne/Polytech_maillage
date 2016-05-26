@@ -12,7 +12,6 @@
 // calculate hausdorff distance between two meshes
 double Hausdorff(pMesh meshA, pMesh meshB )
 {
-  printf("dd\n");
 
   
 	int i,j,N;
@@ -20,17 +19,28 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	int* VertToTriaB = (int*)calloc(meshB->np+1, sizeof(int));
 	hashTria(meshA, VertToTriaA);
 	hashTria(meshB, VertToTriaB);
-	 		printf("dd\n"); 
+
+	// create bucket
 	Bucket bucketA, bucketB;
 	Point point;
 	point.c[0] = 0 ;
 	point.c[1] = 0 ;
 	point.c[2] = 0 ;
 
+	// bound the points between the interval [0,1]
 	positive_boundingbox( meshA ,  &point);
 	positive_boundingbox(meshB ,  &point);
 
-	fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
+	fprintf(stdout,"\n  -- Creation bucket MESH_A \n\nPlease type the number of subdivision : \n");
+	fflush(stdin);	// just to be able to do a scanf without conflicts
+	fscanf(stdin,"%d",&N);
+	bucketA.size = N ;
+	init_bucket( &bucketA , meshA ); 
+	fill_bucket( &bucketA , meshA );
+
+
+
+	fprintf(stdout,"\n  -- Creation bucket MESH_B \n\nPlease type the number of subdivision : \n");
 	fflush(stdin);	// just to be able to do a scanf without conflicts
 	fscanf(stdin,"%d",&N);
 	bucketB.size = N ;
@@ -40,13 +50,7 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 
 
 
-	fprintf(stdout,"\n  -- Creation bucket MESH \n\nPlease type the number of subdivision : \n");
-	fflush(stdin);	// just to be able to do a scanf without conflicts
-	fscanf(stdin,"%d",&N);
-	bucketA.size = N ;
-	init_bucket( &bucketA , meshA ); 
-	fill_bucket( &bucketA , meshA );
-
+	// create table of hachage
 	Hedge *tabA = (Hedge*)calloc(3*meshA->nt+1,sizeof(Hedge));	
 	hashHedge(meshA, tabA);
 	setAdj(meshA, tabA);
@@ -59,13 +63,11 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	double distCurrent;
 	for(i=2; i<=meshA->np; i++)
 	{
-		printf(" INDICE DE LA BOUCLE = %d\n", i);
 		distCurrent = distanceUsingBucket(meshB, &meshA->point[i], VertToTriaB , &bucketB);
-		printf("DISTANCE ENTRE %d et MESH B = %f \n", i, distCurrent);
 		if (distCurrent > distAB)
 	  		distAB = distCurrent;
 	}
-	printf("d444\n");
+	
 
 	// calculate shortest distance from meshB to meshA
 	double distBA = distanceUsingBucket(meshA, &meshB->point[1], VertToTriaA, &bucketA);
@@ -75,9 +77,9 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 		if (distCurrent > distBA)
 	  		distBA = distCurrent;
 	}
-	printf("g\n");
+
 	// hausdorff distance is the maximum of both calculated distances
-	printf("distAB = %f et dist BA = %f \n", distAB, distBA);
+	//printf("distAB = %f et dist BA = %f \n", distAB, distBA);
 	double distHausdorff = (distAB > distBA) ? distAB : distBA;
 
 	free(VertToTriaA);

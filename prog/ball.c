@@ -18,7 +18,10 @@
 
 
 
-
+/* Searches the ball/triangles around the given point and saves them in list
+   Brute force method, walking trough all triangles and check if points is 
+   attached or not
+   triangles are saved like this: list[i] = 3*k+j with k is the k-th triangle of the ball and j the position of the point in the ball (0,1,2) */
 int boulep(pMesh mesh, int start, int point , int** list)
 {
 	int i,j,compt=0;
@@ -26,37 +29,34 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	clock_t fin;
 	double difference;
 	
-	//fprintf(stdout," Le point considéré est le %d \n",mesh->tria[start].v[point]);
+	// clock just mesures the time to compare later the efficiency of this function with another
 	debut= clock();
-	/* Méthode actuelle méthode naïve avec parcours de tout les triangles*/
+	// Parcour all triangles
 	for(i=1 ; i <= mesh->nt ; i ++ )
 	{
-		/* parcours des 3 points de chaques triangles */
+		// Parcour all 3 points of the triangle
 		for ( j=0 ; j<=2 ; j++ )
 		{
 			if ( mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
-				//fprintf(stdout," face %d \n",i);
-				/* on incremente le compteur qui nous servira pour le malloc du tableau list*/
-				compt++;
+				compt++; // counts to define the malloc after
 			}
 		}
 	}
-	
+
+	// define list	
 	*list = (int*) malloc ( (compt+1) * sizeof(int)) ;
 	compt = 0 ;
 	for(i=1 ; i <= mesh->nt ; i ++ )
 	{
-		/* parcours des 3 points de chaques triangles */
+		// Parcour all the 3 points of the triangle
 		for ( j=0 ; j<=2 ; j++ )
 		{
 			if (  mesh->tria[i].v[j] == mesh->tria[start].v[point] )
 			{
-				/* on remplit la list */
-			//	printf( "i  %d \n",i);
-				(*list)[compt] = 3*(i) + j ;
+				// add number of triangle and number of vertice to list
+				(*list)[compt] = 3*(i) + j ; 
 
-				//fprintf(stdout,"*(list[%d] = 3*%d + %d = %d \n",compt, i, j,(*list)[compt]);
 				compt++;
 			}
 		}
@@ -65,12 +65,14 @@ int boulep(pMesh mesh, int start, int point , int** list)
 	difference = difftime (fin, debut);
 	//fprintf(stdout," temps d'éxécution %f \n",difference );
 	return compt ; 
-	
-	
 }
 
 
-
+/* Function boule optimised!
+   Searches the ball/triangles around the given point and saves them in list
+   Does not walk anymore through all the triangles. Checks just in the 
+   neighbourhood if the triangles belong to the point
+   triangles are saved like this: list[i] = 3*k+j with k is the k-th triangle of the ball and j the position of the point in the ball (0,1,2) */
 int boule_adj(pMesh mesh, int start, int point , int** list)
 {
 	int i,j,compt = 0;
@@ -85,9 +87,7 @@ int boule_adj(pMesh mesh, int start, int point , int** list)
 	{
 		for ( i = 0 ; i<3 ; i++ )
 		{
-			//fprintf(stdout," ici  " );
 			triangle =  mesh->adja[3*(triangle_ori-1)+1+i]/3 ; 
-			//fprintf(stdout," triangle_ori = %d " , triangle_ori ) ;
 			if ( triangle != triangle_av )
 			{
 				for ( j=0 ; j<=2 ; j++ )
@@ -116,8 +116,8 @@ int boule_adj(pMesh mesh, int start, int point , int** list)
 
 
 
-// This function takes a array of all the points in the mesh
-// It completes the array it in order to associate one triangle to each point
+/* This function takes a array tab of the size of all points in the mesh
+ For each point in the mesh it associates one possible triangle belonging to this point */
 void hashTria(pMesh mesh, int *tab)
 {
 	int i, j, k;
