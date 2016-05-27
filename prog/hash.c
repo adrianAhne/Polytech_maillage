@@ -431,57 +431,61 @@ double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucke
 
 	return d0;
 }
-
-
+/* FUNCTION distbuck 
+		This function will calculate the minimum distance between a point of the mesh A and the mesh B 
+		PARAMETERS: a pointer to the point p of the mesh A, a pointer to the bucket of the mesh B, a pointer to the mesh B 
+		RETURN : the distance d 
+*/ 
 double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 {
-	/* on définit d,dapp,iel,kel */
+	/* we define d,dapp,iel,kel */
 	double d = 10000.0, dapp = 10000.0 ;
 	int kel = 0 , iel = 0 ;
 	
-	/* On stocke la case ou le point p est dans le bucket du maillage B */
+	/* we save the box where the point p is in the bucket of the mesh B */
 	int C = bucket_retour_key(  bucket_meshB , meshB , p , 0.0 );
 	
-	/* Maintenant on cherche le point p0 de la case du bucket le plus proche de p */
-	/* On parcours tous les points de la case et pour chacun d'entre eux on calcule la distance */
+	/* Now we search the nearest point p0 in the box of the bucket */
+	/* We go throught all the points of the box and for each one we calculate the distance */
 	Point p0 , pt = meshB->point[ bucket_meshB->head[C] ] ; ;
 	double dist0 , d0 ;
 	int cherche = bucket_meshB->head[C] ;
-	/* on calcule la distance pour le premier point */
+	/* First we calculate the distance for the first point */
 	d0 = sqrt( ( pt.c[0] - p->c[0] ) * ( pt.c[0] - p->c[0] ) + ( pt.c[1] - p->c[1] ) * ( pt.c[1] - p->c[1] ) + ( pt.c[2] - p->c[2] ) * ( pt.c[2] - p->c[2] )) ;
 	p0 = meshB->point[ bucket_meshB->head[C] ] ;
 	p0.s =  cherche ;
 	while(bucket_meshB->link[cherche])
 	{
-		/* on récupère le point */
+		/* we save the point */
 		pt = meshB->point[ bucket_meshB->link[cherche] ] ;
 		
-		/* on calcule la distance entre p0 et p */
+		/* we calculate the distance between p0 and p */
 		dist0 = ( pt.c[0] - p->c[0] ) * ( pt.c[0] - p->c[0] ) + ( pt.c[1] - p->c[1] ) * ( pt.c[1] - p->c[1] ) + ( pt.c[2] - p->c[2] ) * ( pt.c[2] - p->c[2] ) ;
 		//printf ( " dist0 = %f  ",dist0) ;
-		/* on stocke la plus petite */
+		/* we save the smallest distance */
 		if ( dist0 < d0 )
 		{
 			d0 = sqrt(dist0) ;
 			p0 = pt ;
 			p0.s =  bucket_meshB->link[cherche] ;
 		}
-		/* on change de point */
+		/* and we change the point */
 		cherche = bucket_meshB->link[cherche] ;
 		
 	
 	}
  /* printf ( " d0 = %f  ",d0) ;
 	printf ( " p0.s = %d  ",p0.s) ;*/
+	/* if d0 = 0 so d = 0 */
 	if (!d0) 
 		return d0 ; 
-	/* A présent on a le point p0 de la case le plus proche de p */
-	/* On rentre dans la boucle */
+	/* Now we have the nearest point p0 of the bucket  */
+	
 	int test = 1 ;
 	while ( test )
 	{
-		/* On fait la liste des triangles autour de p0 */
-		/* Tout d'abord on cherche le premier triangle qui contient p0 pour nous servir de départ à la boule */
+		/* We make the list of the triangles around p0 */
+		/* we search the first triangle containing the point p0 */
 		int tr = 0 ,i = 1 , indicept;
 		while ( !tr )
 		{
@@ -502,8 +506,8 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 			}
 			i++;
 		}
-		/* on a donc le premier triangle et l'indice du point correspondant */
-		/* A présent on peut faire la boule */
+		/* We have the first triangle */
+		/* Now we make the ball */
 		int indice_point , indice_p0 ;
 		double dk ;
 		int** list_trianglep0 =(int**) malloc ( sizeof(int*)) ;
@@ -514,17 +518,17 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 			indice_point =  (*list_trianglep0)[i] % 3;
 			printf("triangle %d = %d \n ", i,((*list_trianglep0)[i] - indice_point)/3 );
 		}	*/
-		/* A présent pour chaque triangle de la boule B0 on calcule la distance entre le point p du maillage A et les triangles de la boule autour de p0 
-			On stocke la plus petite distance */
+		/* For each triangle of the ball B0, we calculate the distance between the point p of the mesh A and the triangle of the ball B0 
+			We save the smallest distance */
 		for (i = 0 ; i < nb_trianglesp0 ; i++ )
 		{
-			/* on récupère l'indice du point p0 pour chaque triangle k*/
+			/* we collect the index of the point p0 for each triangle k*/
 			indice_point =  (*list_trianglep0)[i] % 3 ;
 			//printf ( " indice_point = %d ", indice_point ) ;
-			/* on calcule à présent la distance entre le point p et chaque triangle k*/
+			/* we calculate the distance between the point p and each triangle k of the ball Bk */
 			dk = distPointToTriangle(meshB, &meshB->tria[((*list_trianglep0)[i]-indice_point)/3], p);
 		
-			/* on stocke à présent la distance minimale et l'indice du triangle correspondant */
+			/* Now we save the minimum distance and the index of the triangle */
 			if ( dk < d )
 			{
 				d = dk ;
@@ -533,30 +537,31 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 			}
 		}
 	//	printf( " d = %f  ",d); 
-		/* A présent on a le triangle, autour du point p0, le plus proche du point du meshA  */
-		/* Maintenant pour tous les points de ce triangles différents de p0 :
-				on construit la boule autour de ces points 
-					on stocke le triangle le plus proche de p 
-						on compare la distance entre le point et ce triangle et celle entre le point et le triangle de la boule autour de p0 */
+		/* At this point, we have the triangle, around p0, close to the point p0 of the mesh A*/
+		/* now for each point of this triangle different of p0 :
+				we construct the ball around each point 
+					we save the triangle closer to the point p 
+						we compare the distance between this triangle and the point p and the distance between the triangle of the ball p0 and the point p 
+						*/
 		for( i = 0 ; i <=2 ; i++ )
 		{		
-			/* Si différent de p0 )*/		
+			/* if different of p0 )*/		
 			if ( i != indice_p0 )
 			{
-				/* on construit la boule autour de ce nouveau point : le triangle de départ et le triangle kel et l'indice du point est i*/
+				/* we construct the ball around this new point: start is the triangle kel and the index is i */
 				int indice_pointpk , j , indice_pkmin ;
 				double d_pk ;
 				int** list_trianglepk =(int**) malloc ( sizeof(int*)) ;
 				int nb_trianglespk = boulep ( meshB, kel , i , list_trianglepk);
 				
-				/* A present pour chaque triangle de cette boule on calcule la distance entre le point du maillage A et les triangles */
+				/* At this point for each triangle of this ball we calculate the distance between the point of the mesh A and the triangles */
 				for ( j = 0 ; j < nb_trianglespk ; j++ )
 				{
-					/* on récupère l'indice du point pour chaque triangle k*/
+					/* we collect the index for each triangle k*/
 					indice_pointpk =  (*list_trianglepk)[j] % 3 ;				
 					d_pk = distPointToTriangle(meshB, &meshB->tria[((*list_trianglepk)[j]-indice_pointpk)/3], p);
 					
-					/* on stocke la plus petite distance et l'indice du triangle le plus proche */
+					/* we save the smallest distance and the index of the triangle closer */
 					if( d_pk < dapp )
 					{
 						dapp = d_pk ;
@@ -565,7 +570,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 					}
 				}
 				
-				/* On compare à présent la distance obtenu par le triangle de la boule Bk à celui de la boule B0 */
+				/* we compare the distances */
 				if ( dapp < d ) 
 				{
 					d = dapp ;
@@ -583,7 +588,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 	
 		}
 		
-		/* on libère les listes avant de recommencer */
+		/* free */
 		free( (*list_trianglep0)) ;
 		free(list_trianglep0) ;
 	

@@ -38,7 +38,11 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 	 Compute the distance between a point and a surface using buckets and adjacences
 	 VertToTria gives an array which tells us to which triangle a given point belongs to */
 double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , pBucket bucket);
-
+/* FUNCTION distbuck 
+		This function will calculate the minimum distance between a point of the mesh A and the mesh B 
+		PARAMETERS: a pointer to the point p of the mesh A, a pointer to the bucket of the mesh B, a pointer to the mesh B 
+		RETURN : the distance d 
+*/ 
 double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB );
 
 #endif
