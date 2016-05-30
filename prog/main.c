@@ -69,7 +69,7 @@ int main(int argc,char *argv[]) {
 
 	fprintf(stdout,"*** Main3 (2016) ***\n ");
 
-	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 14. distPointToBoule\n 15. distance Hausdorff\nChoose: \n");
+	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 15. distance Hausdorff\nChoose: \n");
 
 	fflush(stdin);
 	fscanf(stdin,"%d",&test);
@@ -553,43 +553,10 @@ int main(int argc,char *argv[]) {
 	}
 		
 
-	// test function hashTria
-	if (test == 14)
-	{
- 		Mesh	mesh;
- 		int i;
- 		double dist;
-		/* parse arguments */
-		fprintf(stdout,"\n  -- DATA MESH\n");
 
-
-		/* default values */
-		memset(&mesh,0,sizeof(Mesh));  	
-		if ( !parsar(argc,argv,&mesh) )  return(1);
-  		 
-  		/* read data */
-  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
-		if ( !loadMesh(&mesh) )  return(1);
-		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
-		
-	
-		int* tab = (int*)calloc(mesh.np+1, sizeof(int));
-		hashTria(&mesh, tab);
-		printf("tab[877]=%d\n", tab[877]);
-		//for(i=0; i<mesh.np+1; i++)
-			//printf("i=%d triangle=%d\n", i, tab[i]);
-		/*
-		pTria tria = &mesh.tria[877];
-		dist = distancePointToBoule(&mesh, 877, mesh.point[1377], tab);
-		printf("dist=%f\n", dist);
-		*/
-			
-		free(tab);
-	}
- 
  
  	// test hausdorff distance between two mesh
-	if (test == 15)
+	if (test == 14)
 	{
  		Mesh	meshA, meshB;
 
