@@ -59,7 +59,7 @@ void normalesOfTriangles(pMesh mesh)
 	
 	for (i = 1; i < mesh->np; ++i)
 	{
-		norm = sqrt( pow(mesh->Normal[i].n[0],2) + pow(mesh->Normal[i].n[1],2) + pow(mesh->Normal[i].n[2],2) );
+ 		norm = sqrt( pow(mesh->Normal[i].n[0],2) + pow(mesh->Normal[i].n[1],2) + pow(mesh->Normal[i].n[2],2) );
 		for (j=0;j<3;j++) {
 			mesh->Normal[i].n[j] *= 1 / norm;
 		}
