@@ -118,6 +118,7 @@ int courbure3D(pMesh mesh )
 */
 int courbure2D( pMesh mesh )
 {
+	// check tells us how many edges are connected to a vertex i
 	int check = 0 , i , j ;
 	int *voisin  ;
 	double u1=0,u2=0,v1=0,v2=0,normu=0,normv=0,costh=0,dist1,dist2,dist;
@@ -186,7 +187,7 @@ int courbure2D( pMesh mesh )
 			
 		}
 		
-		// TO DO: Explain this if????
+		// Check if 0,1 edges or more than 2 edges are connected to a vertex. If this is the case set value to -1 to receive a visual difference in the image later
 		if ( check == 1 || check == 0 )
 		{
 			mesh->sol[i] = -1 ;			

@@ -493,7 +493,7 @@ int main(int argc,char *argv[]) {
  	}
 
 
- 	// Bucket sort algorithm for the computation of the distance point-triangulation
+ 	// Calculates ball of triangles around a given point
  	if (test == 13)
  	{
  		Mesh	mesh;
@@ -512,29 +512,40 @@ int main(int argc,char *argv[]) {
 	  	/* read data */
   		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
+		
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		int** list = (int**)malloc(sizeof(int*)) ;
+		debut = time(NULL);
+		int nb_triangle = boulep(&mesh,5727,0,list),i;
+		fin = time(NULL);
+		difference = difftime(fin,debut);
+		printf("Method brute force \n");
+		printf("Considered point = %d \n ", mesh.tria[5727].v[0] );
+		printf("Time to calculate ball brute-force: %f\n", difference);
+		
+		printf("Numbre of triangles around given point = %d \n ", nb_triangle );
+		printf("Index of triangles:  \n " );
+		for (i=0;i<nb_triangle;i++)
+			printf("triangle %d = %d \n ", i,(*list)[i] );	
+		
+		
 		debut = time(NULL) ;
 		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
 		hashHedge(&mesh, tab);
 		setAdj(&mesh, tab);
-		fin = time(NULL);
-		difference = difftime (fin, debut);
-		fprintf(stdout," temps d'éxécution %f \n",difference );
-		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
-		int** list = (int**)malloc(sizeof(int*)) ;
-		int nb_triangle = boulep(&mesh,5727,0,list),i;
-		printf("le point considéré = %d \n ", mesh.tria[5727].v[0] );
 		
-		
-		printf("Nombre de triangles autour = %d \n ", nb_triangle );
-		printf("Liste des triangles autour :  \n " );
-		for (i=0;i<nb_triangle;i++)
-			printf("triangle %d = %d \n ", i,(*list)[i] );
-			
-		printf("En utilisant les relations d'adjacences \n " );
 		int** list2 = (int**)malloc(sizeof(int*)) ;
 		int compt = boule_adj(&mesh, 5727, 0 , list2);
-		printf("Nombre de triangles autour = %d \n ", compt );
-		printf("Liste des triangles autour :  \n " );
+
+		fin = time(NULL);
+		difference = difftime (fin, debut);
+		
+		printf("Method with adjacence\n");
+		printf("Considered point = %d \n ", mesh.tria[5727].v[0] );
+		printf("Time to calculate ball adjacence: %f\n", difference);
+		printf("Number of triangles around given point = %d \n ", compt );
+		printf("Index of triangles:  \n " );
 		for (i=0;i<compt;i++)
 			printf("triangle %d = %d \n ", i,(*list2)[i] );
 		
