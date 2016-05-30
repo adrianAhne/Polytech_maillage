@@ -93,7 +93,7 @@ int loadMesh(pMesh mesh) {
 		
 	}
 
-	fprintf(stdout, " the xmax is %f \n ", xmax ) ;
+	// fprintf(stdout, " the xmax is %f \n ", xmax ) ;
 	/* Center of the mesh*/
 	mesh->o[0] = 0.5 * (xmin+xmax); 
 	mesh->o[1] = 0.5 * (ymin+ymax); 
