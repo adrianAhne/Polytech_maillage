@@ -14,7 +14,8 @@ OBJS= \
 	bucket.o \
 	distance.o \
 	hash.o \
-	hausdorff.o
+	hausdorff.o \
+	tools.o
 
 
 all: main
@@ -49,10 +50,11 @@ bucket: bucket.c
 hash: hash.c bucket.c ball.c
 	$(CC) -c hash.c bucket.c ball.c -o hash.o $(CFLAG)
 
-
-	
 hausdorff: hausdorff.c hash.c
 	$(CC) -c hausdorff.c hash.c -o hausdorff.o $(CFLAG)
+
+tools: tools.c
+	$(CC) -c tools.c -o tools.o $(CFLAG)
 
 clean:
 	$(RM) -r $(OBJS) myprogram

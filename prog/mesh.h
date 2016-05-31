@@ -1,4 +1,5 @@
-
+#ifndef MESH_H
+#define MESH_H
 
 #define NPMAX 10000
 
@@ -62,7 +63,7 @@ typedef Mesh * pMesh;
 /* prototypes */
 //int saveSol(pMesh mesh,int it);
 
-
+#endif
 
  
 
