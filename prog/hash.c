@@ -115,9 +115,10 @@ int setAdj(pMesh mesh, Hedge * tab)
 	// for chaque triangle, mesh->adja[3*(k-1)+1+j] will be the associated adjacent relation of the arrêt j of k, seen in the neighbour triangle
 	for(i=1; i<=mesh->nt; i++)
 	{
+		
     	pt = &mesh->tria[i];
     	if ( !pt->v[0] )  continue;
-    
+    	
 		for(j=0; j<3; j++)
     	{
     		// Calculate the associated key to the edge (na, nb)
@@ -131,6 +132,7 @@ int setAdj(pMesh mesh, Hedge * tab)
 	        // Parcour the chaine of the associated array tab at this key value, until what the object Hedge associated to (na, nb) is found
 	        // One of the two data adj1, adj2 of this object is the adjacent relation of the edge in the triangle i. The other one is the searched relation to put in mesh->adja[3*(i-1) + 1 + j]
       		do{
+
       			if ( (tab[key].ia == min) &&  (tab[key].ib == max) )
       			{ 
       				adj = 3*i+j;

@@ -15,11 +15,11 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 
   
 	int i,j,N;
-	int* VertToTriaA = (int*)calloc(meshA->np+1, sizeof(int));
+	/*int* VertToTriaA = (int*)calloc(meshA->np+1, sizeof(int));
 	int* VertToTriaB = (int*)calloc(meshB->np+1, sizeof(int));
 	hashTria(meshA, VertToTriaA);
 	hashTria(meshB, VertToTriaB);
-
+*/
 	// create bucket
 	Bucket bucketA, bucketB;
 	Point point;
@@ -54,7 +54,7 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	Hedge *tabA = (Hedge*)calloc(3*meshA->nt+1,sizeof(Hedge));	
 	hashHedge(meshA, tabA);
 	setAdj(meshA, tabA);
-  Hedge *tabB = (Hedge*)calloc(3*meshB->nt+1,sizeof(Hedge));	
+ 	Hedge *tabB = (Hedge*)calloc(3*meshB->nt+1,sizeof(Hedge));	
 	hashHedge(meshB, tabB);
 	setAdj(meshB, tabB);
 
@@ -87,8 +87,8 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	else 
 		return distBA ;
 
-	free(VertToTriaA);
+	/*free(VertToTriaA);
 	free(VertToTriaB);
-
+*/
 	return distHausdorff;
 }

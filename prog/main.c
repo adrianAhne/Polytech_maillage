@@ -13,6 +13,7 @@
 #include "ball.h" 
 #include "hausdorff.h"
 #include "InOut.h"
+#include <time.h>
 
 
 
@@ -581,8 +582,8 @@ int main(int argc,char *argv[]) {
 	if (test == 15)
 	{
  		Mesh	meshA, meshB;
-
-		/* parse arguments */
+ 		time_t debut,fin;
+ 		/* parse arguments */
 		fprintf(stdout,"\n  -- DATA MESH\n");
 
 		/* default values */
@@ -593,9 +594,11 @@ int main(int argc,char *argv[]) {
 		if ( !parsar(argc,argv,&meshB) )  return(1);
 		if ( !loadMesh(&meshB) ) return(1);
 		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
-		
+
+		debut = clock() ;
 		double distHausdorff = Hausdorff(&meshA, &meshB);
-		printf("distHausdorff = %f\n", distHausdorff);
+		fin = clock() ;
+		printf("distHausdorff = %f\n calcul = %f \n ", distHausdorff, difftime(fin ,debut));
  	}
 
 	return(0);
