@@ -70,7 +70,7 @@ int main(int argc,char *argv[]) {
 
 	fprintf(stdout,"*** Main3 (2016) ***\n ");
 
-	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 14. distPointToBoule\n 15. distance Hausdorff\nChoose: \n");
+	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 15. distance Hausdorff\nChoose: \n");
 
 	fflush(stdin);
 	fscanf(stdin,"%d",&test);
@@ -494,7 +494,7 @@ int main(int argc,char *argv[]) {
  	}
 
 
- 	// Bucket sort algorithm for the computation of the distance point-triangulation
+ 	// Calculates ball of triangles around a given point
  	if (test == 13)
  	{
  		Mesh	mesh;
@@ -513,29 +513,40 @@ int main(int argc,char *argv[]) {
 	  	/* read data */
   		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
 		if ( !loadMesh(&mesh) )  return(1);
+		
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
+		
+		int** list = (int**)malloc(sizeof(int*)) ;
+		debut = time(NULL);
+		int nb_triangle = boulep(&mesh,5727,0,list),i;
+		fin = time(NULL);
+		difference = difftime(fin,debut);
+		printf("Method brute force \n");
+		printf("Considered point = %d \n ", mesh.tria[5727].v[0] );
+		printf("Time to calculate ball brute-force: %f\n", difference);
+		
+		printf("Numbre of triangles around given point = %d \n ", nb_triangle );
+		printf("Index of triangles:  \n " );
+		for (i=0;i<nb_triangle;i++)
+			printf("triangle %d = %d \n ", i,(*list)[i] );	
+		
+		
 		debut = time(NULL) ;
 		Hedge *tab = (Hedge*)calloc(3*mesh.nt+1,sizeof(Hedge));
 		hashHedge(&mesh, tab);
 		setAdj(&mesh, tab);
-		fin = time(NULL);
-		difference = difftime (fin, debut);
-		fprintf(stdout," temps d'éxécution %f \n",difference );
-		fprintf(stdout,"  -- DATA READING COMPLETED.\n");
-		int** list = (int**)malloc(sizeof(int*)) ;
-		int nb_triangle = boulep(&mesh,5727,0,list),i;
-		printf("le point considéré = %d \n ", mesh.tria[5727].v[0] );
 		
-		
-		printf("Nombre de triangles autour = %d \n ", nb_triangle );
-		printf("Liste des triangles autour :  \n " );
-		for (i=0;i<nb_triangle;i++)
-			printf("triangle %d = %d \n ", i,(*list)[i] );
-			
-		printf("En utilisant les relations d'adjacences \n " );
 		int** list2 = (int**)malloc(sizeof(int*)) ;
 		int compt = boule_adj(&mesh, 5727, 0 , list2);
-		printf("Nombre de triangles autour = %d \n ", compt );
-		printf("Liste des triangles autour :  \n " );
+
+		fin = time(NULL);
+		difference = difftime (fin, debut);
+		
+		printf("Method with adjacence\n");
+		printf("Considered point = %d \n ", mesh.tria[5727].v[0] );
+		printf("Time to calculate ball adjacence: %f\n", difference);
+		printf("Number of triangles around given point = %d \n ", compt );
+		printf("Index of triangles:  \n " );
 		for (i=0;i<compt;i++)
 			printf("triangle %d = %d \n ", i,(*list2)[i] );
 		
@@ -543,43 +554,10 @@ int main(int argc,char *argv[]) {
 	}
 		
 
-	// test function hashTria
-	if (test == 14)
-	{
- 		Mesh	mesh;
- 		int i;
- 		double dist;
-		/* parse arguments */
-		fprintf(stdout,"\n  -- DATA MESH\n");
 
-
-		/* default values */
-		memset(&mesh,0,sizeof(Mesh));  	
-		if ( !parsar(argc,argv,&mesh) )  return(1);
-  		 
-  		/* read data */
-  		fprintf(stdout,"\n  -- INPUT DATA MESH \n");
-		if ( !loadMesh(&mesh) )  return(1);
-		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
-		
-	
-		int* tab = (int*)calloc(mesh.np+1, sizeof(int));
-		hashTria(&mesh, tab);
-		printf("tab[877]=%d\n", tab[877]);
-		//for(i=0; i<mesh.np+1; i++)
-			//printf("i=%d triangle=%d\n", i, tab[i]);
-		/*
-		pTria tria = &mesh.tria[877];
-		dist = distancePointToBoule(&mesh, 877, mesh.point[1377], tab);
-		printf("dist=%f\n", dist);
-		*/
-			
-		free(tab);
-	}
- 
  
  	// test hausdorff distance between two mesh
-	if (test == 15)
+	if (test == 14)
 	{
  		Mesh	meshA, meshB;
  		time_t debut,fin;

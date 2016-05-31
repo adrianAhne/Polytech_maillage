@@ -55,6 +55,7 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 	hashHedge(meshA, tabA);
 	setAdj(meshA, tabA);
  	Hedge *tabB = (Hedge*)calloc(3*meshB->nt+1,sizeof(Hedge));	
+
 	hashHedge(meshB, tabB);
 	setAdj(meshB, tabB);
 
@@ -68,7 +69,7 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 		if (distCurrent > distAB)
 	  		distAB = distCurrent;
 	}
-	printf( "distAB = %f \n " , distAB ) ;
+	//printf( "distAB = %f \n " , distAB ) ;
 
 	// calculate shortest distance from meshB to meshA
 	double distBA = distbuck( &meshB->point[1] , &bucketA , meshA );
@@ -78,9 +79,8 @@ double Hausdorff(pMesh meshA, pMesh meshB )
 		if (distCurrent > distBA)
 	  		distBA = distCurrent;
 	}
-	printf( "distBA = %f \n" , distBA ) ;
+	//printf( "distBA = %f \n" , distBA ) ;
 	// hausdorff distance is the maximum of both calculated distances
-	//printf("distAB = %f et dist BA = %f \n", distAB, distBA);
 	double distHausdorff ;
 	if ( distAB > distBA ) 
 		return distAB ;

@@ -34,10 +34,7 @@ void baryCoord(pMesh mesh, int triangle, pPoint p, double cb[3]);
 /* find triangle who includes the point p by starting at a starttriangle and approaches the searched triangles via adjacents */
 int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3]);
 
-/*	 Following the algorithm given in github/doc/main.pdf
-	 Compute the distance between a point and a surface using buckets and adjacences
-	 VertToTria gives an array which tells us to which triangle a given point belongs to */
-double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , pBucket bucket);
+
 /* FUNCTION distbuck 
 		This function will calculate the minimum distance between a point of the mesh A and the mesh B 
 		PARAMETERS: a pointer to the point p of the mesh A, a pointer to the bucket of the mesh B, a pointer to the mesh B 

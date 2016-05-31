@@ -252,187 +252,8 @@ int locelt(pMesh mesh, int startTriangle, pPoint p, double cb[3])
 }
 
 
-/*	 Following the algorithm given in github/doc/main.pdf
-	 Compute the distance between a point and a surface using buckets and adjacences
-	 VertToTria gives an array which tells us to which triangle a given point belongs to */
-double distanceUsingBucket(pMesh mesh, pPoint p, int *VertToTria , Bucket* bucket )
-{
- 	unsigned N = 0;
-	double d = 100000000.0, dapp = 10000.0, d0, dk, d_pk;
-	int kel = 0, iel = 0, C, p0, pk, i,j,k, start, pointN, ind ;
-	int TriaInBoule, TriaInBoulePK;
 
 
-	int indice_point ;
-	int real_indic ;
-
-	//positive_boundingbox( mesh , &point );
-
-	
-	// Find the cell grid C to which point belongs 
-	// returns number of bucket
-	C = bucket_retour_key( bucket , mesh, p , 0.0 ); // doesn't work
-	printf("Cell grid of the point : %d\n", C);
-
-	// TO DO: how to choose p0???
-	// check for each point in the bucket the distance to the given point and take the minimum as p0 (Norm2)
-	p0 = bucket->head[C]; // false : one point in the cell grid with it's distance to point
-	//ALEXANDRE: Comment peux-je avoir accès aux elements du bucket? 
-	// Réponse: je vais te créer un tableau avec tout les points d'une case 
-	int* points ; // le tableau d'indice des points
-
-	int cherche = bucket->head[C] ;
-	int compte = 0 ;
-	
-	while ( bucket->link[cherche] ) 
-	{
-		cherche = bucket->link[cherche] ;
-		compte ++ ;
-	}
-	points =(int*) malloc((compte+1) * sizeof(int)	 ) ;
-	/* fill up the array of indice of points */
-	points[0] = bucket->head[C] ;
-	cherche = bucket->head[C] ;
-	for( i = 1 ; i <= compte ; i++ ) 
-	{
-		points[i] = bucket->link[cherche] ;
-		//fprintf(stdout,"  Points[%d]  x = %f  y = %f  z =  %f \n",i, mesh->point[points[i]].c[0],mesh->point[points[i]].c[1],mesh->point[points[i]].c[2]);
-		cherche  = bucket->link[cherche] ;
-	} 
-	
-	printf("compte = %d \n" , compte);
-	/* ICI tu as le tableau remplis tu peux calculer la distance : bon courage */
-
-	
-	// Starting from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
-	double dist0 = 100000000000000;
-	double dCurrent;
-	for(i=0; i <= compte; i++)
-	{
-		// 3-dimensional case: calculate distance between point in bucket and given point p via the norm2 : dCurrent = sqrt(x_bucket - x_point)^2 + (y_bucket - y_point)^2 + (z_bucket - z_point)^2
-		dCurrent = sqrt((mesh->point[points[i]].c[0] - p->c[0])*(mesh->point[points[i]].c[0] - p->c[0]) + (mesh->point[points[i]].c[1] - p->c[1])*(mesh->point[points[i]].c[1] - p->c[1]) + (mesh->point[points[i]].c[2] - p->c[2])*(mesh->point[points[i]].c[2] - p->c[2]));
-
-		if (dCurrent < dist0)
-		{
-			dist0 = dCurrent;
-			p0 = points[i]; // integer of current point in bucket	
-		}
-	}
-
-	d0 = dist0;
-		printf("d0 = %f \n",d0 ) ;
-
-	if ( !d0 )
-		return d0 ;
-	
-	// startin from C explore the bucket and find the vertex triangulation p0 closer to p and retain the distance d0 = d(p,p0)
-	int thepoint = p0 ;
-	printf(" p0 = %d\n",p0);
-	while(p0)
-	{
-		int** list = (int**)malloc(sizeof(int*)) ; // list of triangles in the ball B(p0)
-	
-
-		// get list of all triangles in the ball B(p0) of p0
-		TriaInBoule = boulep(mesh, VertToTria[p0], p0 , list);
-
-		// for each triangle K_k' in the ball B(p0)
-		for(k=0; k < TriaInBoule; k++)
-		{
-				
-			//printf(" %d \n",k);
-			//printf(" *(list)[k]/3 = %d \n",(*list)[k]/3 ) ; 
-			// calculate distance d_k = d(p, K_k');
-			int indice_point =  (*list)[k] % 3;
-			//printf("Liste des triangles autour :  \n " );
-			/*for (i=0;i<TriaInBoule;i++)
-				printf("triangle %d = %d \n ", i,((*list)[i] - indice_point)/3 );
-			*/
-
-			dk = distPointToTriangle(mesh, &mesh->tria[((*list)[k]-indice_point)/3], p);
-			//printf(" dk = %f \n",dk);
-
-			if (dk < d0)
-			{
-				//update the distance d= dk
-				d0 = dk;
-				// store index of current triangle kel = k
-				kel = ((*list)[k]-indice_point)/3 ;
-				real_indic = indice_point ;			
-			}
-
-		}
-		free(list);
-			
-		
-		// for each vertex pk belonging to the triangle kel
-		for(i=0; i <= 2; i++)
-		{
-
-			//printf("p0 = %d et mesh->tria[kel].v[i] = %d \n" , p0 , mesh->tria[kel].v[i] );
-			// check that current point is not the point, which was already handled in the for loop before. Consider only the two vertices of the triangle which are left
-			if (mesh->tria[kel].v[i] != p0)
-			{
-				int** listLocal = (int**)malloc(sizeof(int*)); // list of triangles in the ball B(pk)
-				//printf("ICI\n") ; 
-
-				pk = mesh->tria[kel].v[i] ;
-
-				// get list of all triangles in the ball B(pk) of pk
-				TriaInBoulePK = boulep(mesh, kel, i, listLocal);
-				/*for (i=0;i<TriaInBoulePK && kel!= (* listLocal)[i] ;i++)
-					printf("triangle %d = %d \n ", i,(* listLocal)[i] );*/
-
-
-				// for each triangle K_pk' in the ball B(pk)
-		
-				for (j=0; j < TriaInBoulePK  ;j++)
-				{
-						
-					int indice_point = (*listLocal)[j] %3;
-
-					if ( (*listLocal)[j] != kel ) 
-					{
-						//compute the distance d_pk = d(p, K_pk')
-						d_pk = distPointToTriangle(mesh, &mesh->tria[((*listLocal)[j]-indice_point)/3], p);
-
-			
-
-						if(d_pk < dapp)
-						{
-							// update the distance
-							dapp = d_pk;
-							
-							// store the index of current triangle iel = j
-							iel = j;
-						}
-					}
-				}
-					free(listLocal);
-				//printf("dapp = %f  d = %f\n ", dapp,d) ;
-
-		
-			if (dapp < d0)
-			{
-				p0 = pk; 
-				if (p0 == thepoint )
-					p0 = 0;
-			}
-			else
-				p0 = 0;
-		
-			
-			}
-			
-		}	
-
-	}
-	
-
-
-
-	return d0;
-}
 /* FUNCTION distbuck 
 		This function will calculate the minimum distance between a point of the mesh A and the mesh B 
 		PARAMETERS: a pointer to the point p of the mesh A, a pointer to the bucket of the mesh B, a pointer to the mesh B 
@@ -514,19 +335,13 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 		double dk ;
 		int** list_trianglep0 =(int**) malloc ( sizeof(int*)) ;
 		int nb_trianglesp0 = boulep ( meshB, tr, indicept , list_trianglep0);
-		/*printf("Liste des triangles autour :  \n " );
-		for (i=0;i < nb_trianglesp0;i++)
-		{
-			indice_point =  (*list_trianglep0)[i] % 3;
-			printf("triangle %d = %d \n ", i,((*list_trianglep0)[i] - indice_point)/3 );
-		}	*/
+
 		/* For each triangle of the ball B0, we calculate the distance between the point p of the mesh A and the triangle of the ball B0 
 			We save the smallest distance */
 		for (i = 0 ; i < nb_trianglesp0 ; i++ )
 		{
 			/* we collect the index of the point p0 for each triangle k*/
 			indice_point =  (*list_trianglep0)[i] % 3 ;
-			//printf ( " indice_point = %d ", indice_point ) ;
 			/* we calculate the distance between the point p and each triangle k of the ball Bk */
 			dk = distPointToTriangle(meshB, &meshB->tria[((*list_trianglep0)[i]-indice_point)/3], p);
 		
@@ -538,7 +353,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 				indice_p0 = indice_point;
 			}
 		}
-	//	printf( " d = %f  ",d); 
+
 		/* At this point, we have the triangle, around p0, close to the point p0 of the mesh A*/
 		/* now for each point of this triangle different of p0 :
 				we construct the ball around each point 
@@ -582,6 +397,7 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 				}
 				else
 					test = 0 ;
+					
 				free( (*list_trianglepk)) ;
 				free(list_trianglepk) ;
 				
@@ -593,11 +409,9 @@ double distbuck( pPoint p , pBucket bucket_meshB , pMesh meshB )
 		/* free */
 		free( (*list_trianglep0)) ;
 		free(list_trianglep0) ;
-	
 	}
-//	printf("d return = %f \n",d);
-	return d ;
 	
+	return d ;
 }
 
 
