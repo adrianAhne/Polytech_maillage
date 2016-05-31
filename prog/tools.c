@@ -1,6 +1,8 @@
-#include "mesh.h"
-
-extern Info  info;
+#include "tools.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+//extern Info  info;
 
 
 

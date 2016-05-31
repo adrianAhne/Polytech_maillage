@@ -13,7 +13,11 @@
 #include "ball.h" 
 #include "hausdorff.h"
 #include "InOut.h"
+
 #include <time.h>
+
+
+#include "tools.h"
 
 
 
@@ -577,6 +581,28 @@ int main(int argc,char *argv[]) {
 		double distHausdorff = Hausdorff(&meshA, &meshB);
 		fin = clock() ;
 		printf("distHausdorff = %f\n calcul = %f \n ", distHausdorff, difftime(fin ,debut));
+ 	}
+
+ 	// test hausdorff distance between two mesh brute force
+	if (test == 15)
+	{
+ 		Mesh	meshA, meshB;
+ 		time_t debut, fin;
+		/* parse arguments */
+		fprintf(stdout,"\n  -- DATA MESH\n");
+
+		/* default values */
+		memset(&meshA,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&meshA) )  return(1);
+		if ( !loadMesh(&meshA) )  return(1);
+		memset(&meshB,0,sizeof(Mesh));  	
+		if ( !parsar(argc,argv,&meshB) )  return(1);
+		if ( !loadMesh(&meshB) ) return(1);
+		fprintf(stdout,"  -- DATA READING COMPLETED.\n");	
+		debut = clock();
+		double distHausdorff = hausdorff_bruteforce(&meshA, &meshB);
+		fin = clock();
+		printf("distHausdorff = %f calcul : %f \n", distHausdorff, difftime(fin, debut));
  	}
 
 	return(0);
