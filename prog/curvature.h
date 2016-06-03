@@ -10,7 +10,7 @@
 	It creates the sol file in the current working directory	
 	3 dimensional
 */
-int courbure3D(pMesh mesh ) ;
+int curvature3D(pMesh mesh);
 
 /*
 	Calculates the curvature for each point by adding up
@@ -19,7 +19,6 @@ int courbure3D(pMesh mesh ) ;
 	It creates the sol file in the current working directory	
 	2 dimensional
 */
-int courbure2D( pMesh mesh );
-
+int curvature2D(pMesh mesh);
 
 #endif

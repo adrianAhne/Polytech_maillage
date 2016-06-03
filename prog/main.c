@@ -74,7 +74,7 @@ int main(int argc,char *argv[]) {
 
 	fprintf(stdout,"*** Main3 (2016) ***\n ");
 
-	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 15. distance Hausdorff\nChoose: \n");
+	fprintf(stdout,"TEST SELECTION\n\n Which test would you like to execute?\n\n 1. Rotation 2D\n 2. Rotation 3D\n 3. Superposition\n 4. Translation 2D\n 5. Translation 3D\n 6. Curvature 2D\n 7. Curvature 3D\n 8. Bucket \n 9. Distance point to triangle \n 10. Hash function \n 11. Normales \n 12. Distance point to mesh via bucket \n 13. Ball\n 14. distance Hausdorff opimale \n 15. distance Hausdorff brute-force\nChoose: \n");
 
 	fflush(stdin);
 	fscanf(stdin,"%d",&test);
@@ -280,7 +280,7 @@ int main(int argc,char *argv[]) {
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Courbure 2D MESH \n\n ");
 
-		if ( ! courbure2D(&mesh)) return(1);
+		if ( ! curvature2D(&mesh)) return(1);
 		
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
@@ -293,6 +293,7 @@ int main(int argc,char *argv[]) {
 	if ( test == 7 )
 	{
 		Mesh	mesh;
+		int i ;
 		/* default values */
 		memset(&mesh,0,sizeof(Mesh));
 		
@@ -308,8 +309,11 @@ int main(int argc,char *argv[]) {
 		/* FUNCTION */
 		fprintf(stdout,"\n  -- Courbure 3D MESH \n\n ");
 
-		if ( ! courbure3D(&mesh)) return(1);
-		
+		if ( ! curvature3D(&mesh)) return(1);
+		for( i=1 ; i<=mesh.np ; i++ )
+		{
+			//printf("%f\n",mesh.sol[i]);
+		} 
 		/* save mesh */
 		fprintf(stdout,"\n  -- OUTPUT DATA\n");
   		if ( !saveSol(&mesh,1) )  return(1);
@@ -492,7 +496,7 @@ int main(int argc,char *argv[]) {
 		fscanf(stdin,"%d",&N);
 		bucket.size = N ;
 		double dist;
-		dist = distanceUsingBucket(&mesh, &p, VertToTria , &bucket);
+		dist = distbuck( &p, &bucket, &mesh);
 		printf("DistanceUsingBucket = %f\n", dist);
 		free(VertToTria);
  	}

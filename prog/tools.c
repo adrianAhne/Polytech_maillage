@@ -1,8 +1,16 @@
-#include "tools.h"
-#include <math.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-//extern Info  info;
+#include <string.h>
+#include <assert.h>
+#include <math.h>
+#include "libmesh5.h"
+#include "tools.h"
+
+#define LS_MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#define LS_MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define INIVAL_3d     3.0
+#define EPS1     1.e-20
 
 
 
@@ -25,14 +33,9 @@ double hausdorff_bruteforce(pMesh mesh1, pMesh mesh2){
   nac1 = 0;
   nac2 = 0;
   
-  
-  
-  
-
   /* Compute rho(\Gamma_1,\Gamma_2)*/
   for(k=1;k<=mesh1->nt;k++){
     pt = &mesh1->tria[k];
-    if(pt->ref ==5){
     
     p0 = &mesh1->point[pt->v[0]];
     p1 = &mesh1->point[pt->v[1]];
@@ -48,6 +51,7 @@ double hausdorff_bruteforce(pMesh mesh1, pMesh mesh2){
     
     for(j=1;j<=mesh2->nt;j++){
       pt1 = &mesh2->tria[j];
+      if ( pt1->ref ==5 ) {
       p3 = &mesh2->point[pt1->v[0]];
       p4 = &mesh2->point[pt1->v[1]];
       p5 = &mesh2->point[pt1->v[2]];
@@ -64,7 +68,7 @@ double hausdorff_bruteforce(pMesh mesh1, pMesh mesh2){
       d = distpt_3d(p3,p4,p5,pmil,&proj);
       dmil = LS_MIN(dmil,d);
       
-    
+        
        }
     }
     rho1 = LS_MAX(rho1,d0);
@@ -107,6 +111,8 @@ double hausdorff_bruteforce(pMesh mesh1, pMesh mesh2){
           d = distpt_3d(p3,p4,p5,pmil,&proj);
           dmil = LS_MIN(dmil,d);
           
+          
+        
       }
       rho2 = LS_MAX(rho1,d0);
       rho2 = LS_MAX(rho1,d1);
@@ -251,3 +257,64 @@ double distpt_3d(pPoint p0,pPoint p1,pPoint p2,pPoint pq,char *proj) {
     }
     
   }
+
+
+/* return distance from point pa to segment (p1p2)
+ vertex tag set to 2 if distance is realized by p1 or p2 */
+double distpt_23d(pPoint p1,pPoint p2,pPoint pa) {
+  double   a,b,c,d,dd,ux,uy,vx,vy,wx,wy,xp,yp;
+  
+  a = p1->c[1] - p2->c[1];
+  b = p2->c[0] - p1->c[0];
+  c = -b*p1->c[1] - a*p1->c[0];
+  d = INIVAL_3d;
+  
+  dd = a*a + b*b;
+  if ( dd < EPS1 ) {
+    d = (pa->c[0]-p1->c[0])*(pa->c[0]-p1->c[0]) + (pa->c[1]-p1->c[1])*(pa->c[1]-p1->c[1]);
+    return(d);
+  }
+  xp =  b*b * pa->c[0] - a*b * pa->c[1] - a*c;
+  yp = -a*b * pa->c[0] + a*a * pa->c[1] - b*c;
+  dd = 1.0 / dd;
+  xp *= dd;
+  yp *= dd;
+  
+  ux = xp - p1->c[0];
+  uy = yp - p1->c[1];
+  vx = xp - p2->c[0];
+  vy = yp - p2->c[1];
+  wx = p2->c[0] - p1->c[0];
+  wy = p2->c[1] - p1->c[1];
+  
+  if ( fabs(b) < EPS1 ) {
+    if ( uy*wy <= 0.0 ) {
+      d = (pa->c[0]-p1->c[0])*(pa->c[0]-p1->c[0]) + (pa->c[1]-p1->c[1])*(pa->c[1]-p1->c[1]);
+    }
+    else if ( vy*wy <= 0.0 )
+      d = (pa->c[0]-xp)*(pa->c[0]-xp) + (pa->c[1]-yp)*(pa->c[1]-yp);
+    else {
+      d = (pa->c[0]-p2->c[0])*(pa->c[0]-p2->c[0]) + (pa->c[1]-p2->c[1])*(pa->c[1]-p2->c[1]);
+    }
+  }
+  else {
+    if ( ux*wx <= 0.0 ) {
+      d = (pa->c[0]-p1->c[0])*(pa->c[0]-p1->c[0]) + (pa->c[1]-p1->c[1])*(pa->c[1]-p1->c[1]);
+    }
+    else if ( vx*wx <= 0.0 )
+      d = (pa->c[0]-xp)*(pa->c[0]-xp) + (pa->c[1]-yp)*(pa->c[1]-yp);
+    else {
+      d = (pa->c[0]-p2->c[0])*(pa->c[0]-p2->c[0]) + (pa->c[1]-p2->c[1])*(pa->c[1]-p2->c[1]);
+    }
+  }
+  
+  return(d);
+}
+
+
+
+
+
+
+
+
